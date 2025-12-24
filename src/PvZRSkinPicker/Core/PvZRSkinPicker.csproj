@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <VersionFile>
+      <![CDATA[
+namespace $(RootNamespace).Metadata%3B
+
+internal static class ModInfo
+{
+	public const string Name = nameof($(RootNamespace))%3B
+
+	public const string Version = "$(ModVersion)"%3B
+
+	public const string Author = "$(ModAuthor)"%3B
+
+	public const string DownloadLink = "$(ModDownloadLink)"%3B
+}
+      ]]>
+    </VersionFile>
+  </PropertyGroup>
+
+	<Target Name="GenerateVersionFile" BeforeTargets="BeforeCompile;CoreCompile" Outputs="Metadata/ModInfo.g.cs">
+		<ItemGroup>
+			<FileWrites Include="Metadata/ModInfo.g.cs" />
+		</ItemGroup>
+		<WriteLinesToFile File="Metadata/ModInfo.g.cs" Lines="$(VersionFile)" WriteOnlyWhenDifferent="true" Overwrite="true" />
+	</Target>
+
+	<Target Name="CheckPvzReDir" BeforeTargets="BeforeBuild">
+		<Error Condition="'$(PvzReDir)' == ''" Text="Environment variable 'PvzReDir' is required but not set." />
+		<Message Text="PvzReDir is: $(PvzReDir)" Importance="high" />
+	</Target>
+
+  <ItemDefinitionGroup>
+    <Reference>
+      <Private>false</Private>
+    </Reference>
+  </ItemDefinitionGroup>
+
+	<ItemGroup>
+		<Reference Include="$(PvzReDir)\MelonLoader\Il2CppAssemblies\*.dll" />
+		<Reference Include="$(PvzReDir)\MelonLoader\net6\MelonLoader.dll" />
+		<Reference Include="$(PvzReDir)\MelonLoader\net6\0Harmony.dll" />
+		<Reference Include="$(PvzReDir)\MelonLoader\net6\Il2CppInterop.Runtime.dll" />
+		<Reference Include="$(PvzReDir)\MelonLoader\net6\Il2CppInterop.Common.dll" />
+	</ItemGroup>
+
+	<Target Name="CopyDllToMods" AfterTargets="PostBuildEvent">
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PvzReDir)\Mods" />
+	</Target>
+</Project>

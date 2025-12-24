@@ -1,0 +1,45 @@
+<Project>
+
+  <PropertyGroup>
+    <ModVersion>0.0.1</ModVersion>
+    <ModAuthor>RaptorRush</ModAuthor>
+    <ModDownloadLink>TODO</ModDownloadLink>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>true</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AssemblyVersion>$(ModVersion)</AssemblyVersion>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <PlatformTarget>x64</PlatformTarget>
+    <IsPackable>false</IsPackable>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+	<PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>CS1591;SA1600;SA1601;SA1602;SA1629;SA1633</NoWarn>
+	</PropertyGroup>
+
+  <ItemGroup>
+
+    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+
+    <PackageReference Include="Roslynator.Analyzers" Version="4.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+
+  </ItemGroup>
+
+</Project>
