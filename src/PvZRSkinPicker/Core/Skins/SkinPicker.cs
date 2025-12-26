@@ -23,22 +23,12 @@ internal abstract class SkinPicker<T>
         };
     }
 
-    public void Previous()
-    {
-        this.ChangeSelection(-1);
-    }
-
     public void Next()
     {
-        this.ChangeSelection(1);
-    }
-
-    protected abstract void OnSelect(Skin skin);
-
-    private void ChangeSelection(int offset)
-    {
-        this.selectedIndex = (this.selectedIndex + offset + this.Skins.Count) % this.Skins.Count;
+        this.selectedIndex = (this.selectedIndex + 1) % this.Skins.Count;
         var selectedSkin = this.Skins[this.selectedIndex];
         this.OnSelect(selectedSkin);
     }
+
+    protected abstract void OnSelect(Skin skin);
 }

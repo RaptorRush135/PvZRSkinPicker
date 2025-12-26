@@ -1,14 +1,15 @@
 ﻿namespace PvZRSkinPicker;
 
+using Il2CppReloaded.Data;
 using Il2CppReloaded.Gameplay;
 
 using MelonLoader;
 
 using PvZRSkinPicker.Api.Context;
+using PvZRSkinPicker.Api.UI;
+using PvZRSkinPicker.Assets;
 using PvZRSkinPicker.Extensions;
 using PvZRSkinPicker.Skins;
-
-using UnityEngine;
 
 public sealed class Core : MelonMod
 {
@@ -19,14 +20,6 @@ public sealed class Core : MelonMod
     public override void OnInitializeMelon()
     {
         ModContextApi.Ready += this.Ready;
-    }
-
-    public override void OnUpdate()
-    {
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            this.NextPlant();
-        }
     }
 
     private void Ready(ModContext context)
@@ -41,6 +34,19 @@ public sealed class Core : MelonMod
             .ToDictionary(picker => picker.Type);
 
         this.context = context;
+
+        const string SkinSwap = "SkinSwap";
+        var icon = ModAssets.LoadSprite($"{SkinSwap}.png");
+        var plantSkinSwapButton = AlmanacUI.CreatePortraitOverlayButton(SkinSwap, icon, AlmanacEntryType.Plant);
+        plantSkinSwapButton.AddOnClick(this.NextPlant);
+
+        this.context.Almanac.m_plantsModel.m_selectedModel.Subscribe(
+            (Action<string>)(value =>
+            {
+                var selectedType = (SeedType)int.Parse(value);
+                bool enabled = this.pickers.ContainsKey(selectedType);
+                plantSkinSwapButton.SetActive(enabled);
+            }));
     }
 
     private void NextPlant()

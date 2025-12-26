@@ -26,6 +26,10 @@ internal static class ModInfo
 		<WriteLinesToFile File="Metadata/ModInfo.g.cs" Lines="$(VersionFile)" WriteOnlyWhenDifferent="true" Overwrite="true" />
 	</Target>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Assets/SkinSwap.png" />
+  </ItemGroup>
+
 	<Target Name="CheckPvzReDir" BeforeTargets="BeforeBuild">
 		<Error Condition="'$(PvzReDir)' == ''" Text="Environment variable 'PvzReDir' is required but not set." />
 		<Message Text="PvzReDir is: $(PvzReDir)" Importance="high" />
