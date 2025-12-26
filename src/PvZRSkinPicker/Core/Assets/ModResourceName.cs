@@ -14,5 +14,7 @@ internal class ModResourceName
 
     public static implicit operator string(ModResourceName resource) => resource.name;
 
-    public override string ToString() => this.name;
+    public override string ToString() => this;
+
+    public string GetNameWithoutExtension() => Path.GetFileNameWithoutExtension(this);
 }

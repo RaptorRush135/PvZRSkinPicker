@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Skins;
+﻿namespace PvZRSkinPicker.Skins.Picker;
 
 using Il2CppReloaded.Gameplay;
 

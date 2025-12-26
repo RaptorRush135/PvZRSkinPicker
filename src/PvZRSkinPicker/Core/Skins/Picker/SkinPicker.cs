@@ -1,6 +1,9 @@
-﻿namespace PvZRSkinPicker.Skins;
+﻿namespace PvZRSkinPicker.Skins.Picker;
 
 using System.Diagnostics.Contracts;
+
+using PvZRSkinPicker.Data;
+using PvZRSkinPicker.Skins;
 
 internal abstract class SkinPicker<T>
     where T : struct, Enum
@@ -10,6 +13,13 @@ internal abstract class SkinPicker<T>
     public T Type { get; private init; }
 
     public IReadOnlyList<Skin> Skins { get; private init; } = null!;
+
+    [Pure]
+    public static TPicker? TryCreate<TPicker>(ISkinDataDefinition<T> definition)
+        where TPicker : SkinPicker<T>, new()
+    {
+        return TryCreate<TPicker>(definition.Type, definition.GetSkins());
+    }
 
     [Pure]
     public static TPicker? TryCreate<TPicker>(T type, IEnumerable<Skin> skins)

@@ -9,6 +9,8 @@ using UnityEngine;
 
 internal static class ModAssets
 {
+    public static readonly ModResourceName SkinSwap = "SkinSwap.png";
+
     [Pure]
     public static string GetResourceName(string fileName)
     {

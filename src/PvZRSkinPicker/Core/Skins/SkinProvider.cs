@@ -9,7 +9,9 @@ using UnityEngine.AddressableAssets;
 
 internal static class SkinProvider
 {
-    public static IEnumerable<Skin> GetSkins(IPlatformService platformService, PlantDefinition definition)
+    public static IEnumerable<Skin> GetSkins(
+        PlantDefinition definition,
+        IPlatformService platformService)
     {
         IEnumerable<Skin?> skins =
         [
@@ -23,7 +25,9 @@ internal static class SkinProvider
         return skins.WhereNotNull();
     }
 
-    public static IEnumerable<Skin> GetSkins(IPlatformService platformService, ZombieDefinition definition)
+    public static IEnumerable<Skin> GetSkins(
+        ZombieDefinition definition,
+        IPlatformService platformService)
     {
         IEnumerable<Skin?> skins =
         [
