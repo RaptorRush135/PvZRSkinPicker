@@ -29,7 +29,9 @@ internal static class AlmanacUI
             .Find("SelectedItemRenderPortrait")
             .Cast<RectTransform>();
 
-        return CreateOverlayButton(name, portrait, sprite, 150, new Vector2(50, 100));
+        int verticalPadding = type == AlmanacEntryType.Plant ? 100 : 75;
+
+        return CreateOverlayButton(name, portrait, sprite, 150, new Vector2(50, verticalPadding));
     }
 
     private static ModButton CreateOverlayButton(
