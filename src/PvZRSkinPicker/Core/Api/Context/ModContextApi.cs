@@ -15,7 +15,8 @@ internal static class ModContextApi
 
     static ModContextApi()
     {
-        DataServiceApi.OnReady += value => OnResolve(ref dataService, value);
+        AudioServiceApi.Initialize();
+        AppCoreApi.OnDataServiceReady += value => OnResolve(ref dataService, value);
         PlatformServiceApi.OnReady += value => OnResolve(ref platformService, value);
         AppDataApi.OnAlmanacBound += value => OnResolve(ref almanac, value);
     }

@@ -2,6 +2,9 @@
 
 using System.Diagnostics.Contracts;
 
+using Il2CppReloaded.Services;
+
+using PvZRSkinPicker.Api;
 using PvZRSkinPicker.Data;
 using PvZRSkinPicker.Skins;
 
@@ -38,6 +41,7 @@ internal abstract class SkinPicker<T>
         this.selectedIndex = (this.selectedIndex + 1) % this.Skins.Count;
         var selectedSkin = this.Skins[this.selectedIndex];
         this.OnSelect(selectedSkin);
+        AudioServiceApi.PlayWithRandomPitch(FoleyType.LimbsPop);
     }
 
     protected abstract void OnSelect(Skin skin);
