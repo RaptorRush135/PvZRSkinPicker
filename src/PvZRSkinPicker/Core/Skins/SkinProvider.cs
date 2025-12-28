@@ -32,6 +32,7 @@ internal static class SkinProvider
         IEnumerable<Skin?> skins =
         [
             TryCreate("Default", definition.m_prefab),
+            TryCreate("Retro", definition.m_retroGameObject, platformService.RetroContentAvailable),
             TryCreate("Platform", definition.m_platformGameObject, platformService.PlatformContentAvailable),
             TryCreate("EasterEgg", definition.m_easterEggGameObject),
             TryCreate("Xmas", definition.m_decemberGameObject),
