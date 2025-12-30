@@ -7,7 +7,7 @@ using PvZRSkinPicker.Extensions;
 
 using UnityEngine.AddressableAssets;
 
-internal static class SkinProvider
+internal static class SkinLocator
 {
     public static IEnumerable<Skin> GetSkins(
         PlantDefinition definition,

@@ -14,5 +14,5 @@ internal sealed class ZombieSkinDataDefinition(
     public ZombieType Type => definition.ZombieType;
 
     public IEnumerable<Skin> GetSkins()
-        => SkinProvider.GetSkins(definition, platformService);
+        => SkinLocator.GetSkins(definition, platformService);
 }

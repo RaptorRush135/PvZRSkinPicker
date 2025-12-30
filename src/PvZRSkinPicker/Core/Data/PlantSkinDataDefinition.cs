@@ -14,5 +14,5 @@ internal sealed class PlantSkinDataDefinition(
     public SeedType Type => definition.SeedType;
 
     public IEnumerable<Skin> GetSkins()
-        => SkinProvider.GetSkins(definition, platformService);
+        => SkinLocator.GetSkins(definition, platformService);
 }
