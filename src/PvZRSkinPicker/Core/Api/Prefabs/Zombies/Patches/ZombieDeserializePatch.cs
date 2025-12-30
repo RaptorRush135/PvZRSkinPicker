@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Api.Prefabs.Zombies;
+﻿namespace PvZRSkinPicker.Api.Prefabs.Zombies.Patches;
 
 using System.Reflection;
 using System.Runtime.InteropServices;

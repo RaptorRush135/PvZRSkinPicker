@@ -8,6 +8,7 @@ using Il2CppReloaded;
 using Il2CppReloaded.Data;
 using Il2CppReloaded.Gameplay;
 
+using PvZRSkinPicker.Api.Prefabs.Zombies.Patches;
 using PvZRSkinPicker.NativeUtils;
 using PvZRSkinPicker.Skins;
 
