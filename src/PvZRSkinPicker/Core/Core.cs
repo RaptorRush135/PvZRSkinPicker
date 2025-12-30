@@ -2,15 +2,17 @@
 
 using Il2CppReloaded.Data;
 using Il2CppReloaded.DataModels;
-using Il2CppReloaded.Gameplay;
 
 using MelonLoader;
 
 using PvZRSkinPicker.Almanac;
 using PvZRSkinPicker.Almanac.UI;
 using PvZRSkinPicker.Api.Context;
+using PvZRSkinPicker.Api.Prefabs;
+using PvZRSkinPicker.Api.Prefabs.Zombies;
 using PvZRSkinPicker.Data;
 using PvZRSkinPicker.Extensions;
+using PvZRSkinPicker.Skins;
 using PvZRSkinPicker.Skins.Picker;
 
 public sealed class Core : MelonMod
@@ -27,33 +29,33 @@ public sealed class Core : MelonMod
 
     private static void Ready(ModContext context)
     {
-        SetupSkinPicker<SeedType, PlantSkinPicker>(
+        SetupSkinPicker(
             AlmanacEntryType.Plant,
             context.Almanac.m_plantsModel,
             context.DataService.PlantDefinitions.AsEnumerable()
-                .Select(d => new PlantSkinDataDefinition(d, context.PlatformService)));
+                .Select(d => new PlantSkinDataDefinition(d, context.PlatformService)),
+            PlantPrefabResolver.SetOverride);
 
-        SetupSkinPicker<ZombieType, ZombieSkinPicker>(
+        SetupSkinPicker(
             AlmanacEntryType.Zombie,
             context.Almanac.m_zombiesModel,
             context.DataService.ZombieDefinitions.AsEnumerable()
-                .Select(d => new ZombieSkinDataDefinition(d, context.PlatformService)));
+                .Select(d => new ZombieSkinDataDefinition(d, context.PlatformService)),
+            ZombiePrefabResolver.SetOverride);
     }
 
-    private static void SetupSkinPicker<T, TPicker>(
+    private static void SetupSkinPicker<T>(
         AlmanacEntryType type,
         AlmanacEntriesModel entriesModel,
-        IEnumerable<ISkinDataDefinition<T>> definitions)
+        IEnumerable<ISkinDataDefinition<T>> definitions,
+        Action<T, Skin> onSelect)
         where T : struct, Enum
-        where TPicker : SkinPicker<T>, new()
     {
         var button = SkinSwapUI.CreateButton(type);
 
         var selection = new AlmanacSelection<T>(entriesModel.m_selectedModel);
 
-        var controller = new SkinPickerController<T, TPicker>(
-            selection,
-            definitions);
+        var controller = new SkinPickerController<T>(selection, definitions, onSelect);
 
         controller.Bind(button);
     }

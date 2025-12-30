@@ -5,24 +5,24 @@ using PvZRSkinPicker.Almanac.UI;
 using PvZRSkinPicker.Data;
 using PvZRSkinPicker.Extensions;
 
-internal sealed class SkinPickerController<T, TPicker>
+internal sealed class SkinPickerController<T>
     where T : struct, Enum
-    where TPicker : SkinPicker<T>, new()
 {
     private readonly AlmanacSelection<T> selection;
 
-    private readonly Dictionary<T, TPicker> pickers;
+    private readonly Dictionary<T, SkinPicker<T>> pickers;
 
     public SkinPickerController(
         AlmanacSelection<T> selection,
-        IEnumerable<ISkinDataDefinition<T>> definitions)
+        IEnumerable<ISkinDataDefinition<T>> definitions,
+        Action<T, Skin> onSelect)
     {
         ArgumentNullException.ThrowIfNull(selection);
         ArgumentNullException.ThrowIfNull(definitions);
 
         this.selection = selection;
         this.pickers = definitions
-            .Select(SkinPicker<T>.TryCreate<TPicker>)
+            .Select(d => SkinPicker<T>.TryCreate(d, onSelect))
             .WhereNotNull()
             .ToDictionary(picker => picker.Type);
     }

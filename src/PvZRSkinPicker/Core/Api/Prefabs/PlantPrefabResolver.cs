@@ -7,16 +7,18 @@ using HarmonyLib;
 using Il2CppReloaded.Data;
 using Il2CppReloaded.Gameplay;
 
+using PvZRSkinPicker.Skins;
+
 using UnityEngine.AddressableAssets;
 
 [HarmonyPatch]
 internal static class PlantPrefabResolver
 {
-    private static Dictionary<SeedType, AssetReferenceGameObject> Overrides { get; } = [];
+    private static Dictionary<SeedType, Skin> Overrides { get; } = [];
 
-    public static void SetOverride(SeedType type, AssetReferenceGameObject prefab)
+    public static void SetOverride(SeedType type, Skin skin)
     {
-        Overrides[type] = prefab;
+        Overrides[type] = skin;
     }
 
     [HarmonyPostfix]
@@ -25,9 +27,9 @@ internal static class PlantPrefabResolver
         PlantDefinition __instance,
         ref AssetReferenceGameObject __result)
     {
-        if (Overrides.TryGetValue(__instance.SeedType, out var @override))
+        if (Overrides.TryGetValue(__instance.SeedType, out var skin))
         {
-            __result = @override;
+            __result = skin.Prefab;
         }
     }
 }
