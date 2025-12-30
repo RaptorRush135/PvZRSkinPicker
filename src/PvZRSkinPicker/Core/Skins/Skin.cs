@@ -3,6 +3,5 @@
 using UnityEngine.AddressableAssets;
 
 internal sealed record Skin(
-    string Name,
-    AssetReferenceGameObject Prefab,
-    string? Author = null);
+    SkinType Type,
+    AssetReferenceGameObject Prefab);

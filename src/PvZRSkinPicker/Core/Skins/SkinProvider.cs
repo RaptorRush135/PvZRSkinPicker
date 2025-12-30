@@ -15,11 +15,11 @@ internal static class SkinProvider
     {
         IEnumerable<Skin?> skins =
         [
-            TryCreate("Default", definition.m_prefab),
-            TryCreate("Preorder", definition.m_preorderGameObject, platformService.PreOrderDLCAvailable),
-            TryCreate("EasterEgg", definition.m_easterEggGameObject),
-            TryCreate("Xmas", definition.m_decemberGameObject),
-            TryCreate("China", definition.m_chinaGameObject),
+            TryCreateSkin(SkinType.Normal, definition.m_prefab),
+            TryCreateSkin(SkinType.Retro, definition.m_preorderGameObject, platformService.PreOrderDLCAvailable),
+            TryCreateSkin(SkinType.China, definition.m_chinaGameObject),
+            TryCreateSkin(SkinType.EasterEgg, definition.m_easterEggGameObject),
+            TryCreateSkin(SkinType.December, definition.m_decemberGameObject),
         ];
 
         return skins.WhereNotNull();
@@ -31,21 +31,21 @@ internal static class SkinProvider
     {
         IEnumerable<Skin?> skins =
         [
-            TryCreate("Default", definition.m_prefab),
-            TryCreate("Retro", definition.m_retroGameObject, platformService.RetroContentAvailable),
-            TryCreate("Platform", definition.m_platformGameObject, platformService.PlatformContentAvailable),
-            TryCreate("EasterEgg", definition.m_easterEggGameObject),
-            TryCreate("Xmas", definition.m_decemberGameObject),
-            TryCreate("China", definition.m_chinaGameObject),
+            TryCreateSkin(SkinType.Normal, definition.m_prefab),
+            TryCreateSkin(SkinType.Retro, definition.m_retroGameObject, platformService.RetroContentAvailable),
+            TryCreateSkin(SkinType.Platform, definition.m_platformGameObject, platformService.PlatformContentAvailable),
+            TryCreateSkin(SkinType.China, definition.m_chinaGameObject),
+            TryCreateSkin(SkinType.EasterEgg, definition.m_easterEggGameObject),
+            TryCreateSkin(SkinType.December, definition.m_decemberGameObject),
         ];
 
         return skins.WhereNotNull();
     }
 
-    private static Skin? TryCreate(string name, AssetReferenceGameObject prefab, bool enabled = true)
+    private static Skin? TryCreateSkin(SkinType type, AssetReferenceGameObject prefab, bool enabled = true)
     {
         return string.IsNullOrEmpty(prefab.AssetGUID)
             || !enabled
-            ? null : new(name, prefab);
+            ? null : new(type, prefab);
     }
 }

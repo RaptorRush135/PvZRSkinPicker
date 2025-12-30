@@ -3,8 +3,13 @@
 using Il2CppReloaded.DataModels;
 using Il2CppReloaded.Services;
 
+using PvZRSkinPicker.Api.Prefabs.Zombies;
+using PvZRSkinPicker.NativeUtils;
+
 internal static class ModContextApi
 {
+    private static readonly HookStore HookStore = new();
+
     private static IDataService? dataService;
 
     private static IPlatformService? platformService;
@@ -15,13 +20,22 @@ internal static class ModContextApi
 
     static ModContextApi()
     {
+        HookStore.Add(
+            ZombiePrefabResolver.Initialize());
+
         AudioServiceApi.Initialize();
+
         AppCoreApi.OnDataServiceReady += value => OnResolve(ref dataService, value);
         PlatformServiceApi.OnReady += value => OnResolve(ref platformService, value);
         AppDataApi.OnAlmanacBound += value => OnResolve(ref almanac, value);
     }
 
     public static event Action<ModContext>? Ready;
+
+    public static void Dispose()
+    {
+        HookStore.DetachAll();
+    }
 
     private static void OnResolve<T>(ref T field, T value)
     {

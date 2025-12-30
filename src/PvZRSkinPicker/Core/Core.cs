@@ -15,9 +15,14 @@ using PvZRSkinPicker.Skins.Picker;
 
 public sealed class Core : MelonMod
 {
-    public override void OnInitializeMelon()
+    public override void OnLateInitializeMelon()
     {
         ModContextApi.Ready += Ready;
+    }
+
+    public override void OnDeinitializeMelon()
+    {
+        ModContextApi.Dispose();
     }
 
     private static void Ready(ModContext context)
