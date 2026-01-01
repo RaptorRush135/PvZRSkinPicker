@@ -18,6 +18,14 @@
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
+  <ItemGroup>
+    <SourceRoot Include="$(MSBuildThisFileDirectory)" />
+  </ItemGroup>
+
+  <Target Name="PrintSourceRoot" BeforeTargets="BeforeBuild">
+    <Message Text="SourceRoot is: @(SourceRoot)" Importance="high" />
+  </Target>
+
 	<PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>CS1591;SA1600;SA1601;SA1602;SA1629;SA1633</NoWarn>
