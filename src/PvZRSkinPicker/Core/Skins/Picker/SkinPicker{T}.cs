@@ -52,8 +52,13 @@ internal sealed class SkinPicker<T>
     public void Next()
     {
         this.selectedIndex = (this.selectedIndex + 1) % this.Skins.Count;
+        this.ApplySelection();
+        AudioServiceApi.PlayWithRandomPitch(FoleyType.LimbsPop);
+    }
+
+    public void ApplySelection()
+    {
         Skin selectedSkin = this.Skins[this.selectedIndex];
         this.OnSelect(this.Type, selectedSkin);
-        AudioServiceApi.PlayWithRandomPitch(FoleyType.LimbsPop);
     }
 }

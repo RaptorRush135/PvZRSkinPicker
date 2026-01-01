@@ -57,6 +57,7 @@ public sealed class Core : MelonMod
 
         var controller = new SkinPickerController<T>(selection, definitions, prefabResolver.SetOverride);
 
+        controller.ApplySelections();
         controller.Bind(button);
     }
 }

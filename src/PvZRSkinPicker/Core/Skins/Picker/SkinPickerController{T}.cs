@@ -27,6 +27,14 @@ internal sealed class SkinPickerController<T>
             .ToDictionary(picker => picker.Type);
     }
 
+    public void ApplySelections()
+    {
+        foreach (var picker in this.pickers.Values)
+        {
+            picker.ApplySelection();
+        }
+    }
+
     public void Bind(ModButton button)
     {
         this.selection.SelectionChanged += type =>
