@@ -17,8 +17,7 @@ internal static class ZombieDefinitionGetPrefabPatch
         ZombieDefinition __instance,
         ref AssetReferenceGameObject __result)
     {
-        // TODO: Check if almanac open?
-        if (ZombiePrefabResolver.Overrides.TryGetValue(__instance.ZombieType, out var skin))
+        if (ZombiePrefabResolver.Instance.Overrides.TryGetValue(__instance.ZombieType, out var skin))
         {
             __result = skin.Prefab;
             return false;

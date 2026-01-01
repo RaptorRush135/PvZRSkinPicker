@@ -3,6 +3,7 @@
 using Il2CppReloaded.DataModels;
 using Il2CppReloaded.Services;
 
+using PvZRSkinPicker.Api.Prefabs.Plants;
 using PvZRSkinPicker.Api.Prefabs.Zombies;
 using PvZRSkinPicker.NativeUtils;
 
@@ -21,6 +22,7 @@ internal static class ModContextApi
     static ModContextApi()
     {
         HookStore.Add(
+            PlantPrefabResolver.Initialize(),
             ZombiePrefabResolver.Initialize());
 
         AudioServiceApi.Initialize();
@@ -51,7 +53,7 @@ internal static class ModContextApi
                 "Required services were already resolved.");
         }
 
-        if (dataService is null || almanac is null || platformService is null)
+        if (dataService is null || platformService is null || almanac is null)
         {
             return;
         }

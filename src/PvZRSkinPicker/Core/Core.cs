@@ -9,10 +9,10 @@ using PvZRSkinPicker.Almanac;
 using PvZRSkinPicker.Almanac.UI;
 using PvZRSkinPicker.Api.Context;
 using PvZRSkinPicker.Api.Prefabs;
+using PvZRSkinPicker.Api.Prefabs.Plants;
 using PvZRSkinPicker.Api.Prefabs.Zombies;
 using PvZRSkinPicker.Data;
 using PvZRSkinPicker.Extensions;
-using PvZRSkinPicker.Skins;
 using PvZRSkinPicker.Skins.Picker;
 
 public sealed class Core : MelonMod
@@ -34,28 +34,28 @@ public sealed class Core : MelonMod
             context.Almanac.m_plantsModel,
             context.DataService.PlantDefinitions.AsEnumerable()
                 .Select(d => new PlantSkinDataDefinition(d, context.PlatformService)),
-            PlantPrefabResolver.SetOverride);
+            PlantPrefabResolver.Instance);
 
         SetupSkinPicker(
             AlmanacEntryType.Zombie,
             context.Almanac.m_zombiesModel,
             context.DataService.ZombieDefinitions.AsEnumerable()
                 .Select(d => new ZombieSkinDataDefinition(d, context.PlatformService)),
-            ZombiePrefabResolver.SetOverride);
+            ZombiePrefabResolver.Instance);
     }
 
     private static void SetupSkinPicker<T>(
         AlmanacEntryType type,
         AlmanacEntriesModel entriesModel,
         IEnumerable<ISkinDataDefinition<T>> definitions,
-        Action<T, Skin> onSelect)
+        PrefabResolver<T> prefabResolver)
         where T : struct, Enum
     {
         var button = SkinSwapUI.CreateButton(type);
 
         var selection = new AlmanacSelection<T>(entriesModel.m_selectedModel);
 
-        var controller = new SkinPickerController<T>(selection, definitions, onSelect);
+        var controller = new SkinPickerController<T>(selection, definitions, prefabResolver.SetOverride);
 
         controller.Bind(button);
     }

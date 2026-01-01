@@ -10,24 +10,27 @@ using Il2CppReloaded.Services;
 [HarmonyPatch]
 internal static class GameplayServiceApi
 {
-    public static bool? ChinaModeActiveOverride { get; set; }
+    public static bool? PreOrderContentActiveOverride { get; set; }
 
     public static bool? RetroContentActiveOverride { get; set; }
 
     public static bool? PlatformContentActiveOverride { get; set; }
 
+    public static bool? ChinaModeActiveOverride { get; set; }
+
     public static void SetOverrides(bool? value)
     {
-        ChinaModeActiveOverride = value;
+        PreOrderContentActiveOverride = value;
         RetroContentActiveOverride = value;
         PlatformContentActiveOverride = value;
+        ChinaModeActiveOverride = value;
     }
 
     [HarmonyPrefix]
-    [HarmonyPatch(typeof(GameplayService), nameof(GameplayService.ChinaModeActive), MethodType.Getter)]
-    private static bool ChinaModeActive(ref bool __result)
+    [HarmonyPatch(typeof(GameplayService), nameof(GameplayService.PreOrderContentActive), MethodType.Getter)]
+    private static bool PreOrderContentActive(ref bool __result)
     {
-        return ApplyOverride(ChinaModeActiveOverride, ref __result);
+        return ApplyOverride(PreOrderContentActiveOverride, ref __result);
     }
 
     [HarmonyPrefix]
@@ -42,6 +45,13 @@ internal static class GameplayServiceApi
     private static bool PlatformContentActive(ref bool __result)
     {
         return ApplyOverride(PlatformContentActiveOverride, ref __result);
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(GameplayService), nameof(GameplayService.ChinaModeActive), MethodType.Getter)]
+    private static bool ChinaModeActive(ref bool __result)
+    {
+        return ApplyOverride(ChinaModeActiveOverride, ref __result);
     }
 
     private static bool ApplyOverride(bool? @override, ref bool result)

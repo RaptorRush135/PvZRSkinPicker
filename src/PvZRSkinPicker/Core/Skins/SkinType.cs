@@ -3,6 +3,7 @@
 public enum SkinType
 {
     Normal,
+    PreOrder,
     Retro,
     Platform,
     China,

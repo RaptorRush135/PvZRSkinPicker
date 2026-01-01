@@ -10,6 +10,14 @@ internal sealed class HookStore
         this.hooks.Add(hook);
     }
 
+    public void Add(params ReadOnlySpan<IFunctionHook> hooks)
+    {
+        foreach (var hook in hooks)
+        {
+            this.Add(hook);
+        }
+    }
+
     public void DetachAll()
     {
         this.hooks.ForEach(h => h.Detach());

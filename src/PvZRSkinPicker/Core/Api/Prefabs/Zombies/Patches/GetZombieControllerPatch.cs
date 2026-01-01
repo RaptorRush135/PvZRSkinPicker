@@ -35,10 +35,11 @@ internal static class GetZombieControllerPatch
 
         if (forceDecember)
         {
+            // TODO: Ignore resolver?
             return;
         }
 
-        if (!ZombiePrefabResolver.Overrides.TryGetValue(zombieDefinition.ZombieType, out var skin))
+        if (!ZombiePrefabResolver.Instance.Overrides.TryGetValue(zombieDefinition.ZombieType, out var skin))
         {
             return;
         }
@@ -68,8 +69,8 @@ internal static class GetZombieControllerPatch
         }
     }
 
-    [HarmonyFinalizer]
-    private static void Finalizer(
+    [HarmonyPostfix]
+    private static void Postfix(
         ZombieDefinition zombieDefinition,
         GetZombieControllerPatchState __state)
     {

@@ -6,18 +6,20 @@ using HarmonyLib;
 
 using Il2CppReloaded.Gameplay;
 
+using PvZRSkinPicker.Api.Prefabs.Patches;
+
 [HarmonyPatch(typeof(Zombie), nameof(Zombie.DropHead))]
 internal static class ZombieDropHeadPatch
 {
     [HarmonyPrefix]
     private static void Prefix(Zombie __instance, out EmulateSkinConditionsPatchState __state)
     {
-        EmulateSkinConditionsPatchHelper.Prefix(__instance, out __state);
+        ZombiePrefabResolver.SkinConditionsPatcher.Prefix(__instance, out __state);
     }
 
     [HarmonyPostfix]
     private static void Postfix(EmulateSkinConditionsPatchState __state)
     {
-        EmulateSkinConditionsPatchHelper.Postfix(__state);
+        ZombiePrefabResolver.SkinConditionsPatcher.Postfix(__state);
     }
 }
