@@ -25,6 +25,7 @@ internal static class ModContextApi
             PlantPrefabResolver.Initialize(),
             ZombiePrefabResolver.Initialize());
 
+        GameplayServiceApi.Initialize();
         AudioServiceApi.Initialize();
 
         AppCoreApi.OnDataServiceReady += value => OnResolve(ref dataService, value);

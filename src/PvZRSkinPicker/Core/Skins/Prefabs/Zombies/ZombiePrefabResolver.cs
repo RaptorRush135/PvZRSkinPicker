@@ -5,6 +5,7 @@ using Il2CppReloaded.Gameplay;
 using PvZRSkinPicker.NativeUtils;
 using PvZRSkinPicker.Skins.Prefabs;
 using PvZRSkinPicker.Skins.Prefabs.Patches;
+using PvZRSkinPicker.Skins.Prefabs.Serialization;
 
 internal static class ZombiePrefabResolver
 {

@@ -1,5 +1,6 @@
 ﻿namespace PvZRSkinPicker.Api;
 
+
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 #pragma warning disable IDE0051 // Remove unused private member
 
@@ -10,6 +11,11 @@ using Il2CppReloaded.Services;
 [HarmonyPatch]
 internal static class GameplayServiceApi
 {
+    static GameplayServiceApi()
+    {
+        AppCoreApi.OnGameplayServiceReady += service => Instance = service;
+    }
+
     public static bool? PreOrderContentActiveOverride { get; set; }
 
     public static bool? RetroContentActiveOverride { get; set; }
@@ -17,6 +23,14 @@ internal static class GameplayServiceApi
     public static bool? PlatformContentActiveOverride { get; set; }
 
     public static bool? ChinaModeActiveOverride { get; set; }
+
+    public static IGameplayService Instance
+    {
+        get => field ?? throw new InvalidOperationException("GameplayService not ready.");
+        private set;
+    }
+
+    public static void Initialize() => GC.KeepAlive(PreOrderContentActiveOverride);
 
     public static void SetOverrides(bool? value)
     {
