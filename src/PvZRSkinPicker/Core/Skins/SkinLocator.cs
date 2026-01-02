@@ -16,7 +16,7 @@ internal static class SkinLocator
         IEnumerable<Skin?> skins =
         [
             TryCreateSkin(SkinType.Normal, definition.m_prefab),
-            TryCreateSkin(SkinType.PreOrder, definition.m_preorderGameObject, platformService.PreOrderDLCAvailable),
+            TryCreateSkin(SkinType.PreOrderPlant, definition.m_preorderGameObject, platformService.PreOrderDLCAvailable),
             TryCreateSkin(SkinType.China, definition.m_chinaGameObject),
             TryCreateSkin(SkinType.EasterEgg, definition.m_easterEggGameObject),
             TryCreateSkin(SkinType.December, definition.m_decemberGameObject),
@@ -32,8 +32,8 @@ internal static class SkinLocator
         IEnumerable<Skin?> skins =
         [
             TryCreateSkin(SkinType.Normal, definition.m_prefab),
-            TryCreateSkin(SkinType.Retro, definition.m_retroGameObject, platformService.RetroContentAvailable),
-            TryCreateSkin(SkinType.Platform, definition.m_platformGameObject, platformService.PlatformContentAvailable),
+            TryCreateSkin(SkinType.RetroZombie, definition.m_retroGameObject, platformService.RetroContentAvailable),
+            TryCreateSkin(SkinType.PlatformZombie, definition.m_platformGameObject, platformService.PlatformContentAvailable),
             TryCreateSkin(SkinType.China, definition.m_chinaGameObject),
             TryCreateSkin(SkinType.EasterEgg, definition.m_easterEggGameObject),
             TryCreateSkin(SkinType.December, definition.m_decemberGameObject),

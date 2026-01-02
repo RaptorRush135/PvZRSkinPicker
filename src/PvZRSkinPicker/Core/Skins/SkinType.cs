@@ -3,9 +3,9 @@
 public enum SkinType
 {
     Normal,
-    PreOrder,
-    Retro,
-    Platform,
+    PreOrderPlant,
+    RetroZombie,
+    PlatformZombie,
     China,
     EasterEgg,
     December,

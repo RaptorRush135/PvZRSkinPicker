@@ -10,13 +10,13 @@ internal static class SkinConditionEmulator
 
         switch (skinType)
         {
-            case SkinType.PreOrder:
+            case SkinType.PreOrderPlant:
                 GameplayServiceApi.PreOrderContentActiveOverride = true;
                 return true;
-            case SkinType.Retro:
+            case SkinType.RetroZombie:
                 GameplayServiceApi.RetroContentActiveOverride = true;
                 return true;
-            case SkinType.Platform:
+            case SkinType.PlatformZombie:
                 GameplayServiceApi.PlatformContentActiveOverride = true;
                 return true;
             case SkinType.China:
