@@ -36,7 +36,6 @@ internal static class GetZombieControllerPatch
 
         if (forceDecember)
         {
-            // TODO: Ignore resolver?
             return;
         }
 

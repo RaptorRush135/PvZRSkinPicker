@@ -1,6 +1,5 @@
 ﻿namespace PvZRSkinPicker.Api;
 
-
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 #pragma warning disable IDE0051 // Remove unused private member
 

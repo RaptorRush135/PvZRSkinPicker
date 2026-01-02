@@ -17,14 +17,16 @@ internal static class PlantDefinitionGetPrefabPatch
     private static bool Prefix(
         PlantDefinition __instance,
         ref AssetReferenceGameObject __result,
-        bool easterEggAllowed,
         bool forceDecemberContent,
-        bool forceNormalContent,
         bool forceRetroContent)
     {
+        if (forceDecemberContent || forceRetroContent)
+        {
+            return true;
+        }
+
         if (PlantPrefabResolver.Instance.Overrides.TryGetValue(__instance.SeedType, out var skin))
         {
-            // TODO: Ignore resolver on certain conditions (params)?
             __result = skin.Prefab;
             return false;
         }
