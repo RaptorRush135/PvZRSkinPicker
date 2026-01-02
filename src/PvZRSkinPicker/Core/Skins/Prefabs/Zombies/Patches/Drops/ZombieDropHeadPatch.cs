@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Api.Prefabs.Zombies.Patches.Drops;
+﻿namespace PvZRSkinPicker.Skins.Prefabs.Zombies.Patches.Drops;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 
@@ -6,10 +6,11 @@ using HarmonyLib;
 
 using Il2CppReloaded.Gameplay;
 
-using PvZRSkinPicker.Api.Prefabs.Patches;
+using PvZRSkinPicker.Skins.Prefabs.Patches;
+using PvZRSkinPicker.Skins.Prefabs.Zombies;
 
-[HarmonyPatch(typeof(Zombie), nameof(Zombie.DropHelm))]
-internal static class ZombieDropHelmPatch
+[HarmonyPatch(typeof(Zombie), nameof(Zombie.DropHead))]
+internal static class ZombieDropHeadPatch
 {
     [HarmonyPrefix]
     private static void Prefix(Zombie __instance, out EmulateSkinConditionsPatchState __state)

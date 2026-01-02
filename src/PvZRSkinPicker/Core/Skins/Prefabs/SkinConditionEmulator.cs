@@ -1,4 +1,6 @@
-﻿namespace PvZRSkinPicker.Api.Prefabs;
+﻿namespace PvZRSkinPicker.Skins.Prefabs;
+
+using PvZRSkinPicker.Api;
 
 using PvZRSkinPicker.Skins;
 

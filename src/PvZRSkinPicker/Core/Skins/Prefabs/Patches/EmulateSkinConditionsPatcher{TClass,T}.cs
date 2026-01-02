@@ -1,6 +1,8 @@
-﻿namespace PvZRSkinPicker.Api.Prefabs.Patches;
+﻿namespace PvZRSkinPicker.Skins.Prefabs.Patches;
 
 using Il2CppReloaded.Gameplay;
+
+using PvZRSkinPicker.Skins.Prefabs;
 
 internal sealed class EmulateSkinConditionsPatcher<TClass, T>(
     PrefabResolver<T> prefabResolver,

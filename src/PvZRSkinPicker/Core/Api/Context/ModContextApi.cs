@@ -3,9 +3,9 @@
 using Il2CppReloaded.DataModels;
 using Il2CppReloaded.Services;
 
-using PvZRSkinPicker.Api.Prefabs.Plants;
-using PvZRSkinPicker.Api.Prefabs.Zombies;
 using PvZRSkinPicker.NativeUtils;
+using PvZRSkinPicker.Skins.Prefabs.Plants;
+using PvZRSkinPicker.Skins.Prefabs.Zombies;
 
 internal static class ModContextApi
 {

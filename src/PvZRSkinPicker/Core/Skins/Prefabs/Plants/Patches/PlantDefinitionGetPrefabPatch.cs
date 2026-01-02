@@ -1,10 +1,12 @@
-﻿namespace PvZRSkinPicker.Api.Prefabs.Plants.Patches;
+﻿namespace PvZRSkinPicker.Skins.Prefabs.Plants.Patches;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 
 using HarmonyLib;
 
 using Il2CppReloaded.Data;
+
+using PvZRSkinPicker.Skins.Prefabs.Plants;
 
 using UnityEngine.AddressableAssets;
 

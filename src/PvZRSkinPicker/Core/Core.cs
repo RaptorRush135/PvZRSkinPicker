@@ -8,12 +8,12 @@ using MelonLoader;
 using PvZRSkinPicker.Almanac;
 using PvZRSkinPicker.Almanac.UI;
 using PvZRSkinPicker.Api.Context;
-using PvZRSkinPicker.Api.Prefabs;
-using PvZRSkinPicker.Api.Prefabs.Plants;
-using PvZRSkinPicker.Api.Prefabs.Zombies;
 using PvZRSkinPicker.Data;
 using PvZRSkinPicker.Extensions;
 using PvZRSkinPicker.Skins.Picker;
+using PvZRSkinPicker.Skins.Prefabs;
+using PvZRSkinPicker.Skins.Prefabs.Plants;
+using PvZRSkinPicker.Skins.Prefabs.Zombies;
 
 public sealed class Core : MelonMod
 {

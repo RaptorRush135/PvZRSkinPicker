@@ -1,8 +1,10 @@
-﻿namespace PvZRSkinPicker.Api.Prefabs;
+﻿namespace PvZRSkinPicker.Skins.Prefabs;
 
 #pragma warning disable CA1822 // Mark members as static
 
 using System.Collections.ObjectModel;
+
+using PvZRSkinPicker.Api;
 
 using PvZRSkinPicker.Skins;
 

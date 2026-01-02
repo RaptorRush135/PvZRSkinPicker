@@ -1,10 +1,11 @@
-﻿namespace PvZRSkinPicker.Api.Prefabs.Serialization;
+﻿namespace PvZRSkinPicker.Skins.Prefabs.Serialization;
 
 using System.Reflection;
 
 using Il2CppReloaded.Gameplay;
 
 using PvZRSkinPicker.NativeUtils;
+using PvZRSkinPicker.Skins.Prefabs;
 
 internal sealed class ReloadedDeserializePatch<TClass, T>
     where TClass : ReloadedObject

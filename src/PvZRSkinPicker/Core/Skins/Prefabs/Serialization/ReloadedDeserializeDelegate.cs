@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Api.Prefabs.Serialization;
+﻿namespace PvZRSkinPicker.Skins.Prefabs.Serialization;
 
 using System.Runtime.InteropServices;
 

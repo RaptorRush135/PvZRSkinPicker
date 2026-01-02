@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Api.Prefabs.Zombies.Patches;
+﻿namespace PvZRSkinPicker.Skins.Prefabs.Zombies.Patches;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 
@@ -8,6 +8,7 @@ using Il2CppReloaded;
 using Il2CppReloaded.Data;
 
 using PvZRSkinPicker.Skins;
+using PvZRSkinPicker.Skins.Prefabs.Zombies;
 
 [HarmonyPatch(typeof(GameplayPooler), nameof(GameplayPooler.GetZombieController))]
 internal static class GetZombieControllerPatch

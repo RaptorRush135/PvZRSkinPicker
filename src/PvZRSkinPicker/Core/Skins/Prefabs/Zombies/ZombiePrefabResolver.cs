@@ -1,10 +1,10 @@
-﻿namespace PvZRSkinPicker.Api.Prefabs.Zombies;
+﻿namespace PvZRSkinPicker.Skins.Prefabs.Zombies;
 
 using Il2CppReloaded.Gameplay;
 
-using PvZRSkinPicker.Api.Prefabs.Patches;
-using PvZRSkinPicker.Api.Prefabs.Serialization;
 using PvZRSkinPicker.NativeUtils;
+using PvZRSkinPicker.Skins.Prefabs;
+using PvZRSkinPicker.Skins.Prefabs.Patches;
 
 internal static class ZombiePrefabResolver
 {

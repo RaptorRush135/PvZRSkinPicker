@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Api.Prefabs.Zombies.Patches;
+﻿namespace PvZRSkinPicker.Skins.Prefabs.Zombies.Patches;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 #pragma warning disable IDE0051 // Remove unused private member
@@ -6,6 +6,8 @@
 using HarmonyLib;
 
 using Il2CppReloaded.Data;
+
+using PvZRSkinPicker.Skins.Prefabs.Zombies;
 
 using UnityEngine.AddressableAssets;
 
