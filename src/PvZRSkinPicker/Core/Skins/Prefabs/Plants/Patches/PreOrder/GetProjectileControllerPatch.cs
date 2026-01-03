@@ -9,24 +9,18 @@ using Il2CppReloaded;
 using Il2CppReloaded.Data;
 using Il2CppReloaded.Gameplay;
 
-using PvZRSkinPicker.Api;
-
 [HarmonyPatch(typeof(GameplayPooler), nameof(GameplayPooler.GetProjectileController))]
 internal static class GetProjectileControllerPatch
 {
-    private const ProjectileType PreorderFlag = (ProjectileType)(1 << 30);
+    private static readonly ProjectileType PreorderFlag
+        = PreOrderConditionPatchHelper.GetUniquePreOrderKey<ProjectileType>();
 
     [HarmonyPrefix]
     private static void Prefix(ProjectileDefinition projectileDefinition)
     {
-        if (projectileDefinition.ProjectileType != ProjectileType.PeashooterPea)
+        if (projectileDefinition.ProjectileType is ProjectileType.PeashooterPea or ProjectileType.PeashooterFireball
+            && PreOrderConditionPatchHelper.IsContentActive)
         {
-            return;
-        }
-
-        if (GameplayServiceApi.Instance.PreOrderContentActive)
-        {
-            // Unique key for the pool
             projectileDefinition.m_projectileType |= PreorderFlag;
         }
     }

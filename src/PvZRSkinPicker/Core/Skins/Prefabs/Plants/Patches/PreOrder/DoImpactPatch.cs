@@ -6,14 +6,13 @@ using HarmonyLib;
 
 using Il2CppReloaded.Gameplay;
 
-[HarmonyPatch(typeof(Plant), nameof(Plant.Fire))]
-internal static class PlantFirePatch
+[HarmonyPatch(typeof(Projectile), nameof(Projectile.DoImpact))]
+internal static class DoImpactPatch
 {
     [HarmonyPrefix]
-    private static void Prefix(Plant __instance)
+    private static void Prefix(Projectile __instance)
     {
-        if (__instance.mSeedType == SeedType.Peashooter
-            && __instance.mController.IsRetroContent)
+        if (PreOrderConditionPatchHelper.IsRetroPea(__instance))
         {
             PreOrderConditionPatchHelper.EnablePreOrderContent();
         }
