@@ -16,7 +16,17 @@ internal static class PreOrderConditionPatchHelper
 
     public static bool IsRetroPea(Projectile projectile)
     {
-        return projectile.mController.gameObject.name == "Projectile-Pea_Retro(Clone)";
+        return projectile.mProjectileType switch
+        {
+            ProjectileType.PeashooterPea
+                => MatchesProjectileGameObjectName("Projectile-Pea_Retro(Clone)"),
+            ProjectileType.PeashooterFireball
+                => MatchesProjectileGameObjectName("Projectile-Fireball_Retro(Clone)"),
+            _ => false,
+        };
+
+        bool MatchesProjectileGameObjectName(string expectedName)
+            => projectile.mController.gameObject.name == expectedName;
     }
 
     public static void EnablePreOrderContent()
