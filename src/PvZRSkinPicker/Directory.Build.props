@@ -1,9 +1,9 @@
 <Project>
 
   <PropertyGroup>
-    <ModVersion>0.0.1</ModVersion>
+    <ModVersion>1.0.0</ModVersion>
     <ModAuthor>RaptorRush</ModAuthor>
-    <ModDownloadLink>TODO</ModDownloadLink>
+    <ModDownloadLink>https://github.com/RaptorRush135/PvZRSkinPicker</ModDownloadLink>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -27,8 +27,9 @@
   </Target>
 
 	<PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateDocumentationFile Condition="'$(Configuration)' != 'Release'">true</GenerateDocumentationFile>
     <NoWarn>CS1591;SA1600;SA1601;SA1602;SA1629;SA1633</NoWarn>
+    <NoWarn Condition="'$(Configuration)' == 'Release'">$(NoWarn);SA0001</NoWarn>
 	</PropertyGroup>
 
   <ItemGroup>
@@ -49,5 +50,25 @@
     </PackageReference>
 
   </ItemGroup>
+
+  <Target Name="ZipPublishWithFolder" AfterTargets="Build" Condition="'$(Configuration)'=='Release'">
+
+    <PropertyGroup>
+      <ZipStage>$(BaseIntermediateOutputPath)ZipStage</ZipStage>
+      <ZipFolderName>Mods</ZipFolderName>
+      <ZipFileName>$(AssemblyName).zip</ZipFileName>
+    </PropertyGroup>
+
+    <Delete Files="$(OutputPath)$(ZipFileName)" />
+    <ItemGroup>
+      <FilesToZip Include="$(TargetDir)**\*" />
+    </ItemGroup>
+    <RemoveDir Directories="$(ZipStage)" />
+    <MakeDir Directories="$(ZipStage)\$(ZipFolderName)" />
+    <Copy SourceFiles="@(FilesToZip)" DestinationFolder="$(ZipStage)\$(ZipFolderName)" />
+    <ZipDirectory SourceDirectory="$(ZipStage)" DestinationFile="$(OutputPath)$(ZipFileName)" Overwrite="true" />
+    <RemoveDir Directories="$(ZipStage)" />
+
+  </Target>
 
 </Project>

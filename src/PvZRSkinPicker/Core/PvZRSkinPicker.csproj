@@ -52,4 +52,5 @@ internal static class ModInfo
 	<Target Name="CopyDllToMods" AfterTargets="PostBuildEvent">
 		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PvzReDir)\Mods" />
 	</Target>
+
 </Project>
