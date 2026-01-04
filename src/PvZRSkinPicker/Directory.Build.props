@@ -51,17 +51,23 @@
 
   </ItemGroup>
 
+  <Target Name="CleanZipFiles" BeforeTargets="Clean">
+    <ItemGroup>
+      <ZipFilesToDelete Include="$(OutputPath)*.zip" />
+    </ItemGroup>
+    <Delete Files="@(ZipFilesToDelete)" />
+  </Target>
+
   <Target Name="ZipPublishWithFolder" AfterTargets="Build" Condition="'$(Configuration)'=='Release'">
 
     <PropertyGroup>
       <ZipStage>$(BaseIntermediateOutputPath)ZipStage</ZipStage>
       <ZipFolderName>Mods</ZipFolderName>
-      <ZipFileName>$(AssemblyName).zip</ZipFileName>
+      <ZipFileName>$(AssemblyName)$(ModVersion.Replace('.', '-')).zip</ZipFileName>
     </PropertyGroup>
 
-    <Delete Files="$(OutputPath)$(ZipFileName)" />
     <ItemGroup>
-      <FilesToZip Include="$(TargetDir)**\*" />
+      <FilesToZip Include="$(TargetDir)**\*" Exclude="$(TargetDir)**\*.zip" />
     </ItemGroup>
     <RemoveDir Directories="$(ZipStage)" />
     <MakeDir Directories="$(ZipStage)\$(ZipFolderName)" />
