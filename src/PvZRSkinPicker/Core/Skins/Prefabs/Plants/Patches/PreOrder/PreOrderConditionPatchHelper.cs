@@ -3,6 +3,7 @@
 using Il2CppReloaded.Gameplay;
 
 using PvZRSkinPicker.Api;
+using PvZRSkinPicker.Extensions;
 
 internal static class PreOrderConditionPatchHelper
 {
@@ -26,7 +27,7 @@ internal static class PreOrderConditionPatchHelper
         };
 
         bool MatchesProjectileGameObjectName(string expectedName)
-            => projectile.mController.gameObject.name == expectedName;
+            => projectile?.mController.Ref()?.gameObject.Ref()?.name == expectedName;
     }
 
     public static void EnablePreOrderContent()

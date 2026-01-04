@@ -6,7 +6,8 @@ using GameObject = UnityEngine.GameObject;
 
 internal static class UnityExtensions
 {
-    private const string UnityNullJustification = "Needed to force Unity null check; ?? skips overloaded operators.";
+    private const string UnityNullJustification =
+        "UnityEngine.Object does not support ?. or ?? for detached objects; explicit null check required.";
 
     [SuppressMessage(
         "Style",
