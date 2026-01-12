@@ -1,6 +1,7 @@
 ﻿namespace PvZRSkinPicker.Skins;
 
 using Il2CppReloaded.Data;
+using Il2CppReloaded.Gameplay;
 using Il2CppReloaded.Services;
 
 using PvZRSkinPicker.Extensions;
@@ -29,6 +30,12 @@ internal static class SkinLocator
         ZombieDefinition definition,
         IPlatformService platformService)
     {
+        // "DuckyTube" uses the skins of "Normal"
+        if (definition.ZombieType == ZombieType.DuckyTube)
+        {
+            return [];
+        }
+
         IEnumerable<Skin?> skins =
         [
             TryCreateSkin(SkinType.Normal, definition.m_prefab),

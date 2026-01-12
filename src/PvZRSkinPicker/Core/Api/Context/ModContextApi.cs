@@ -22,8 +22,8 @@ internal static class ModContextApi
     static ModContextApi()
     {
         HookStore.Add(
-            PlantPrefabResolver.Initialize(),
-            ZombiePrefabResolver.Initialize());
+            PlantSkinOverrideResolver.Initialize(),
+            ZombieSkinOverrideResolver.Initialize());
 
         GameplayServiceApi.Initialize();
         AudioServiceApi.Initialize();

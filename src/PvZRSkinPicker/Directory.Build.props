@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <ModVersion>1.0.0</ModVersion>
+    <ModVersion>1.0.1</ModVersion>
     <ModAuthor>RaptorRush</ModAuthor>
     <ModDownloadLink>https://github.com/RaptorRush135/PvZRSkinPicker</ModDownloadLink>
   </PropertyGroup>

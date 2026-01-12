@@ -6,7 +6,7 @@ using PvZRSkinPicker.Skins;
 
 internal static class SkinConditionEmulator
 {
-    public static bool ApplyGameplayOverridesForSkinType(SkinType skinType)
+    public static void ApplyGameplayOverridesForSkinType(SkinType skinType)
     {
         GameplayServiceApi.SetOverrides(false);
 
@@ -14,18 +14,16 @@ internal static class SkinConditionEmulator
         {
             case SkinType.PreOrderPlant:
                 GameplayServiceApi.PreOrderContentActiveOverride = true;
-                return true;
+                break;
             case SkinType.RetroZombie:
                 GameplayServiceApi.RetroContentActiveOverride = true;
-                return true;
+                break;
             case SkinType.PlatformZombie:
                 GameplayServiceApi.PlatformContentActiveOverride = true;
-                return true;
+                break;
             case SkinType.China:
                 GameplayServiceApi.ChinaModeActiveOverride = true;
-                return true;
+                break;
         }
-
-        return false;
     }
 }

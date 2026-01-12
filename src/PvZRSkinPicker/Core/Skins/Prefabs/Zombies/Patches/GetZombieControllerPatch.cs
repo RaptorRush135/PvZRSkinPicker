@@ -39,7 +39,7 @@ internal static class GetZombieControllerPatch
             return;
         }
 
-        if (!ZombiePrefabResolver.Instance.Overrides.TryGetValue(zombieDefinition.ZombieType, out var skin))
+        if (!ZombieSkinOverrideResolver.Instance.TryGetContextOverride(zombieDefinition.ZombieType, out var skin))
         {
             return;
         }

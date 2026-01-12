@@ -34,21 +34,21 @@ public sealed class Core : MelonMod
             context.Almanac.m_plantsModel,
             context.DataService.PlantDefinitions.AsEnumerable()
                 .Select(d => new PlantSkinDataDefinition(d, context.PlatformService)),
-            PlantPrefabResolver.Instance);
+            PlantSkinOverrideResolver.Instance);
 
         SetupSkinPicker(
             AlmanacEntryType.Zombie,
             context.Almanac.m_zombiesModel,
             context.DataService.ZombieDefinitions.AsEnumerable()
                 .Select(d => new ZombieSkinDataDefinition(d, context.PlatformService)),
-            ZombiePrefabResolver.Instance);
+            ZombieSkinOverrideResolver.Instance);
     }
 
     private static void SetupSkinPicker<T>(
         AlmanacEntryType type,
         AlmanacEntriesModel entriesModel,
         IEnumerable<ISkinDataDefinition<T>> definitions,
-        PrefabResolver<T> prefabResolver)
+        SkinOverrideResolver<T> prefabResolver)
         where T : struct, Enum
     {
         var button = SkinSwapUI.CreateButton(type);

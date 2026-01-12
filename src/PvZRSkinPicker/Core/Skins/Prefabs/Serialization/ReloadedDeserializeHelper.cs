@@ -38,10 +38,11 @@ internal static class ReloadedDeserializeHelper
         return new(binaryReader - Unsafe.SizeOf<Il2CppObject>());
     }
 
-    public static void AdvanceReaderByBaseDeserialize(IntPtr binaryReader, int version, IntPtr methodInfo)
+    public static ReloadedObject ReadObject(IntPtr binaryReader, int version, IntPtr methodInfo)
     {
-        var dummyObject = new ReloadedObject();
-        ObjectDeserialize.Invoke(dummyObject.Pointer, binaryReader, version, methodInfo);
+        var @object = new ReloadedObject();
+        ObjectDeserialize.Invoke(@object.Pointer, binaryReader, version, methodInfo);
+        return @object;
     }
 
     public static T ReadIntEnum<T>(ReloadedBinaryReader binaryReader)

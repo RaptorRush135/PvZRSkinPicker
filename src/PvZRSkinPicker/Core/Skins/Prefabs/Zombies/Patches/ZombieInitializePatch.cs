@@ -6,21 +6,21 @@ using HarmonyLib;
 
 using Il2CppReloaded.Gameplay;
 
-using PvZRSkinPicker.Skins.Prefabs.Patches;
 using PvZRSkinPicker.Skins.Prefabs.Zombies;
 
 [HarmonyPatch(typeof(Zombie), nameof(Zombie.ZombieInitialize))]
 internal static class ZombieInitializePatch
 {
     [HarmonyPrefix]
-    private static void Prefix(ZombieType theType, out EmulateSkinConditionsPatchState __state)
+    private static void Prefix(Zombie __instance, int theRow, ZombieType theType)
     {
-        ZombiePrefabResolver.SkinConditionsPatcher.Prefix(theType, out __state);
+        var context = new SpawnContext<ZombieType>(theType, __instance.mBoard, theRow);
+        ZombieSkinOverrideResolver.SkinConditionsPatcher.Prefix(context);
     }
 
     [HarmonyPostfix]
-    private static void Postfix(EmulateSkinConditionsPatchState __state)
+    private static void Postfix()
     {
-        ZombiePrefabResolver.SkinConditionsPatcher.Postfix(__state);
+        ZombieSkinOverrideResolver.SkinConditionsPatcher.Postfix();
     }
 }

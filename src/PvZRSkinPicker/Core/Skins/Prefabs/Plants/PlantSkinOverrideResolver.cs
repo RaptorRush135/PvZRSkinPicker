@@ -4,15 +4,14 @@ using Il2CppReloaded.Gameplay;
 
 using PvZRSkinPicker.NativeUtils;
 using PvZRSkinPicker.Skins.Prefabs;
-using PvZRSkinPicker.Skins.Prefabs.Patches;
 using PvZRSkinPicker.Skins.Prefabs.Serialization;
 
-internal static class PlantPrefabResolver
+internal sealed class PlantSkinOverrideResolver : SkinOverrideResolver<SeedType>
 {
-    public static PrefabResolver<SeedType> Instance { get; } = new PrefabResolver<SeedType>();
+    public static PlantSkinOverrideResolver Instance { get; } = new();
 
     public static EmulateSkinConditionsPatcher<Plant, SeedType> SkinConditionsPatcher { get; }
-        = new EmulateSkinConditionsPatcher<Plant, SeedType>(Instance, p => p.mSeedType);
+        = new EmulateSkinConditionsPatcher<Plant, SeedType>(Instance, p => new(p.mSeedType, p.mBoard, p.mRow));
 
     public static IFunctionHook Initialize()
     {

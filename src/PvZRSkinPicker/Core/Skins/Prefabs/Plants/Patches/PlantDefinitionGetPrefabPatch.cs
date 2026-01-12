@@ -6,8 +6,6 @@ using HarmonyLib;
 
 using Il2CppReloaded.Data;
 
-using PvZRSkinPicker.Skins.Prefabs.Plants;
-
 using UnityEngine.AddressableAssets;
 
 [HarmonyPatch(typeof(PlantDefinition), nameof(PlantDefinition.GetPrefab))]
@@ -25,7 +23,7 @@ internal static class PlantDefinitionGetPrefabPatch
             return true;
         }
 
-        if (PlantPrefabResolver.Instance.Overrides.TryGetValue(__instance.SeedType, out var skin))
+        if (PlantSkinOverrideResolver.Instance.TryGetContextOverride(__instance.SeedType, out var skin))
         {
             __result = skin.Prefab;
             return false;

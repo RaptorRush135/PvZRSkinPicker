@@ -6,21 +6,19 @@ using HarmonyLib;
 
 using Il2CppReloaded.Gameplay;
 
-using PvZRSkinPicker.Skins.Prefabs.Patches;
-using PvZRSkinPicker.Skins.Prefabs.Plants;
-
 [HarmonyPatch(typeof(Plant), nameof(Plant.PlantInitialize))]
 internal static class PlantInitializePatch
 {
     [HarmonyPrefix]
-    private static void Prefix(SeedType theSeedType, out EmulateSkinConditionsPatchState __state)
+    private static void Prefix(Plant __instance, int theGridY, SeedType theSeedType)
     {
-        PlantPrefabResolver.SkinConditionsPatcher.Prefix(theSeedType, out __state);
+        var context = new SpawnContext<SeedType>(theSeedType, __instance.mBoard, theGridY);
+        PlantSkinOverrideResolver.SkinConditionsPatcher.Prefix(context);
     }
 
     [HarmonyPostfix]
-    private static void Postfix(EmulateSkinConditionsPatchState __state)
+    private static void Postfix()
     {
-        PlantPrefabResolver.SkinConditionsPatcher.Postfix(__state);
+        PlantSkinOverrideResolver.SkinConditionsPatcher.Postfix();
     }
 }

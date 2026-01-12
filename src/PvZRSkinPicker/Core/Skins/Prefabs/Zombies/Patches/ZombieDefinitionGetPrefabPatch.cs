@@ -19,7 +19,7 @@ internal static class ZombieDefinitionGetPrefabPatch
         ZombieDefinition __instance,
         ref AssetReferenceGameObject __result)
     {
-        if (ZombiePrefabResolver.Instance.Overrides.TryGetValue(__instance.ZombieType, out var skin))
+        if (ZombieSkinOverrideResolver.Instance.TryGetContextOverride(__instance.ZombieType, out var skin))
         {
             __result = skin.Prefab;
             return false;
