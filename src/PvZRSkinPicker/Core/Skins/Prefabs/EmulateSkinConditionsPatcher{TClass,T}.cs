@@ -2,7 +2,6 @@
 
 using Il2CppReloaded.Gameplay;
 
-// TODO: Delete & refactor?
 internal sealed class EmulateSkinConditionsPatcher<TClass, T>(
     SkinOverrideResolver<T> skinOverrideResolver,
     Func<TClass, SpawnContext<T>> contextGetter)

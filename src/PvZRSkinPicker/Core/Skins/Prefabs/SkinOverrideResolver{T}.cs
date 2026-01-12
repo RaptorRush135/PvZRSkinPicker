@@ -43,7 +43,7 @@ internal abstract class SkinOverrideResolver<T>
 
         if (this.TryGetOverride(context, out var skin))
         {
-            SkinConditionEmulator.ApplyGameplayOverridesForSkinType(skin.Type);
+            ApplyGameplayOverridesForSkinType(skin.Type);
         }
     }
 
@@ -54,6 +54,27 @@ internal abstract class SkinOverrideResolver<T>
     }
 
     protected virtual bool IsSkinCompatible(SkinType skinType, SpawnContext<T> context) => true;
+
+    private static void ApplyGameplayOverridesForSkinType(SkinType skinType)
+    {
+        GameplayServiceApi.SetOverrides(false);
+
+        switch (skinType)
+        {
+            case SkinType.PreOrderPlant:
+                GameplayServiceApi.PreOrderContentActiveOverride = true;
+                break;
+            case SkinType.RetroZombie:
+                GameplayServiceApi.RetroContentActiveOverride = true;
+                break;
+            case SkinType.PlatformZombie:
+                GameplayServiceApi.PlatformContentActiveOverride = true;
+                break;
+            case SkinType.China:
+                GameplayServiceApi.ChinaModeActiveOverride = true;
+                break;
+        }
+    }
 
     private bool TryGetOverride(SpawnContext<T> context, [MaybeNullWhen(false)] out Skin skin)
     {
