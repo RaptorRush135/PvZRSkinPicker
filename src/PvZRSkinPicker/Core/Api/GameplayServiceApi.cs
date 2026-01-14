@@ -7,12 +7,14 @@ using HarmonyLib;
 
 using Il2CppReloaded.Services;
 
+using MelonLoader;
+
 [HarmonyPatch]
 internal static class GameplayServiceApi
 {
     static GameplayServiceApi()
     {
-        AppCoreApi.OnGameplayServiceReady += service => Instance = service;
+        AppCoreApi.OnGameplayServiceReady.Subscribe(service => Instance = service);
     }
 
     public static bool? PreOrderContentActiveOverride { get; set; }
@@ -23,13 +25,19 @@ internal static class GameplayServiceApi
 
     public static bool? ChinaModeActiveOverride { get; set; }
 
-    public static IGameplayService Instance
+    public static IGameplayService? Instance
     {
-        get => field ?? throw new InvalidOperationException("GameplayService not ready.");
+        get
+        {
+            if (field == null)
+            {
+                Melon<Core>.Logger.Warning("GameplayService not ready");
+            }
+
+            return field;
+        }
         private set;
     }
-
-    public static void Initialize() => GC.KeepAlive(PreOrderContentActiveOverride);
 
     public static void SetOverrides(bool? value)
     {

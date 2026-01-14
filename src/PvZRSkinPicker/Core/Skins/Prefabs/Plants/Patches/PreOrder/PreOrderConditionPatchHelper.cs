@@ -7,7 +7,7 @@ using PvZRSkinPicker.Extensions;
 
 internal static class PreOrderConditionPatchHelper
 {
-    public static bool IsContentActive => GameplayServiceApi.Instance.PreOrderContentActive;
+    public static bool IsContentActive => GameplayServiceApi.Instance?.PreOrderContentActive ?? false;
 
     public static T GetUniquePreOrderKey<T>()
         where T : struct, Enum

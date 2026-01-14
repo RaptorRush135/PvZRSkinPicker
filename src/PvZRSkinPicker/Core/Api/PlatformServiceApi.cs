@@ -6,15 +6,17 @@ using HarmonyLib;
 
 using Il2CppReloaded.Services;
 
+using PvZRSkinPicker.Events;
+
 [HarmonyPatch]
-public static class PlatformServiceApi
+internal static class PlatformServiceApi
 {
-    public static event Action<IPlatformService>? OnReady;
+    public static readonly OneTimeEvent<IPlatformService> OnReady = new();
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(PlatformService), nameof(PlatformService._onPlatformAsyncOpsCompleted))]
     private static void Provide(PlatformService __instance)
     {
-        OnReady?.Invoke(__instance.Cast<IPlatformService>());
+        OnReady.Invoke(__instance.Cast<IPlatformService>());
     }
 }

@@ -19,7 +19,18 @@ public sealed class Core : MelonMod
 {
     public override void OnLateInitializeMelon()
     {
-        ModContextApi.Ready += Ready;
+        try
+        {
+            ModContextApi.Initialize();
+        }
+        catch (Exception ex)
+        {
+            Melon<Core>.Logger.Error("Failed to initialize skin picker", ex);
+            this.Unregister();
+            return;
+        }
+
+        ModContextApi.Ready.Subscribe(Ready);
     }
 
     public override void OnDeinitializeMelon()

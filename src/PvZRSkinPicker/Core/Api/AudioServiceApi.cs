@@ -24,12 +24,10 @@ internal static class AudioServiceApi
         Justification = "False positive (https://github.com/SonarSource/sonar-dotnet/issues/9656).")]
     static AudioServiceApi()
     {
-        AppCoreApi.OnAudioServiceReady += value => audioService = value;
+        AppCoreApi.OnAudioServiceReady.Subscribe(value => audioService = value);
     }
 
     private static bool BypassDebounce { get; set; }
-
-    public static void Initialize() => GC.KeepAlive(audioService);
 
     public static void PlayWithRandomPitch(FoleyType foleyType)
     {

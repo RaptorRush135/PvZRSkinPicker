@@ -3,12 +3,15 @@
 using Il2CppReloaded.DataModels;
 using Il2CppReloaded.Services;
 
+using PvZRSkinPicker.Events;
 using PvZRSkinPicker.NativeUtils;
 using PvZRSkinPicker.Skins.Prefabs.Plants;
 using PvZRSkinPicker.Skins.Prefabs.Zombies;
 
 internal static class ModContextApi
 {
+    public static readonly OneTimeEvent<ModContext> Ready = new();
+
     private static readonly HookStore HookStore = new();
 
     private static IDataService? dataService;
@@ -19,21 +22,16 @@ internal static class ModContextApi
 
     private static bool fired;
 
-    static ModContextApi()
+    public static void Initialize()
     {
         HookStore.Add(
             PlantSkinOverrideResolver.Initialize(),
             ZombieSkinOverrideResolver.Initialize());
 
-        GameplayServiceApi.Initialize();
-        AudioServiceApi.Initialize();
-
-        AppCoreApi.OnDataServiceReady += value => OnResolve(ref dataService, value);
-        PlatformServiceApi.OnReady += value => OnResolve(ref platformService, value);
-        AppDataApi.OnAlmanacBound += value => OnResolve(ref almanac, value);
+        AppCoreApi.OnDataServiceReady.Subscribe(value => OnResolve(ref dataService, value));
+        PlatformServiceApi.OnReady.Subscribe(value => OnResolve(ref platformService, value));
+        AppDataApi.OnAlmanacBound.Subscribe(value => OnResolve(ref almanac, value));
     }
-
-    public static event Action<ModContext>? Ready;
 
     public static void Dispose()
     {
@@ -61,6 +59,6 @@ internal static class ModContextApi
 
         fired = true;
         var context = new ModContext(dataService, platformService, almanac);
-        Ready?.Invoke(context);
+        Ready.Invoke(context);
     }
 }

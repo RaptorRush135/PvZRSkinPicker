@@ -7,14 +7,16 @@ using Il2CppReloaded.Services;
 
 using Il2CppTekly.Injectors;
 
+using PvZRSkinPicker.Events;
+
 [HarmonyPatch]
-public static class AppCoreApi
+internal static class AppCoreApi
 {
-    public static event Action<IGameplayService>? OnGameplayServiceReady;
+    public static readonly OneTimeEvent<IGameplayService> OnGameplayServiceReady = new();
 
-    public static event Action<IDataService>? OnDataServiceReady;
+    public static readonly OneTimeEvent<IDataService> OnDataServiceReady = new();
 
-    public static event Action<IAudioService>? OnAudioServiceReady;
+    public static readonly OneTimeEvent<IAudioService> OnAudioServiceReady = new();
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(AppCore), nameof(AppCore.Provide))]
@@ -24,8 +26,8 @@ public static class AppCoreApi
         var dataService = container.Get<IDataService>();
         var audioService = container.Get<IAudioService>();
 
-        OnGameplayServiceReady?.Invoke(gameplayService);
-        dataService.add_OnReady((Action)(() => OnDataServiceReady?.Invoke(dataService)));
-        OnAudioServiceReady?.Invoke(audioService);
+        OnGameplayServiceReady.Invoke(gameplayService);
+        dataService.add_OnReady((Action)(() => OnDataServiceReady.Invoke(dataService)));
+        OnAudioServiceReady.Invoke(audioService);
     }
 }

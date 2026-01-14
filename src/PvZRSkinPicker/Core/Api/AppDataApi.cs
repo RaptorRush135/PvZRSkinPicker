@@ -6,15 +6,17 @@ using HarmonyLib;
 
 using Il2CppReloaded.DataModels;
 
+using PvZRSkinPicker.Events;
+
 [HarmonyPatch]
-public static class AppDataApi
+internal static class AppDataApi
 {
-    public static event Action<AlmanacModel>? OnAlmanacBound;
+    public static readonly OneTimeEvent<AlmanacModel> OnAlmanacBound = new();
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(AppDataProvider), nameof(AppDataProvider.OnBind))]
     private static void OnBind(AppDataProvider __instance)
     {
-        OnAlmanacBound?.Invoke(__instance.m_almanacModel);
+        OnAlmanacBound.Invoke(__instance.m_almanacModel);
     }
 }
