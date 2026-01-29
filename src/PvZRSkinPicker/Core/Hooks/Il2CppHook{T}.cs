@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.NativeUtils;
+﻿namespace PvZRSkinPicker.Hooks;
 
 using System.Reflection;
 using System.Runtime.InteropServices;

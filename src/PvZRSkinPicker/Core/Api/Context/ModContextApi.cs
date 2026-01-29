@@ -4,7 +4,7 @@ using Il2CppReloaded.DataModels;
 using Il2CppReloaded.Services;
 
 using PvZRSkinPicker.Events;
-using PvZRSkinPicker.NativeUtils;
+using PvZRSkinPicker.Hooks;
 using PvZRSkinPicker.Skins.Prefabs.Plants;
 using PvZRSkinPicker.Skins.Prefabs.Zombies;
 

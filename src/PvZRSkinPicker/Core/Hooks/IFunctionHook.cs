@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.NativeUtils;
+﻿namespace PvZRSkinPicker.Hooks;
 
 internal interface IFunctionHook
 {

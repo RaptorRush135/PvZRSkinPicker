@@ -8,7 +8,7 @@ using Il2CppSource.Serialization;
 
 using MelonLoader;
 
-using PvZRSkinPicker.NativeUtils;
+using PvZRSkinPicker.Hooks;
 using PvZRSkinPicker.Skins.Prefabs;
 
 internal sealed class ReloadedDeserializePatch<TClass, T>
