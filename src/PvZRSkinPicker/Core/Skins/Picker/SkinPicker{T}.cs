@@ -32,9 +32,11 @@ internal sealed class SkinPicker<T>
     [Pure]
     public static SkinPicker<T>? TryCreate(
         ISkinDataDefinition<T> definition,
+        IEnumerable<Skin> extraSkins,
         Action<T, Skin> onSelect)
     {
-        return TryCreate(definition.Type, definition.GetSkins(), onSelect);
+        var allSkins = definition.GetSkins().Concat(extraSkins);
+        return TryCreate(definition.Type, allSkins, onSelect);
     }
 
     [Pure]

@@ -15,14 +15,17 @@ internal sealed class SkinPickerController<T>
     public SkinPickerController(
         AlmanacSelection<T> selection,
         IEnumerable<ISkinDataDefinition<T>> definitions,
+        IReadOnlyDictionary<T, IEnumerable<Skin>> extraSkins,
         Action<T, Skin> onSelect)
     {
         ArgumentNullException.ThrowIfNull(selection);
         ArgumentNullException.ThrowIfNull(definitions);
+        ArgumentNullException.ThrowIfNull(extraSkins);
+        ArgumentNullException.ThrowIfNull(onSelect);
 
         this.selection = selection;
         this.pickers = definitions
-            .Select(d => SkinPicker<T>.TryCreate(d, onSelect))
+            .Select(d => SkinPicker<T>.TryCreate(d, extraSkins.GetValueOrDefault(d.Type) ?? [], onSelect))
             .WhereNotNull()
             .ToDictionary(picker => picker.Type);
     }

@@ -1,7 +1,10 @@
 ﻿namespace PvZRSkinPicker;
 
+using System.Collections.Immutable;
+
 using Il2CppReloaded.Data;
 using Il2CppReloaded.DataModels;
+using Il2CppReloaded.Gameplay;
 
 using MelonLoader;
 
@@ -10,6 +13,7 @@ using PvZRSkinPicker.Almanac.UI;
 using PvZRSkinPicker.Api.Context;
 using PvZRSkinPicker.Data;
 using PvZRSkinPicker.Extensions;
+using PvZRSkinPicker.Skins;
 using PvZRSkinPicker.Skins.Picker;
 using PvZRSkinPicker.Skins.Prefabs;
 using PvZRSkinPicker.Skins.Prefabs.Plants;
@@ -40,11 +44,14 @@ public sealed class Core : MelonMod
 
     private static void Ready(ModContext context)
     {
+        var customSkinLoader = new CustomSkinLoader(context.DataService);
+
         SetupSkinPicker(
             AlmanacEntryType.Plant,
             context.Almanac.m_plantsModel,
             context.DataService.PlantDefinitions.AsEnumerable()
                 .Select(d => new PlantSkinDataDefinition(d, context.PlatformService)),
+            customSkinLoader.GetPlantSkins(),
             PlantSkinOverrideResolver.Instance);
 
         SetupSkinPicker(
@@ -52,6 +59,7 @@ public sealed class Core : MelonMod
             context.Almanac.m_zombiesModel,
             context.DataService.ZombieDefinitions.AsEnumerable()
                 .Select(d => new ZombieSkinDataDefinition(d, context.PlatformService)),
+            ImmutableDictionary<ZombieType, IEnumerable<Skin>>.Empty,
             ZombieSkinOverrideResolver.Instance);
     }
 
@@ -59,6 +67,7 @@ public sealed class Core : MelonMod
         AlmanacEntryType type,
         AlmanacEntriesModel entriesModel,
         IEnumerable<ISkinDataDefinition<T>> definitions,
+        IReadOnlyDictionary<T, IEnumerable<Skin>> extraSkins,
         SkinOverrideResolver<T> prefabResolver)
         where T : struct, Enum
     {
@@ -66,7 +75,11 @@ public sealed class Core : MelonMod
 
         var selection = new AlmanacSelection<T>(entriesModel.m_selectedModel);
 
-        var controller = new SkinPickerController<T>(selection, definitions, prefabResolver.SetOverride);
+        var controller = new SkinPickerController<T>(
+            selection,
+            definitions,
+            extraSkins,
+            onSelect: prefabResolver.SetOverride);
 
         controller.ApplySelections();
         controller.Bind(button);

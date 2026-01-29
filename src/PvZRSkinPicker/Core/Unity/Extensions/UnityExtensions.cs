@@ -1,8 +1,11 @@
-﻿namespace PvZRSkinPicker.Extensions;
+﻿namespace PvZRSkinPicker.Unity.Extensions;
 
 using System.Diagnostics.CodeAnalysis;
 
-using GameObject = UnityEngine.GameObject;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
+
+using UnityObject = UnityEngine.Object;
 
 internal static class UnityExtensions
 {
@@ -18,12 +21,21 @@ internal static class UnityExtensions
         "RCS1084:Use coalesce expression instead of conditional expression",
         Justification = UnityNullJustification)]
     public static T? Ref<T>(this T? obj)
-        where T : UnityEngine.Object
+        where T : UnityObject
     {
         return obj != null ? obj : null;
     }
 
-    extension(GameObject gameObject)
+    public static AssetReferenceGameObject ToAssetReference(this GameObject obj)
+    {
+        var handle = Addressables.ResourceManager.CreateCompletedOperation(obj, string.Empty);
+        return new AssetReferenceGameObject(string.Empty)
+        {
+            OperationHandle = handle,
+        };
+    }
+
+    extension(GameObject)
     {
         public static GameObject FindOrThrow(string name)
             => GameObject.Find(name).Ref()

@@ -3,7 +3,7 @@
 using Il2CppReloaded.Gameplay;
 
 using PvZRSkinPicker.Api;
-using PvZRSkinPicker.Extensions;
+using PvZRSkinPicker.Unity.Extensions;
 
 internal static class PreOrderConditionPatchHelper
 {

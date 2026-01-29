@@ -14,9 +14,10 @@ internal static class SkinLocator
         PlantDefinition definition,
         IPlatformService platformService)
     {
+        // TODO: Filter to only in almanac?
         IEnumerable<Skin?> skins =
         [
-            TryCreateSkin(SkinType.Normal, definition.m_prefab),
+            new Skin(SkinType.Normal, definition.m_prefab),
             TryCreateSkin(SkinType.PreOrderPlant, definition.m_preorderGameObject, platformService.PreOrderDLCAvailable),
             TryCreateSkin(SkinType.China, definition.m_chinaGameObject),
             TryCreateSkin(SkinType.EasterEgg, definition.m_easterEggGameObject),
@@ -30,7 +31,7 @@ internal static class SkinLocator
         ZombieDefinition definition,
         IPlatformService platformService)
     {
-        // "DuckyTube" uses the skins of "Normal"
+        // "DuckyTube" uses the skins of "Normal", so do not scan for skins
         if (definition.ZombieType == ZombieType.DuckyTube)
         {
             return [];
@@ -38,7 +39,7 @@ internal static class SkinLocator
 
         IEnumerable<Skin?> skins =
         [
-            TryCreateSkin(SkinType.Normal, definition.m_prefab),
+            new Skin(SkinType.Normal, definition.m_prefab),
             TryCreateSkin(SkinType.RetroZombie, definition.m_retroGameObject, platformService.RetroContentAvailable),
             TryCreateSkin(SkinType.PlatformZombie, definition.m_platformGameObject, platformService.PlatformContentAvailable),
             TryCreateSkin(SkinType.China, definition.m_chinaGameObject),

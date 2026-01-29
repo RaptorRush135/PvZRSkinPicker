@@ -2,7 +2,7 @@
 
 using Il2CppReloaded.Data;
 
-using PvZRSkinPicker.Extensions;
+using PvZRSkinPicker.Unity.Extensions;
 
 using UnityEngine;
 using UnityEngine.UI;
