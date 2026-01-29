@@ -24,9 +24,8 @@ internal static class ModContextApi
 
     public static void Initialize()
     {
-        HookStore.Add(
-            PlantSkinOverrideResolver.Initialize(),
-            ZombieSkinOverrideResolver.Initialize());
+        HookStore.Add(PlantSkinOverrideResolver.Initialize());
+        HookStore.Add(ZombieSkinOverrideResolver.Initialize());
 
         AppCoreApi.OnDataServiceReady.Subscribe(value => OnResolve(ref dataService, value));
         PlatformServiceApi.OnReady.Subscribe(value => OnResolve(ref platformService, value));
