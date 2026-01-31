@@ -9,7 +9,7 @@ internal static class ModEnvironment
     public static DirectoryInfo ModDataDirectory { get; }
         = GetDirectoryInternal(MelonEnvironment.UserDataDirectory, ModInfo.Name);
 
-    public static DirectoryInfo SkinsDirectory { get; } = GetDirectory(ensureCreated: true, "Skins");
+    public static DirectoryInfo SkinPacksDirectory { get; } = GetDirectory(ensureCreated: true, "SkinPacks");
 
     public static DirectoryInfo GetDirectory(bool ensureCreated, params IEnumerable<string> paths)
     {

@@ -14,6 +14,7 @@ using PvZRSkinPicker.Api.Context;
 using PvZRSkinPicker.Data;
 using PvZRSkinPicker.Extensions;
 using PvZRSkinPicker.Skins;
+using PvZRSkinPicker.Skins.Custom;
 using PvZRSkinPicker.Skins.Picker;
 using PvZRSkinPicker.Skins.Prefabs;
 using PvZRSkinPicker.Skins.Prefabs.Plants;
@@ -44,7 +45,7 @@ public sealed class Core : MelonMod
 
     private static void Ready(ModContext context)
     {
-        var customSkinLoader = new CustomSkinLoader(context.DataService);
+        var customSkinLoader = new CustomSkinLoader(Melon<Core>.Logger, context.DataService);
 
         SetupSkinPicker(
             AlmanacEntryType.Plant,
@@ -59,7 +60,7 @@ public sealed class Core : MelonMod
             context.Almanac.m_zombiesModel,
             context.DataService.ZombieDefinitions.AsEnumerable()
                 .Select(d => new ZombieSkinDataDefinition(d, context.PlatformService)),
-            ImmutableDictionary<ZombieType, IEnumerable<Skin>>.Empty,
+            ImmutableDictionary<ZombieType, IReadOnlyList<Skin>>.Empty,
             ZombieSkinOverrideResolver.Instance);
     }
 
@@ -67,7 +68,7 @@ public sealed class Core : MelonMod
         AlmanacEntryType type,
         AlmanacEntriesModel entriesModel,
         IEnumerable<ISkinDataDefinition<T>> definitions,
-        IReadOnlyDictionary<T, IEnumerable<Skin>> extraSkins,
+        IReadOnlyDictionary<T, IReadOnlyList<Skin>> extraSkins,
         SkinOverrideResolver<T> prefabResolver)
         where T : struct, Enum
     {

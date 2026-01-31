@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemDefinitionGroup>
+    <Reference>
+      <Private>false</Private>
+    </Reference>
+  </ItemDefinitionGroup>
+
+	<ItemGroup>
+    <Reference Include="$(PvzReDir)\MelonLoader\net6\Newtonsoft.Json.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="PvZRSkinPicker" />
+    <InternalsVisibleTo Include="PvZRSkinPicker.Tests" />
+  </ItemGroup>
+
+</Project>

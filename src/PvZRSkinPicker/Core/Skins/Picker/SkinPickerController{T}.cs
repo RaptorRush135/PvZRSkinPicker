@@ -15,7 +15,7 @@ internal sealed class SkinPickerController<T>
     public SkinPickerController(
         AlmanacSelection<T> selection,
         IEnumerable<ISkinDataDefinition<T>> definitions,
-        IReadOnlyDictionary<T, IEnumerable<Skin>> extraSkins,
+        IReadOnlyDictionary<T, IReadOnlyList<Skin>> extraSkins,
         Action<T, Skin> onSelect)
     {
         ArgumentNullException.ThrowIfNull(selection);

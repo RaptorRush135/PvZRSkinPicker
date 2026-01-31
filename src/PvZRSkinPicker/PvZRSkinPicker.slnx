@@ -5,4 +5,6 @@
     <File Path="Directory.Build.props" />
   </Folder>
   <Project Path="Core/PvZRSkinPicker.csproj" />
+  <Project Path="Skins.Custom.Manifest/PvZRSkinPicker.Skins.Custom.Manifest.csproj" />
+  <Project Path="Tests/PvZRSkinPicker.Tests.csproj" />
 </Solution>
