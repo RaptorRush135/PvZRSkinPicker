@@ -1,7 +1,6 @@
 ﻿namespace PvZRSkinPicker.Skins.Custom.Manifest;
 
-using Newtonsoft.Json;
-
-internal record SkinCatalog(
-    [property: JsonRequired]
-    IReadOnlyList<SkinEntry> Plants);
+internal sealed record SkinCatalog
+{
+    public IReadOnlyList<SkinEntry> Plants { get; init; } = [];
+}
