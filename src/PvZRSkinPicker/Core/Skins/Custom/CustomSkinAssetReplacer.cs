@@ -124,7 +124,7 @@ internal static class CustomSkinAssetReplacer
 
         if (atlas.GetAtlas() == null)
         {
-            Melon<Core>.Logger.Warning("Failed to initialize atlas");
+            Logger.Warning("Failed to initialize atlas");
             return false;
         }
 

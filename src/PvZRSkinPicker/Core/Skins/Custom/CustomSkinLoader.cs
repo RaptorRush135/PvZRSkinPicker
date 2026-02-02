@@ -1,5 +1,7 @@
 ﻿namespace PvZRSkinPicker.Skins.Custom;
 
+using System.Diagnostics;
+
 using Il2CppReloaded.Gameplay;
 using Il2CppReloaded.Services;
 
@@ -24,6 +26,8 @@ internal sealed class CustomSkinLoader(
 {
     public IReadOnlyDictionary<SeedType, IReadOnlyList<Skin>> GetPlantSkins()
     {
+        var stopwatch = Stopwatch.StartNew();
+
         List<SkinPackManifestSource> sources = [.. ModEnvironment.SkinPacksDirectory
             .GetDirectories()
             .Select(this.TryGetManifest)
@@ -43,7 +47,7 @@ internal sealed class CustomSkinLoader(
                 return ordered[0];
             })];
 
-        return sources
+        var skins = sources
             .SelectMany(this.LoadManifestSkins)
             .GroupBy(
                 s => s.Type,
@@ -51,6 +55,14 @@ internal sealed class CustomSkinLoader(
             .ToDictionary(
                 g => g.Key,
                 g => (IReadOnlyList<Skin>)[.. g]);
+
+        stopwatch.Stop();
+
+        int totalSkins = skins.Values.Sum(list => list.Count);
+
+        logger.Msg($"Loaded {totalSkins} custom skins in {stopwatch.ElapsedMilliseconds} ms.");
+
+        return skins;
     }
 
     private SkinPackManifestSource? TryGetManifest(DirectoryInfo directory)
