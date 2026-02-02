@@ -104,9 +104,11 @@ internal sealed class CustomSkinLoader(
         }
     }
 
-    private IEnumerable<SkinPrototype<SeedType>> LoadManifestSkins(SkinPackManifestSource manifestSource)
+    private IReadOnlyCollection<SkinPrototype<SeedType>> LoadManifestSkins(SkinPackManifestSource manifestSource)
     {
         ArgumentNullException.ThrowIfNull(manifestSource);
+
+        logger.Msg($"Processing skin pack '{manifestSource.Manifest.Header}'");
 
         return [.. manifestSource.Manifest.Skins.Plants
             .Select(s => this.TryLoadSkin(manifestSource.Directory, s))
@@ -115,7 +117,7 @@ internal sealed class CustomSkinLoader(
 
     private SkinPrototype<SeedType>? TryLoadSkin(DirectoryInfo packDirectory, SkinEntry skin)
     {
-        logger.Msg($"Processing '{skin}'");
+        logger.Msg($"Processing skin '{skin}'");
 
         try
         {
