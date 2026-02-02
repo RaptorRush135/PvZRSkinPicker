@@ -134,9 +134,8 @@ internal sealed class CustomSkinLoader(
 
             var definition = dataService.GetPlantDefinition(targetType);
 
-            // TODO: Cache? To not load and unload multiple times
             // TODO: Destroy prefab on fail
-            var prefab = PrefabCloner.InstantiateInactiveFromPrefabAsset(definition.m_prefab);
+            var prefab = PrefabCloner.InstantiateInactiveFromPrefabAsset(definition.m_prefab, expectLoaded: true);
 
             var controller = prefab.GetComponent<PlantController>();
 

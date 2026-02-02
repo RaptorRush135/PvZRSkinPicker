@@ -1,14 +1,18 @@
 ﻿namespace PvZRSkinPicker.Unity;
 
+using MelonLoader;
+
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 internal static class PrefabCloner
 {
-    public static GameObject InstantiateInactiveFromPrefabAsset(AssetReferenceGameObject reference)
+    public static GameObject InstantiateInactiveFromPrefabAsset(
+        AssetReferenceGameObject reference,
+        bool expectLoaded = false)
     {
-        GameObject prefab = LoadPrefabReference(reference);
+        GameObject prefab = LoadPrefabReference(reference, expectLoaded);
 
         GameObject clone = InstantiateInactiveFromPrefabAsset(prefab);
 
@@ -17,7 +21,8 @@ internal static class PrefabCloner
         return clone;
     }
 
-    public static GameObject InstantiateInactiveFromPrefabAsset(GameObject prefab)
+    public static GameObject InstantiateInactiveFromPrefabAsset(
+        GameObject prefab)
     {
         prefab.SetActive(false);
 
@@ -29,17 +34,27 @@ internal static class PrefabCloner
         return clone;
     }
 
-    private static GameObject LoadPrefabReference(AssetReferenceGameObject reference)
+    private static GameObject LoadPrefabReference(
+        AssetReferenceGameObject reference,
+        bool expectLoaded)
     {
         AsyncOperationHandle handle = reference.OperationHandle.IsValid()
            ? reference.OperationHandle
            : reference.LoadAssetAsync<GameObject>();
 
-        if (!handle.IsDone)
+        bool isLoaded = handle.IsDone;
+        if (!isLoaded)
         {
             handle.WaitForCompletion();
         }
 
-        return handle.Result.Cast<GameObject>();
+        var result = handle.Result.Cast<GameObject>();
+
+        if (expectLoaded && !isLoaded)
+        {
+            Melon<Core>.Logger.Warning($"Expected prefab '{result.name}' to be loaded");
+        }
+
+        return result;
     }
 }
