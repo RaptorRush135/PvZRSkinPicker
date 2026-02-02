@@ -1,26 +1,19 @@
 ﻿namespace PvZRSkinPicker.Assets;
 
 using System.Diagnostics.Contracts;
-using System.Reflection;
-
-using PvZRSkinPicker.Extensions;
 
 using UnityEngine;
 
 internal static class ModAssets
 {
-    public static readonly ModResourceName SkinSwap = "SkinSwap.png";
+    public static readonly EmbeddedResourceAsset SkinSwap = new("SkinSwap.png");
 
     [Pure]
-    public static string GetResourceName(string fileName)
+    public static Sprite LoadSprite(IModAsset asset)
     {
-        return $"{nameof(PvZRSkinPicker)}.{nameof(Assets)}.{fileName}";
-    }
+        ArgumentNullException.ThrowIfNull(asset);
 
-    [Pure]
-    public static Sprite LoadSprite(ModResourceName resourceName)
-    {
-        var texture = LoadTexture(resourceName);
+        var texture = LoadTexture(asset);
 
         return Sprite.Create(
             texture,
@@ -30,32 +23,18 @@ internal static class ModAssets
     }
 
     [Pure]
-    public static Texture2D LoadTexture(ModResourceName resourceName)
+    public static Texture2D LoadTexture(IModAsset asset)
     {
+        ArgumentNullException.ThrowIfNull(asset);
+
         var texture = new Texture2D(1, 1, TextureFormat.RGBA32, mipChain: true);
-        var imageBytes = LoadBytes(resourceName);
+        var imageBytes = asset.LoadBytes();
         if (!texture.LoadImage(imageBytes))
         {
             throw new InvalidDataException(
-                $"Resource '{resourceName}' could not be decoded.");
+                $"Asset '{asset}' could not be decoded.");
         }
 
         return texture;
-    }
-
-    [Pure]
-    public static byte[] LoadBytes(ModResourceName resourceName)
-    {
-        using var stream = LoadStream(resourceName);
-        return stream.ToArray();
-    }
-
-    [Pure]
-    public static Stream LoadStream(ModResourceName resourceName)
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-
-        return assembly.GetManifestResourceStream(resourceName)
-            ?? throw new InvalidOperationException($"Resource not found: '{resourceName}'.");
     }
 }

@@ -51,10 +51,7 @@ internal static class ModInfo
   </ItemGroup>
 
   <ItemGroup>
-    <Compile
-      Include="..\Skins.Custom.Manifest\**\*.cs"
-      Exclude="**\obj\**"
-      Link="Skins\Custom\Manifest\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Skins.Custom.Manifest\**\*.cs" Exclude="**\obj\**" Link="Skins\Custom\Manifest\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
 	<Target Name="CopyDllToMods" AfterTargets="PostBuildEvent">

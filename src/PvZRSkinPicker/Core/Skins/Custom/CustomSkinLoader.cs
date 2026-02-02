@@ -9,6 +9,7 @@ using Il2CppSpine.Unity;
 
 using MelonLoader;
 
+using PvZRSkinPicker.Assets;
 using PvZRSkinPicker.Environment;
 using PvZRSkinPicker.Extensions;
 using PvZRSkinPicker.Skins.Custom.Manifest;
@@ -102,6 +103,8 @@ internal sealed class CustomSkinLoader(
 
     private SkinPrototype<SeedType>? TryLoadSkin(DirectoryInfo packDirectory, SkinEntry skin)
     {
+        logger.Msg($"Processing '{skin}'");
+
         try
         {
             DirectoryInfo skinDirectory = packDirectory.GetDirectory(skin.Directory);
@@ -125,8 +128,17 @@ internal sealed class CustomSkinLoader(
 
             var controller = prefab.GetComponent<PlantController>();
 
+            // TODO: Cache texture by path?
+            BytesAsset? textureData = skinDirectory.GetFileIfExists("skin.png")?.ReadBytesAsset();
+            Texture2D? texture = textureData != null
+                ? ModAssets.LoadTexture(textureData)
+                : null;
+
+            // TODO: Allow custom path/name?
             bool replaceSucceeded = CustomSkinAssetReplacer.TryReplace(
                 controller.AnimationController.GetComponent<SkeletonAnimation>(),
+                texture,
+                skinDirectory.GetFileIfExists("skin.atlas")?.ReadAllText(),
                 skinDirectory.GetFileIfExists("skin.skel")?.ReadAllBytes());
 
             if (!replaceSucceeded)
@@ -137,6 +149,8 @@ internal sealed class CustomSkinLoader(
 
                 return null;
             }
+
+            logger.Msg("Successfully processed skin");
 
             return new(targetType, prefab);
         }

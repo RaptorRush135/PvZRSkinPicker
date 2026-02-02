@@ -4,17 +4,32 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 using Il2CppSpine.Unity;
 
+using MelonLoader;
+
+using PvZRSkinPicker.Unity.Extensions;
+
 using UnityEngine;
 
 internal static class CustomSkinAssetReplacer
 {
-    public static bool TryReplace(SkeletonAnimation animation, byte[]? skeletonData)
-    {
-        // TODO: Atlas
-        // TODO: Texture
-        return TryReplace(animation, GetSkeletonDataFile());
+    private static readonly MelonLogger.Instance Logger = Melon<Core>.Logger;
 
-        TextAsset? GetSkeletonDataFile()
+    public static bool TryReplace(
+        SkeletonAnimation animation,
+        Texture2D? texture,
+        string? atlasText,
+        byte[]? skeletonData)
+    {
+        return TryReplace(animation, texture, ConvertAtlasTextFile(), ConvertSkeletonDataFile());
+
+        TextAsset? ConvertAtlasTextFile()
+        {
+            return atlasText == null
+                ? null
+                : new TextAsset(atlasText);
+        }
+
+        TextAsset? ConvertSkeletonDataFile()
         {
             if (skeletonData == null)
             {
@@ -29,21 +44,110 @@ internal static class CustomSkinAssetReplacer
         }
     }
 
-    public static bool TryReplace(SkeletonAnimation animation, TextAsset? skeletonData)
+    public static bool TryReplace(
+        SkeletonAnimation animation,
+        Texture2D? texture,
+        TextAsset? atlasText,
+        TextAsset? skeletonData)
     {
-        if (skeletonData == null)
+        if (texture == null && atlasText == null && skeletonData == null)
+        {
+            Logger.Warning("No replacement data provided");
+            return false;
+        }
+
+        if (!TryReplaceAtlas(animation, texture, atlasText, out var atlas))
+        {
+            return false;
+        }
+
+        bool atlasChanged = atlas != animation.SkeletonDataAsset.atlasAssets[0];
+
+        if (skeletonData == null && !atlasChanged)
         {
             return true;
         }
 
-        animation.skeletonDataAsset = SkeletonDataAsset.CreateRuntimeInstance(
-            skeletonData,
-            animation.skeletonDataAsset.atlasAssets,
-            initialize: true,
-            scale: animation.skeletonDataAsset.scale);
+        var skeletonSource = skeletonData.Ref() ?? animation.skeletonDataAsset.skeletonJSON;
 
+        var newSkeleton = SkeletonDataAsset.CreateRuntimeInstance(
+           skeletonSource,
+           atlas,
+           initialize: false,
+           scale: animation.skeletonDataAsset.scale);
+
+        if (newSkeleton.GetSkeletonData(quiet: false) == null)
+        {
+            Logger.Warning(
+                "Failed to initialize skeleton. " +
+                "Make sure the skeleton format version is 4.2.x");
+
+            return false;
+        }
+
+        animation.skeletonDataAsset = newSkeleton;
         animation.Initialize(overwrite: true);
 
-        return animation.valid;
+        if (!animation.valid)
+        {
+            Logger.Warning("Animation initialization failed");
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool TryReplaceAtlas(
+        SkeletonAnimation animation,
+        Texture2D? texture,
+        TextAsset? atlasText,
+        out AtlasAssetBase atlas)
+    {
+        var currentAtlas = animation.SkeletonDataAsset.atlasAssets[0];
+        var currentTexture = currentAtlas.PrimaryMaterial.mainTexture.Cast<Texture2D>();
+        texture.Ref()?.name = currentTexture.name;
+
+        if (atlasText == null)
+        {
+            if (texture == null)
+            {
+                atlas = currentAtlas;
+                return true;
+            }
+
+            atlas = CreateAtlas(currentAtlas.Cast<SpineAtlasAsset>().atlasFile, texture, currentAtlas.PrimaryMaterial);
+            return true;
+        }
+
+        var atlasTexture = texture.Ref() ?? currentTexture;
+        atlas = CreateAtlas(atlasText, atlasTexture, currentAtlas.PrimaryMaterial);
+
+        if (atlas.GetAtlas() == null)
+        {
+            Melon<Core>.Logger.Warning("Failed to initialize atlas");
+            return false;
+        }
+
+        return true;
+    }
+
+    private static SpineAtlasAsset CreateAtlas(
+        TextAsset atlasText,
+        Texture2D texture,
+        Material material)
+    {
+        ArgumentNullException.ThrowIfNull(atlasText);
+        ArgumentNullException.ThrowIfNull(texture);
+        ArgumentNullException.ThrowIfNull(material);
+
+        var newMaterial = new Material(material)
+        {
+            mainTexture = texture,
+        };
+
+        return SpineAtlasAsset.CreateRuntimeInstance(
+            atlasText,
+            new([newMaterial]),
+            initialize: false);
     }
 }

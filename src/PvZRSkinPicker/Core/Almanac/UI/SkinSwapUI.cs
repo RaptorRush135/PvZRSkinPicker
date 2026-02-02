@@ -8,14 +8,14 @@ using UnityEngine;
 
 internal static class SkinSwapUI
 {
-    private static ModResourceName IconResourceName => ModAssets.SkinSwap;
+    private static EmbeddedResourceAsset IconAsset => ModAssets.SkinSwap;
 
-    private static Sprite Icon => field ??= ModAssets.LoadSprite(IconResourceName);
+    private static Sprite Icon => field ??= ModAssets.LoadSprite(IconAsset);
 
     public static ModButton CreateButton(AlmanacEntryType type)
     {
         return AlmanacUI.CreatePortraitOverlayButton(
-            IconResourceName.GetNameWithoutExtension(),
+            IconAsset.GetNameWithoutExtension(),
             Icon,
             type);
     }
