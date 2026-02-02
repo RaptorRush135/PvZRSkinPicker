@@ -134,11 +134,40 @@ internal sealed class CustomSkinLoader(
 
             var definition = dataService.GetPlantDefinition(targetType);
 
-            // TODO: Destroy prefab on fail
             var prefab = PrefabCloner.InstantiateInactiveFromPrefabAsset(definition.m_prefab, expectLoaded: true);
 
-            var controller = prefab.GetComponent<PlantController>();
+            try
+            {
+                var controller = prefab.GetComponent<PlantController>();
+                if (!TryLoadSkin(skinDirectory, controller))
+                {
+                    Object.Destroy(prefab);
 
+                    logger.Warning(
+                        $"Failed to replace assets of '{skin}' in the prefab. " +
+                        "Check Unity debug logs for more details");
+
+                    return null;
+                }
+
+                logger.Msg("Successfully processed skin");
+
+                return new(targetType, prefab);
+            }
+            catch (Exception)
+            {
+                Object.Destroy(prefab);
+                throw;
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.Error($"Could not load skin '{skin}'", ex);
+            return null;
+        }
+
+        static bool TryLoadSkin(DirectoryInfo skinDirectory, PlantController controller)
+        {
             // TODO: Cache texture by path?
             BytesAsset? textureData = skinDirectory.GetFileIfExists("skin.png")?.ReadBytesAsset();
             Texture2D? texture = textureData != null
@@ -146,29 +175,11 @@ internal sealed class CustomSkinLoader(
                 : null;
 
             // TODO: Allow custom path/name?
-            bool replaceSucceeded = CustomSkinAssetReplacer.TryReplace(
+            return CustomSkinAssetReplacer.TryReplace(
                 controller.AnimationController.GetComponent<SkeletonAnimation>(),
                 texture,
                 skinDirectory.GetFileIfExists("skin.atlas")?.ReadAllText(),
                 skinDirectory.GetFileIfExists("skin.skel")?.ReadAllBytes());
-
-            if (!replaceSucceeded)
-            {
-                logger.Warning(
-                    $"Failed to replace assets of '{skin}' in the prefab. " +
-                    "Check Unity debug logs for more details");
-
-                return null;
-            }
-
-            logger.Msg("Successfully processed skin");
-
-            return new(targetType, prefab);
-        }
-        catch (Exception ex)
-        {
-            logger.Error($"Could not load skin '{skin}'", ex);
-            return null;
         }
     }
 
