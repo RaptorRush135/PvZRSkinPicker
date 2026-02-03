@@ -116,11 +116,12 @@ internal static class CustomSkinAssetReplacer
             }
 
             atlas = CreateAtlas(currentAtlas.Cast<SpineAtlasAsset>().atlasFile, texture, currentAtlas.PrimaryMaterial);
-            return true;
         }
-
-        var atlasTexture = texture.Ref() ?? currentTexture;
-        atlas = CreateAtlas(atlasText, atlasTexture, currentAtlas.PrimaryMaterial);
+        else
+        {
+            var atlasTexture = texture.Ref() ?? currentTexture;
+            atlas = CreateAtlas(atlasText, atlasTexture, currentAtlas.PrimaryMaterial);
+        }
 
         if (atlas.GetAtlas() == null)
         {
