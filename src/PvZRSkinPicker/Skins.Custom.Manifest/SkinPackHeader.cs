@@ -8,6 +8,13 @@ internal sealed record SkinPackHeader(
     [property: JsonRequired] int Version,
     IReadOnlyList<string>? Authors)
 {
+    public string FormattedAuthors
+        => field ??= this.Authors switch
+        {
+            null or { Count: 0 } => "???",
+            _ => string.Join(", ", this.Authors),
+        };
+
     public override string ToString() => $"{this.Name}-V{this.Version}({this.Id})";
 
     public string? Validate()

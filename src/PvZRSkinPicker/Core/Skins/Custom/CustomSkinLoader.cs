@@ -110,8 +110,10 @@ internal sealed class CustomSkinLoader(
     {
         ArgumentNullException.ThrowIfNull(manifestSource);
 
+        var header = manifestSource.Manifest.Header;
+
         logger.WriteSpacer();
-        logger.Msg($"Processing skin pack '{manifestSource.Manifest.Header}'");
+        logger.Msg($"Processing skin pack '{header}' by {header.FormattedAuthors}");
 
         return [.. manifestSource.Manifest.Skins.Plants
             .Select(s => this.TryLoadSkin(manifestSource.Directory, s))
