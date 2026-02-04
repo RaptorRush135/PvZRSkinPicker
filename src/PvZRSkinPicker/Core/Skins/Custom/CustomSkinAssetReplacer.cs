@@ -20,6 +20,8 @@ internal static class CustomSkinAssetReplacer
         string? atlasText,
         byte[]? skeletonData)
     {
+        ArgumentNullException.ThrowIfNull(animation);
+
         return TryReplace(animation, texture, ConvertAtlasTextFile(), ConvertSkeletonDataFile());
 
         TextAsset? ConvertAtlasTextFile()
@@ -44,7 +46,7 @@ internal static class CustomSkinAssetReplacer
         }
     }
 
-    public static bool TryReplace(
+    private static bool TryReplace(
         SkeletonAnimation animation,
         Texture2D? texture,
         TextAsset? atlasText,

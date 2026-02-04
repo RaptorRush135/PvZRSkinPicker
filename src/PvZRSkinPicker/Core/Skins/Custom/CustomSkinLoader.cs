@@ -60,7 +60,9 @@ internal sealed class CustomSkinLoader(
 
         int totalSkins = skins.Values.Sum(list => list.Count);
 
+        logger.WriteSpacer();
         logger.Msg($"Loaded {totalSkins} custom skins in {stopwatch.ElapsedMilliseconds} ms.");
+        logger.WriteSpacer();
 
         return skins;
     }
@@ -108,6 +110,7 @@ internal sealed class CustomSkinLoader(
     {
         ArgumentNullException.ThrowIfNull(manifestSource);
 
+        logger.WriteSpacer();
         logger.Msg($"Processing skin pack '{manifestSource.Manifest.Header}'");
 
         return [.. manifestSource.Manifest.Skins.Plants
@@ -117,6 +120,7 @@ internal sealed class CustomSkinLoader(
 
     private SkinPrototype<SeedType>? TryLoadSkin(DirectoryInfo packDirectory, SkinEntry skin)
     {
+        logger.WriteLine();
         logger.Msg($"Processing skin '{skin}'");
 
         try
@@ -141,7 +145,7 @@ internal sealed class CustomSkinLoader(
             try
             {
                 var controller = prefab.GetComponent<PlantController>();
-                if (!TryLoadSkin(skinDirectory, controller))
+                if (!this.TryLoadSkin(skinDirectory, controller))
                 {
                     Object.Destroy(prefab);
 
@@ -167,22 +171,33 @@ internal sealed class CustomSkinLoader(
             logger.Error($"Could not load skin '{skin}'", ex);
             return null;
         }
+    }
 
-        static bool TryLoadSkin(DirectoryInfo skinDirectory, PlantController controller)
-        {
-            // TODO: Cache texture by path?
-            BytesAsset? textureData = skinDirectory.GetFileIfExists("skin.png")?.ReadBytesAsset();
-            Texture2D? texture = textureData != null
-                ? ModAssets.LoadTexture(textureData)
-                : null;
+    private bool TryLoadSkin(DirectoryInfo skinDirectory, PlantController controller)
+    {
+        var animation = controller.AnimationController.GetComponent<SkeletonAnimation>();
 
-            // TODO: Allow custom path/name?
-            return CustomSkinAssetReplacer.TryReplace(
-                controller.AnimationController.GetComponent<SkeletonAnimation>(),
-                texture,
-                skinDirectory.GetFileIfExists("skin.atlas")?.ReadAllText(),
-                skinDirectory.GetFileIfExists("skin.skel")?.ReadAllBytes());
-        }
+        // TODO: Cache texture by path?
+        BytesAsset? textureData = skinDirectory.GetFileIfExists("skin.png")?.ReadBytesAsset();
+        Texture2D? texture = textureData != null
+            ? ModAssets.LoadTexture(textureData)
+            : null;
+
+        var atlas = skinDirectory.GetFileIfExists("skin.atlas")?.ReadAllText();
+
+        var skeleton = skinDirectory.GetFileIfExists("skin.skel")?.ReadAllBytes();
+
+        logger.Msg(
+            $"Assets: " +
+            $"texture={PresenceMark(texture)} " +
+            $"atlas={PresenceMark(atlas)} " +
+            $"skeleton={PresenceMark(skeleton)}");
+
+        // TODO: Allow custom path/name?
+        return CustomSkinAssetReplacer.TryReplace(animation, texture, atlas, skeleton);
+
+        static string PresenceMark(object? value)
+            => value != null ? "[x]" : "[ ]";
     }
 
     private sealed record SkinPackManifestSource(
