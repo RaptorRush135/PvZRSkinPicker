@@ -11,7 +11,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <LangVersion>latest</LangVersion>
-    <AssemblyVersion>$(ModVersion)</AssemblyVersion>
+    <Version>$(ModVersion)</Version>
     <GenerateDependencyFile>false</GenerateDependencyFile>
     <PlatformTarget>x64</PlatformTarget>
     <IsPackable>false</IsPackable>

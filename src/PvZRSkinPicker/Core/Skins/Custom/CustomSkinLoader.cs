@@ -190,7 +190,7 @@ internal sealed class CustomSkinLoader(
         var skeleton = skinDirectory.GetFileIfExists("skin.skel")?.ReadAllBytes();
 
         logger.Msg(
-            $"Assets: " +
+            "Assets: " +
             $"texture={PresenceMark(texture)} " +
             $"atlas={PresenceMark(atlas)} " +
             $"skeleton={PresenceMark(skeleton)}");
