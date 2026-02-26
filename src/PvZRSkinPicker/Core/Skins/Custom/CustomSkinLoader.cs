@@ -50,7 +50,7 @@ internal sealed class CustomSkinLoader(
             .SelectMany(this.LoadManifestSkins)
             .GroupBy(
                 s => s.Type,
-                s => new CustomSkin(s.Name, s.PackId, s.Id, s.Prefab))
+                s => Skin.CreateCustom(s.Name, s.PackId, s.Id, s.Prefab))
             .ToDictionary(
                 g => g.Key,
                 g => (IReadOnlyList<Skin>)[.. g]);

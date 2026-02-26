@@ -82,7 +82,7 @@ internal sealed class SkinLocator(
         where T : struct, Enum
     {
         return string.IsNullOrEmpty(prefab.AssetGUID) || !enabled
-            ? null : new VanillaSkin<T>(type, name, skinType, prefab);
+            ? null : Skin.Create(type, name, skinType, prefab);
     }
 
     private string Localize(string name) => localizer.Localize($"${name}");
