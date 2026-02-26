@@ -2,36 +2,39 @@
 
 using Il2CppReloaded.Data;
 
-using PvZRSkinPicker.Unity.Extensions;
+using Il2CppTekly.DataModels.Binders;
 
 using UnityEngine;
 using UnityEngine.UI;
 
 internal static class AlmanacUI
 {
-    private static Transform GlobalPanels => field ??= GameObject.FindOrThrow("GlobalPanels(Clone)").transform;
+    private static AlmanacSelectedItem PlantSelectedItem
+        => field ??= AlmanacSelectedItem.Setup(AlmanacEntryType.Plant);
+
+    private static AlmanacSelectedItem ZombieSelectedItem
+        => field ??= AlmanacSelectedItem.Setup(AlmanacEntryType.Zombie);
+
+    public static StringBinder GetSelectedItemNameBinder(AlmanacEntryType type)
+        => GetSelectedItem(type).NameBinder;
 
     public static ModButton CreatePortraitOverlayButton(
         string name,
         Sprite sprite,
         AlmanacEntryType type)
     {
-        var selectedItem = GlobalPanels
-            .Find($"P_Almanac_{type}s/Canvas/Layout/Center/Panel/SelectedItem")
-            .Cast<RectTransform>();
-
-        selectedItem
-            .Find("SelectedItemPanel")
-            .GetComponent<Image>()
-            .raycastTarget = false;
-
-        var portrait = selectedItem
-            .Find("SelectedItemRenderPortrait")
-            .Cast<RectTransform>();
+        var selectedItem = GetSelectedItem(type);
 
         int verticalPadding = type == AlmanacEntryType.Plant ? 100 : 75;
 
-        return CreateOverlayButton(name, portrait, sprite, 150, new Vector2(50, verticalPadding));
+        return CreateOverlayButton(name, selectedItem.PortraitTransform, sprite, 150, new Vector2(50, verticalPadding));
+    }
+
+    private static AlmanacSelectedItem GetSelectedItem(AlmanacEntryType type)
+    {
+        return type == AlmanacEntryType.Plant
+            ? PlantSelectedItem
+            : ZombieSelectedItem;
     }
 
     private static ModButton CreateOverlayButton(

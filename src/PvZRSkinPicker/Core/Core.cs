@@ -45,13 +45,15 @@ public sealed class Core : MelonMod
 
     private static void Ready(ModContext context)
     {
+        var skinLocator = new SkinLocator(context.PlatformService, context.Localizer);
+
         var customSkinLoader = new CustomSkinLoader(Melon<Core>.Logger, context.DataService);
 
         SetupSkinPicker(
             AlmanacEntryType.Plant,
             context.Almanac.m_plantsModel,
             context.DataService.PlantDefinitions.AsEnumerable()
-                .Select(d => new PlantSkinDataDefinition(d, context.PlatformService)),
+                .Select(d => new PlantSkinDataDefinition(d, skinLocator)),
             customSkinLoader.GetPlantSkins(),
             PlantSkinOverrideResolver.Instance);
 
@@ -59,7 +61,7 @@ public sealed class Core : MelonMod
             AlmanacEntryType.Zombie,
             context.Almanac.m_zombiesModel,
             context.DataService.ZombieDefinitions.AsEnumerable()
-                .Select(d => new ZombieSkinDataDefinition(d, context.PlatformService)),
+                .Select(d => new ZombieSkinDataDefinition(d, skinLocator)),
             ImmutableDictionary<ZombieType, IReadOnlyList<Skin>>.Empty,
             ZombieSkinOverrideResolver.Instance);
     }
@@ -69,18 +71,21 @@ public sealed class Core : MelonMod
         AlmanacEntriesModel entriesModel,
         IEnumerable<ISkinDataDefinition<T>> definitions,
         IReadOnlyDictionary<T, IReadOnlyList<Skin>> extraSkins,
-        SkinOverrideResolver<T> prefabResolver)
+        SkinOverrideResolver<T> skinOverrideResolver)
         where T : struct, Enum
     {
         var button = SkinSwapUI.CreateButton(type);
 
+        var nameBinder = AlmanacUI.GetSelectedItemNameBinder(type);
+
         var selection = new AlmanacSelection<T>(entriesModel.m_selectedModel);
 
         var controller = new SkinPickerController<T>(
+            nameBinder,
             selection,
             definitions,
             extraSkins,
-            onSelect: prefabResolver.SetOverride);
+            onSelect: skinOverrideResolver.SetOverride);
 
         controller.ApplySelections();
         controller.Bind(button);

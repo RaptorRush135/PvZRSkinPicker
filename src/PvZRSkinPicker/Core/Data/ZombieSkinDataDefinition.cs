@@ -2,17 +2,15 @@
 
 using Il2CppReloaded.Data;
 using Il2CppReloaded.Gameplay;
-using Il2CppReloaded.Services;
 
 using PvZRSkinPicker.Skins;
 
 internal sealed class ZombieSkinDataDefinition(
     ZombieDefinition definition,
-    IPlatformService platformService)
+    SkinLocator skinLocator)
     : ISkinDataDefinition<ZombieType>
 {
     public ZombieType Type => definition.ZombieType;
 
-    public IEnumerable<Skin> GetSkins()
-        => SkinLocator.GetSkins(definition, platformService);
+    public IEnumerable<Skin> GetSkins() => skinLocator.GetSkins(definition);
 }

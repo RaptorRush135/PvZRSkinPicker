@@ -2,17 +2,15 @@
 
 using Il2CppReloaded.Data;
 using Il2CppReloaded.Gameplay;
-using Il2CppReloaded.Services;
 
 using PvZRSkinPicker.Skins;
 
 internal sealed class PlantSkinDataDefinition(
     PlantDefinition definition,
-    IPlatformService platformService)
+    SkinLocator skinLocator)
     : ISkinDataDefinition<SeedType>
 {
     public SeedType Type => definition.SeedType;
 
-    public IEnumerable<Skin> GetSkins()
-        => SkinLocator.GetSkins(definition, platformService);
+    public IEnumerable<Skin> GetSkins() => skinLocator.GetSkins(definition);
 }

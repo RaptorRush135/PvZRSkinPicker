@@ -3,6 +3,8 @@
 using Il2CppReloaded.DataModels;
 using Il2CppReloaded.Services;
 
+using Il2CppTekly.Localizations;
+
 using PvZRSkinPicker.Events;
 using PvZRSkinPicker.Hooks;
 using PvZRSkinPicker.Skins.Prefabs.Plants;
@@ -18,6 +20,8 @@ internal static class ModContextApi
 
     private static IPlatformService? platformService;
 
+    private static ILocalizer? localizer;
+
     private static AlmanacModel? almanac;
 
     private static bool fired;
@@ -29,6 +33,7 @@ internal static class ModContextApi
 
         AppCoreApi.OnDataServiceReady.Subscribe(value => OnResolve(ref dataService, value));
         PlatformServiceApi.OnReady.Subscribe(value => OnResolve(ref platformService, value));
+        AppCoreApi.OnLocalizerReady.Subscribe(value => OnResolve(ref localizer, value));
         AppDataApi.OnAlmanacBound.Subscribe(value => OnResolve(ref almanac, value));
     }
 
@@ -51,13 +56,13 @@ internal static class ModContextApi
                 "Required services were already resolved.");
         }
 
-        if (dataService is null || platformService is null || almanac is null)
+        if (dataService is null || platformService is null || localizer is null || almanac is null)
         {
             return;
         }
 
         fired = true;
-        var context = new ModContext(dataService, platformService, almanac);
+        var context = new ModContext(dataService, platformService, localizer, almanac);
         Ready.Invoke(context);
     }
 }

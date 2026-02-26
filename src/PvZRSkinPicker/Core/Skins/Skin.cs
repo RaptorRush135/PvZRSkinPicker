@@ -2,6 +2,8 @@
 
 using UnityEngine.AddressableAssets;
 
-internal sealed record Skin(
+internal abstract record Skin(
     SkinType Type,
-    AssetReferenceGameObject Prefab);
+    string Name,
+    AssetReferenceGameObject Prefab,
+    string PersistenceId);

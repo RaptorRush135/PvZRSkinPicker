@@ -16,7 +16,6 @@ using PvZRSkinPicker.Environment;
 using PvZRSkinPicker.Extensions;
 using PvZRSkinPicker.Skins.Custom.Manifest;
 using PvZRSkinPicker.Unity;
-using PvZRSkinPicker.Unity.Extensions;
 
 using UnityEngine;
 
@@ -51,7 +50,7 @@ internal sealed class CustomSkinLoader(
             .SelectMany(this.LoadManifestSkins)
             .GroupBy(
                 s => s.Type,
-                s => new Skin(SkinType.Custom, s.Prefab.ToAssetReference()))
+                s => new CustomSkin(s.Name, s.PackId, s.Id, s.Prefab))
             .ToDictionary(
                 g => g.Key,
                 g => (IReadOnlyList<Skin>)[.. g]);
@@ -116,11 +115,11 @@ internal sealed class CustomSkinLoader(
         logger.Msg($"Processing skin pack '{header}' by {header.FormattedAuthors}");
 
         return [.. manifestSource.Manifest.Skins.Plants
-            .Select(s => this.TryLoadSkin(manifestSource.Directory, s))
+            .Select(s => this.TryLoadSkin(manifestSource.Directory, header.Id, s))
             .WhereNotNull()];
     }
 
-    private SkinPrototype<SeedType>? TryLoadSkin(DirectoryInfo packDirectory, SkinEntry skin)
+    private SkinPrototype<SeedType>? TryLoadSkin(DirectoryInfo packDirectory, Guid packId, SkinEntry skin)
     {
         logger.WriteLine();
         logger.Msg($"Processing skin '{skin}'");
@@ -160,7 +159,7 @@ internal sealed class CustomSkinLoader(
 
                 logger.Msg("Successfully processed skin");
 
-                return new(targetType, prefab);
+                return new(targetType, skin.Name, packId, skin.Id, prefab);
             }
             catch (Exception)
             {
@@ -208,6 +207,9 @@ internal sealed class CustomSkinLoader(
 
     private sealed record SkinPrototype<T>(
         T Type,
+        string Name,
+        Guid PackId,
+        Guid Id,
         GameObject Prefab)
         where T : struct, Enum;
 }
