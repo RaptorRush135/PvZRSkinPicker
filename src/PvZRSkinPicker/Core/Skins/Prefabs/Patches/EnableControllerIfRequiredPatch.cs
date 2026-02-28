@@ -6,6 +6,8 @@ using HarmonyLib;
 
 using Il2CppSource.Controllers;
 
+using PvZRSkinPicker.Unity;
+
 [HarmonyPatch]
 internal static class EnableControllerIfRequiredPatch
 {
@@ -13,7 +15,6 @@ internal static class EnableControllerIfRequiredPatch
     [HarmonyPatch(typeof(ReloadedController), nameof(ReloadedController.Init))]
     private static void Prefix(ReloadedController __instance)
     {
-        // TODO: Do not enable all, mark objects to enable
-        __instance.gameObject.SetActive(true);
+        RequiresActivationMarker.ActivateIfRequired(__instance.gameObject);
     }
 }

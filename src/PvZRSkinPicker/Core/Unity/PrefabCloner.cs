@@ -27,6 +27,7 @@ internal static class PrefabCloner
         prefab.SetActive(false);
 
         var clone = Object.Instantiate(prefab);
+        clone.AddComponent<RequiresActivationMarker>();
         Object.DontDestroyOnLoad(clone);
 
         prefab.SetActive(true);
