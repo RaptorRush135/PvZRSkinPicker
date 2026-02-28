@@ -36,11 +36,15 @@ internal sealed record SkinPackManifest(
         var version = token.Value<int>();
         if (version != CurrentFormatVersion)
         {
-            throw new InvalidDataException(); // TODO
+            throw new NotSupportedException(
+                $"Unsupported manifest format version {version}. " +
+                $"Expected {CurrentFormatVersion}.");
         }
 
         var serializer = JsonSerializer.Create();
-        return root.ToObject<SkinPackManifest>(serializer);
+        return root.ToObject<SkinPackManifest>(serializer)
+            ?? throw new JsonSerializationException(
+                $"Failed to deserialize {nameof(SkinPackManifest)}: JSON root was null.");
     }
 
     public override string ToString() => this.Header.ToString();
