@@ -6,6 +6,7 @@ using Il2CppReloaded.Services;
 
 using Il2CppTekly.Localizations;
 
+using PvZRSkinPicker.Almanac.Extensions;
 using PvZRSkinPicker.Extensions;
 
 using UnityEngine.AddressableAssets;
@@ -16,8 +17,12 @@ internal sealed class SkinLocator(
 {
     public IEnumerable<Skin> GetSkins(PlantDefinition definition)
     {
-        // TODO: Filter to only in almanac?
         var type = definition.SeedType;
+        if (!type.IsInAlmanac())
+        {
+            return [];
+        }
+
         string name = this.Localize(definition.PlantName);
 
         IEnumerable<Skin?> skins =
@@ -45,7 +50,7 @@ internal sealed class SkinLocator(
         var type = definition.ZombieType;
 
         // "DuckyTube" uses the skins of "Normal", so do not scan for skins
-        if (type == ZombieType.DuckyTube)
+        if (!type.IsInAlmanac() || type == ZombieType.DuckyTube)
         {
             return [];
         }

@@ -11,6 +11,7 @@ using Il2CppSpine.Unity;
 
 using MelonLoader;
 
+using PvZRSkinPicker.Almanac.Extensions;
 using PvZRSkinPicker.Assets;
 using PvZRSkinPicker.Environment;
 using PvZRSkinPicker.Extensions;
@@ -133,7 +134,8 @@ internal sealed class CustomSkinLoader(
                 return null;
             }
 
-            if (!Enum.TryParse<SeedType>(skin.Type, ignoreCase: true, out var targetType))
+            if (!Enum.TryParse<SeedType>(skin.Type, ignoreCase: true, out var targetType)
+                || !targetType.IsInAlmanac())
             {
                 logger.Warning($"Could not parse type of '{skin}': '{skin.Type}'");
                 return null;
