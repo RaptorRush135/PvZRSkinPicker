@@ -41,11 +41,11 @@ internal static class AppCoreApi
         var localizerType = Il2CppSystem.Type.GetType("Tekly.Localizations.Localizer, Tekly.Localizations.Runtime")
             ?? throw new TypeLoadException("Failed to get Localizer type.");
 
-        const string InstancePropertyName = "Instance";
+        const string InstancePropertyName = nameof(Localizer.Instance);
         var instanceProperty = localizerType.BaseType.GetProperty(InstancePropertyName)
             ?? throw new MissingMemberException(localizerType.BaseType.FullName, InstancePropertyName);
 
-        Il2CppSystem.Object localizerInstance = instanceProperty.GetValue(null);
+        var localizerInstance = instanceProperty.GetValue(null);
         return localizerInstance.Cast<ILocalizer>();
     }
 }
