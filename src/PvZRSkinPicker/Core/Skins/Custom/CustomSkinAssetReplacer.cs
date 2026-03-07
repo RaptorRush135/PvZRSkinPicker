@@ -121,6 +121,12 @@ internal static class CustomSkinAssetReplacer
         }
         else
         {
+            if (!AtlasPageNameMatches(atlasText.text, currentTexture.name))
+            {
+                atlas = currentAtlas;
+                return false;
+            }
+
             var atlasTexture = texture.Ref() ?? currentTexture;
             atlas = CreateAtlas(atlasText, atlasTexture, currentAtlas.PrimaryMaterial);
         }
@@ -152,5 +158,31 @@ internal static class CustomSkinAssetReplacer
             atlasText,
             new([newMaterial]),
             initialize: false);
+    }
+
+    private static bool AtlasPageNameMatches(ReadOnlySpan<char> text, ReadOnlySpan<char> expectedPageName)
+    {
+        int index = text.IndexOfAny('\r', '\n');
+        if (index < 0)
+        {
+            Logger.Warning("Expected multi-line atlas content");
+            return false;
+        }
+
+        var pageName = RemoveOptionalSuffix(text[..index], ".png");
+        if (!pageName.SequenceEqual(expectedPageName))
+        {
+            Logger.Warning($"Page name did not match (Expected: '{expectedPageName}'. Actual: '{pageName}')");
+            return false;
+        }
+
+        return true;
+
+        static ReadOnlySpan<char> RemoveOptionalSuffix(ReadOnlySpan<char> value, ReadOnlySpan<char> suffix)
+        {
+            return value.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)
+                ? value[..^suffix.Length]
+                : value;
+        }
     }
 }
