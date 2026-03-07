@@ -180,7 +180,6 @@ internal sealed class CustomSkinLoader(
     {
         var animation = controller.AnimationController.GetComponent<SkeletonAnimation>();
 
-        // TODO: Cache texture by path?
         BytesAsset? textureData = skinDirectory.GetFileIfExists("skin.png")?.ReadBytesAsset();
         Texture2D? texture = textureData != null
             ? ModAssets.LoadTexture(textureData)
@@ -196,8 +195,13 @@ internal sealed class CustomSkinLoader(
             $"atlas={PresenceMark(atlas)} " +
             $"skeleton={PresenceMark(skeleton)}");
 
-        // TODO: Allow custom path/name?
-        return CustomSkinAssetReplacer.TryReplace(animation, texture, atlas, skeleton);
+        bool replaced = CustomSkinAssetReplacer.TryReplace(animation, texture, atlas, skeleton);
+        if (!replaced)
+        {
+            Object.Destroy(texture);
+        }
+
+        return replaced;
 
         static string PresenceMark(object? value)
             => value != null ? "[x]" : "[ ]";
