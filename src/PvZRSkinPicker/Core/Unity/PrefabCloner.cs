@@ -12,6 +12,8 @@ internal static class PrefabCloner
         AssetReferenceGameObject reference,
         bool expectLoaded = false)
     {
+        ArgumentNullException.ThrowIfNull(reference);
+
         GameObject prefab = LoadPrefabReference(reference, expectLoaded);
 
         GameObject clone = InstantiateInactiveFromPrefabAsset(prefab);
@@ -24,6 +26,8 @@ internal static class PrefabCloner
     public static GameObject InstantiateInactiveFromPrefabAsset(
         GameObject prefab)
     {
+        ArgumentNullException.ThrowIfNull(prefab);
+
         prefab.SetActive(false);
 
         var clone = Object.Instantiate(prefab);
