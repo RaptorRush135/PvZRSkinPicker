@@ -130,14 +130,14 @@ internal sealed class CustomSkinLoader(
             DirectoryInfo skinDirectory = packDirectory.GetDirectory(skin.Directory);
             if (!skinDirectory.Exists)
             {
-                logger.Warning($"Directory of '{skin}' not found: '{skinDirectory.FullName}'");
+                logger.Warning($"Skin directory not found: '{skinDirectory.FullName}'");
                 return null;
             }
 
             if (!Enum.TryParse<SeedType>(skin.Type, ignoreCase: true, out var targetType)
                 || !targetType.IsInAlmanac())
             {
-                logger.Warning($"Could not parse type of '{skin}': '{skin.Type}'");
+                logger.Warning($"Could not parse skin type: '{skin.Type}'");
                 return null;
             }
 
@@ -153,7 +153,7 @@ internal sealed class CustomSkinLoader(
                     Object.Destroy(prefab);
 
                     logger.Warning(
-                        $"Failed to replace assets of '{skin}' in the prefab. " +
+                        "Failed to replace skin assets in the prefab. " +
                         "Check Unity debug logs for more details");
 
                     return null;
@@ -171,7 +171,7 @@ internal sealed class CustomSkinLoader(
         }
         catch (Exception ex)
         {
-            logger.Error($"Could not load skin '{skin}'", ex);
+            logger.Error("Could not load skin", ex);
             return null;
         }
     }
