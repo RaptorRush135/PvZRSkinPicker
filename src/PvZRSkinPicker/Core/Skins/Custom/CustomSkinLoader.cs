@@ -185,23 +185,31 @@ internal sealed class CustomSkinLoader(
             ? ModAssets.LoadTexture(textureData)
             : null;
 
-        var atlas = skinDirectory.GetFileIfExists("skin.atlas")?.ReadAllText();
+        try
+        {
+            var atlas = skinDirectory.GetFileIfExists("skin.atlas")?.ReadAllText();
 
-        var skeleton = skinDirectory.GetFileIfExists("skin.skel")?.ReadAllBytes();
+            var skeleton = skinDirectory.GetFileIfExists("skin.skel")?.ReadAllBytes();
 
-        logger.Msg(
-            "Assets: " +
-            $"texture={PresenceMark(texture)} " +
-            $"atlas={PresenceMark(atlas)} " +
-            $"skeleton={PresenceMark(skeleton)}");
+            logger.Msg(
+                "Assets: " +
+                $"texture={PresenceMark(texture)} " +
+                $"atlas={PresenceMark(atlas)} " +
+                $"skeleton={PresenceMark(skeleton)}");
 
-        bool replaced = CustomSkinAssetReplacer.TryReplace(animation, texture, atlas, skeleton);
-        if (!replaced)
+            bool replaced = CustomSkinAssetReplacer.TryReplace(animation, texture, atlas, skeleton);
+            if (!replaced)
+            {
+                Object.Destroy(texture);
+            }
+
+            return replaced;
+        }
+        catch (Exception)
         {
             Object.Destroy(texture);
+            throw;
         }
-
-        return replaced;
 
         static string PresenceMark(object? value)
             => value != null ? "[x]" : "[ ]";
