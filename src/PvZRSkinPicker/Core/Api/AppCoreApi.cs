@@ -5,7 +5,6 @@ using HarmonyLib;
 using Il2CppReloaded;
 using Il2CppReloaded.Services;
 
-using Il2CppTekly.Injectors;
 using Il2CppTekly.Localizations;
 
 using PvZRSkinPicker.Events;
@@ -23,12 +22,17 @@ internal static class AppCoreApi
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(AppCore), nameof(AppCore.Provide))]
-    private static void Provide(InjectorContainer container)
+    private static void Provide()
     {
-        var gameplayService = container.Get<IGameplayService>();
-        var dataService = container.Get<IDataService>();
+        PlatformServiceApi.OnReady.Subscribe(_ => ResolveServices());
+    }
+
+    private static void ResolveServices()
+    {
+        var gameplayService = AppCore.GetService<IGameplayService>();
+        var dataService = AppCore.GetService<IDataService>();
         var localizer = GetLocalizer();
-        var audioService = container.Get<IAudioService>();
+        var audioService = AppCore.GetService<IAudioService>();
 
         OnGameplayServiceReady.Invoke(gameplayService);
         dataService.add_OnReady((Action)(() => OnDataServiceReady.Invoke(dataService)));
