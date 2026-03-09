@@ -2,6 +2,8 @@
 
 using MelonLoader;
 
+using PvZRSkinPicker.Unity.Extensions;
+
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -26,7 +28,7 @@ internal static class PrefabCloner
     public static GameObject InstantiateInactiveFromPrefabAsset(
         GameObject prefab)
     {
-        ArgumentNullException.ThrowIfNull(prefab);
+        ArgumentNullException.ThrowIfNull(prefab.Ref());
 
         prefab.SetActive(false);
 
@@ -51,6 +53,12 @@ internal static class PrefabCloner
         if (!isLoaded)
         {
             handle.WaitForCompletion();
+        }
+
+        if (handle.Result == null)
+        {
+            throw new InvalidOperationException(
+                $"Failed to load prefab from AssetReference. AssetGUID: '{reference.AssetGUID}'.");
         }
 
         var result = handle.Result.Cast<GameObject>();
