@@ -1,6 +1,7 @@
 ﻿namespace PvZRSkinPicker.Skins.Custom.Manifest;
 
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -49,9 +50,16 @@ internal sealed record SkinPackManifest(
 
     public override string ToString() => this.Header.ToString();
 
+    [Pure]
     public bool Validate([MaybeNullWhen(true)] out string error)
     {
         error = this.Header.Validate();
+        if (error != null)
+        {
+            return false;
+        }
+
+        error = this.Skins.Validate();
         return error == null;
     }
 }
