@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <RootNamespace>PvZRSkinPicker</RootNamespace>
+  </PropertyGroup>
+
   <ItemDefinitionGroup>
     <Reference>
       <Private>false</Private>

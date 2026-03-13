@@ -28,6 +28,9 @@ internal sealed class CustomSkinLoader(
     {
         var stopwatch = Stopwatch.StartNew();
 
+        logger.WriteSpacer();
+        logger.Msg("Reading skin manifests...");
+
         List<SkinPackManifestSource> sources = [.. ModEnvironment.SkinPacksDirectory
             .GetDirectories()
             .Select(this.TryGetManifest)
@@ -51,7 +54,7 @@ internal sealed class CustomSkinLoader(
             .SelectMany(this.LoadManifestSkins)
             .GroupBy(
                 s => s.Type,
-                s => Skin.CreateCustom(s.Name, s.PackId, s.Id, s.Prefab))
+                s => Skin.CreateCustom(s.Name, s.Id, s.Prefab))
             .ToDictionary(
                 g => g.Key,
                 g => (IReadOnlyList<Skin>)[.. g]);
@@ -61,7 +64,7 @@ internal sealed class CustomSkinLoader(
         int totalSkins = skins.Values.Sum(list => list.Count);
 
         logger.WriteSpacer();
-        logger.Msg($"Loaded {totalSkins} custom skins in {stopwatch.ElapsedMilliseconds} ms.");
+        logger.Msg($"Loaded {totalSkins} custom skins in {stopwatch.ElapsedMilliseconds} ms");
         logger.WriteSpacer();
 
         return skins;
@@ -116,11 +119,11 @@ internal sealed class CustomSkinLoader(
         logger.Msg($"Processing skin pack '{header}' by {header.FormattedAuthors}");
 
         return [.. manifestSource.Manifest.Skins.Plants
-            .Select(s => this.TryLoadSkin(manifestSource.Directory, header.Id, s))
+            .Select(skin => this.TryLoadSkin(skin, manifestSource.Directory))
             .WhereNotNull()];
     }
 
-    private SkinPrototype<SeedType>? TryLoadSkin(DirectoryInfo packDirectory, Guid packId, SkinEntry skin)
+    private SkinPrototype<SeedType>? TryLoadSkin(SkinEntry skin, DirectoryInfo packDirectory)
     {
         logger.WriteLine();
         logger.Msg($"Processing skin '{skin}'");
@@ -161,7 +164,7 @@ internal sealed class CustomSkinLoader(
 
                 logger.Msg("Successfully processed skin");
 
-                return new(targetType, skin.Name, packId, skin.Id, prefab);
+                return new(targetType, skin.Name, skin.Id, prefab);
             }
             catch (Exception)
             {
@@ -222,7 +225,6 @@ internal sealed class CustomSkinLoader(
     private sealed record SkinPrototype<T>(
         T Type,
         string Name,
-        Guid PackId,
         Guid Id,
         GameObject Prefab)
         where T : struct, Enum;

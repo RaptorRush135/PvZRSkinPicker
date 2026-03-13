@@ -1,11 +1,15 @@
 ﻿namespace PvZRSkinPicker.Skins.Picker;
 
+using Il2CppReloaded.Services;
+
 using Il2CppTekly.DataModels.Binders;
 
 using PvZRSkinPicker.Almanac;
 using PvZRSkinPicker.Almanac.UI;
+using PvZRSkinPicker.Api;
 using PvZRSkinPicker.Data;
 using PvZRSkinPicker.Extensions;
+using PvZRSkinPicker.Skins.Picker.Selection;
 
 internal sealed class SkinPickerController<T>
     where T : struct, Enum
@@ -37,11 +41,19 @@ internal sealed class SkinPickerController<T>
             .ToDictionary(picker => picker.Type);
     }
 
-    public void ApplySelections()
+    public void ApplySelections(SkinSelectionSet<T> selectionSet)
     {
-        foreach (var picker in this.pickers.Values)
+        foreach (var (type, picker) in this.pickers)
         {
-            picker.ApplySelection();
+            if (selectionSet.Selections.TryGetValue(type, out SkinId? id))
+            {
+                picker.Select(id);
+            }
+            else
+            {
+                // TODO: Remove when skin deselection is implemented
+                picker.ApplySelection();
+            }
         }
     }
 
@@ -60,6 +72,8 @@ internal sealed class SkinPickerController<T>
     {
         if (this.pickers.TryGetValue(this.selection.Value, out var picker))
         {
+            AudioServiceApi.PlayWithRandomPitch(FoleyType.LimbsPop);
+
             Skin skin = picker.Next();
             this.selection.Refresh();
             this.nameBinder.m_text.text = skin.Name;

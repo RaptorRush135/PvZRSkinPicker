@@ -44,7 +44,7 @@ internal static class GetZombieControllerPatch
             return;
         }
 
-        SkinType skinType = skin.Type;
+        SkinType skinType = skin.Id.Type;
 
         if (skinType == SkinType.Normal)
         {

@@ -6,32 +6,28 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 internal sealed record Skin(
-    SkinType Type,
+    SkinId Id,
     string Name,
-    AssetReferenceGameObject Prefab,
-    string PersistenceId)
+    AssetReferenceGameObject Prefab)
 {
-    public static Skin Create<T>(
-        T type,
+    public static Skin Create(
         string name,
         SkinType skinType,
         AssetReferenceGameObject prefab)
-        where T : struct, Enum
     {
         if (skinType == SkinType.Custom)
         {
             throw new InvalidOperationException("Vanilla skins cannot be Custom.");
         }
 
-        return new(skinType, name, prefab, $"{type}:{skinType}");
+        return new(SkinId.Create(skinType), name, prefab);
     }
 
     public static Skin CreateCustom(
         string name,
-        Guid packId,
         Guid id,
         GameObject prefab)
     {
-        return new(SkinType.Custom, name, prefab.ToAssetReference(), $"{packId}:{id}");
+        return new(SkinId.CreateCustom(id), name, prefab.ToAssetReference());
     }
 }

@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Skins.Custom.Manifest\PvZRSkinPicker.Skins.Custom.Manifest.csproj" />
+    <ProjectReference Include="..\Common\PvZRSkinPicker.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

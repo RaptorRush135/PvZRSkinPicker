@@ -2,10 +2,10 @@
 
 using System.Diagnostics.Contracts;
 
-using Il2CppReloaded.Services;
+using MelonLoader;
 
-using PvZRSkinPicker.Api;
 using PvZRSkinPicker.Data;
+using PvZRSkinPicker.Extensions;
 using PvZRSkinPicker.Skins;
 
 internal sealed class SkinPicker<T>
@@ -54,9 +54,20 @@ internal sealed class SkinPicker<T>
     public Skin Next()
     {
         this.selectedIndex = (this.selectedIndex + 1) % this.Skins.Count;
-        Skin selectedSkin = this.ApplySelection();
-        AudioServiceApi.PlayWithRandomPitch(FoleyType.LimbsPop);
-        return selectedSkin;
+        return this.ApplySelection();
+    }
+
+    public void Select(SkinId id)
+    {
+        Skin? selectedSkin = this.Skins.FirstOrDefault(s => s.Id == id);
+        if (selectedSkin == null)
+        {
+            Melon<Core>.Logger.Warning($"Skin with id '{id.Id}' not found");
+            return;
+        }
+
+        this.selectedIndex = this.Skins.IndexOf(selectedSkin);
+        this.ApplySelection();
     }
 
     public Skin ApplySelection()

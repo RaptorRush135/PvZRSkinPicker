@@ -43,7 +43,7 @@ internal abstract class SkinOverrideResolver<T>
 
         if (this.TryGetOverride(context, out var skin))
         {
-            ApplyGameplayOverridesForSkinType(skin.Type);
+            ApplyGameplayOverridesForSkinType(skin.Id.Type);
         }
     }
 
@@ -83,7 +83,7 @@ internal abstract class SkinOverrideResolver<T>
             return false;
         }
 
-        if (!this.IsSkinCompatible(skin.Type, context))
+        if (!this.IsSkinCompatible(skin.Id.Type, context))
         {
             skin = null;
             return false;

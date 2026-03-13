@@ -41,7 +41,7 @@ internal sealed class SkinLocator(
             AssetReferenceGameObject prefab,
             bool enabled = true)
         {
-            return SkinLocator.TryCreateSkin(type, name, skinType, prefab, enabled);
+            return SkinLocator.TryCreateSkin(name, skinType, prefab, enabled);
         }
     }
 
@@ -74,20 +74,18 @@ internal sealed class SkinLocator(
             AssetReferenceGameObject prefab,
             bool enabled = true)
         {
-            return SkinLocator.TryCreateSkin(type, name, skinType, prefab, enabled);
+            return SkinLocator.TryCreateSkin(name, skinType, prefab, enabled);
         }
     }
 
-    private static Skin? TryCreateSkin<T>(
-        T type,
+    private static Skin? TryCreateSkin(
         string name,
         SkinType skinType,
         AssetReferenceGameObject prefab,
         bool enabled)
-        where T : struct, Enum
     {
         return string.IsNullOrEmpty(prefab.AssetGUID) || !enabled
-            ? null : Skin.Create(type, name, skinType, prefab);
+            ? null : Skin.Create(name, skinType, prefab);
     }
 
     private string Localize(string name) => localizer.Localize($"${name}");
