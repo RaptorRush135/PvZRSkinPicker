@@ -1,5 +1,7 @@
 ﻿namespace PvZRSkinPicker.Api.Context;
 
+using HarmonyLib;
+
 using Il2CppReloaded.DataModels;
 using Il2CppReloaded.Services;
 
@@ -26,10 +28,13 @@ internal static class ModContextApi
 
     private static bool fired;
 
-    public static void Initialize()
+    public static void Initialize(Harmony harmony)
     {
-        HookStore.Add(PlantSkinOverrideResolver.Initialize());
-        HookStore.Add(ZombieSkinOverrideResolver.Initialize());
+        using (var scope = new SanityCheckDetourBypass(harmony))
+        {
+            HookStore.Add(PlantSkinOverrideResolver.Initialize());
+            HookStore.Add(ZombieSkinOverrideResolver.Initialize());
+        }
 
         AppCoreApi.OnDataServiceReady.Subscribe(value => OnResolve(ref dataService, value));
         PlatformServiceApi.OnReady.Subscribe(value => OnResolve(ref platformService, value));

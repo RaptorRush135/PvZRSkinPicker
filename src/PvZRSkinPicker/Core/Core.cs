@@ -28,7 +28,7 @@ public sealed class Core : MelonMod
     {
         try
         {
-            ModContextApi.Initialize();
+            ModContextApi.Initialize(this.HarmonyInstance);
         }
         catch (Exception ex)
         {
