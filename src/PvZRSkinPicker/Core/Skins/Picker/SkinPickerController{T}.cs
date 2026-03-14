@@ -1,5 +1,7 @@
 ﻿namespace PvZRSkinPicker.Skins.Picker;
 
+using System.Diagnostics.Contracts;
+
 using Il2CppReloaded.Services;
 
 using Il2CppTekly.DataModels.Binders;
@@ -18,7 +20,7 @@ internal sealed class SkinPickerController<T>
 
     private readonly AlmanacSelection<T> selection;
 
-    private readonly Dictionary<T, SkinPicker<T>> pickers;
+    private readonly IReadOnlyDictionary<T, SkinPicker<T>> pickers;
 
     public SkinPickerController(
         StringBinder nameBinder,
@@ -78,5 +80,16 @@ internal sealed class SkinPickerController<T>
             this.selection.Refresh();
             this.nameBinder.m_text.text = skin.Name;
         }
+    }
+
+    [Pure]
+    public SkinSelectionSet<T> GetSelections()
+    {
+        var selections = this.pickers
+            .ToDictionary(
+                pair => pair.Key,
+                pair => pair.Value.GetSelectedSkin().Id);
+
+        return new SkinSelectionSet<T>(selections);
     }
 }

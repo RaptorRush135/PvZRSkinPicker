@@ -1,5 +1,7 @@
 ﻿namespace PvZRSkinPicker.Skins.Picker.Selection;
 
+using System.Collections.Immutable;
+
 using MelonLoader;
 
 using PvZRSkinPicker.Extensions;
@@ -7,8 +9,6 @@ using PvZRSkinPicker.Extensions;
 internal sealed class SkinSelectionSet<T>
     where T : struct, Enum
 {
-    private readonly Dictionary<T, SkinId> selections;
-
     public SkinSelectionSet(
         IReadOnlyDictionary<string, string> typeToIdMap,
         Predicate<T> typeValidator,
@@ -18,7 +18,7 @@ internal sealed class SkinSelectionSet<T>
         ArgumentNullException.ThrowIfNull(typeValidator);
         ArgumentNullException.ThrowIfNull(logger);
 
-        this.selections = typeToIdMap
+        this.Selections = typeToIdMap
             .Select(TryParsePair)
             .WhereNotNull()
             .ToDictionary();
@@ -42,12 +42,27 @@ internal sealed class SkinSelectionSet<T>
         }
     }
 
+    public SkinSelectionSet(
+        IReadOnlyDictionary<T, SkinId> selections)
+    {
+        ArgumentNullException.ThrowIfNull(selections);
+
+        this.Selections = new Dictionary<T, SkinId>(selections);
+    }
+
     private SkinSelectionSet()
     {
-        this.selections = [];
+        this.Selections = ImmutableDictionary<T, SkinId>.Empty;
     }
 
     public static SkinSelectionSet<T> Empty => field ??= new();
 
-    public IReadOnlyDictionary<T, SkinId> Selections => field ??= this.selections.AsReadOnly();
+    public IReadOnlyDictionary<T, SkinId> Selections { get; }
+
+    public Dictionary<string, string> ToStringMap()
+    {
+        return this.Selections.ToDictionary(
+            pair => pair.Key.ToString(),
+            pair => pair.Value.Id);
+    }
 }

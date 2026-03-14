@@ -3,13 +3,13 @@
 using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 
-using PvZRSkinPicker.Config;
+using PvZRSkinPicker.Configuration;
 
 internal sealed record SkinSelectionConfig : IModConfig
 {
     public static readonly int CurrentFormatVersion = 1;
 
-    public int FormatVersion { get; init; }
+    public int FormatVersion { get; init; } = CurrentFormatVersion;
 
     public IReadOnlyDictionary<string, string> Plants { get; init; } = Empty;
 
@@ -21,6 +21,11 @@ internal sealed record SkinSelectionConfig : IModConfig
     [Pure]
     public static SkinSelectionConfig Load(Stream stream)
     {
-        return ModConfigReader.Load<SkinSelectionConfig>(CurrentFormatVersion, stream);
+        return ModConfig.Load<SkinSelectionConfig>(CurrentFormatVersion, stream);
+    }
+
+    public void Write(Stream stream)
+    {
+        ModConfig.Write(this, stream);
     }
 }

@@ -5,7 +5,7 @@ using System.Diagnostics.Contracts;
 
 using Newtonsoft.Json;
 
-using PvZRSkinPicker.Config;
+using PvZRSkinPicker.Configuration;
 
 internal sealed record SkinPackManifest(
     [property: JsonRequired] SkinPackHeader Header,
@@ -19,7 +19,7 @@ internal sealed record SkinPackManifest(
     [Pure]
     public static SkinPackManifest Load(Stream stream)
     {
-        return ModConfigReader.Load<SkinPackManifest>(CurrentFormatVersion, stream);
+        return ModConfig.Load<SkinPackManifest>(CurrentFormatVersion, stream);
     }
 
     public override string ToString() => this.Header.ToString();

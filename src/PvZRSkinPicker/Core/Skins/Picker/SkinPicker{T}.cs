@@ -72,8 +72,11 @@ internal sealed class SkinPicker<T>
 
     public Skin ApplySelection()
     {
-        Skin selectedSkin = this.Skins[this.selectedIndex];
+        Skin selectedSkin = this.GetSelectedSkin();
         this.OnSelect(this.Type, selectedSkin);
         return selectedSkin;
     }
+
+    [Pure]
+    public Skin GetSelectedSkin() => this.Skins[this.selectedIndex];
 }

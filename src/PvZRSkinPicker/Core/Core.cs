@@ -51,9 +51,12 @@ public sealed class Core : MelonMod
 
         var customSkinLoader = new CustomSkinLoader(Melon<Core>.Logger, context.DataService);
 
-        SkinSelections skinSelections = TryReadSelections();
+        var skinSelectionPersistence = new SkinSelectionPersistence(
+            ModEnvironment.ModDataDirectory.GetFile("selections.json"));
 
-        SetupSkinPicker(
+        SkinSelections skinSelections = skinSelectionPersistence.TryReadSelections();
+
+        var plantPickerController = SetupSkinPicker(
             AlmanacEntryType.Plant,
             context.Almanac.m_plantsModel,
             context.DataService.PlantDefinitions.AsEnumerable()
@@ -62,7 +65,7 @@ public sealed class Core : MelonMod
             PlantSkinOverrideResolver.Instance,
             skinSelections.Plants);
 
-        SetupSkinPicker(
+        var zombiePickerController = SetupSkinPicker(
             AlmanacEntryType.Zombie,
             context.Almanac.m_zombiesModel,
             context.DataService.ZombieDefinitions.AsEnumerable()
@@ -70,31 +73,11 @@ public sealed class Core : MelonMod
             ImmutableDictionary<ZombieType, IReadOnlyList<Skin>>.Empty,
             ZombieSkinOverrideResolver.Instance,
             skinSelections.Zombies);
+
+        skinSelectionPersistence.BindControllers(plantPickerController, zombiePickerController);
     }
 
-    private static SkinSelections TryReadSelections()
-    {
-        var selectionsFile = ModEnvironment.ModDataDirectory.GetFile("selections.json");
-
-        try
-        {
-            if (!selectionsFile.Exists)
-            {
-                return SkinSelections.Empty;
-            }
-
-            using var fileStream = selectionsFile.OpenRead();
-            var config = SkinSelectionConfig.Load(fileStream);
-            return SkinSelections.Parse(config);
-        }
-        catch (Exception ex)
-        {
-            Melon<Core>.Logger.Error($"Failed to load skin selections at '{selectionsFile.FullName}'", ex);
-            return SkinSelections.Empty;
-        }
-    }
-
-    private static void SetupSkinPicker<T>(
+    private static SkinPickerController<T> SetupSkinPicker<T>(
         AlmanacEntryType type,
         AlmanacEntriesModel entriesModel,
         IEnumerable<ISkinDataDefinition<T>> definitions,
@@ -119,5 +102,7 @@ public sealed class Core : MelonMod
 
         controller.ApplySelections(selectionSet);
         controller.Bind(button);
+
+        return controller;
     }
 }

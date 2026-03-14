@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Config;
+﻿namespace PvZRSkinPicker.Configuration;
 
 internal interface IModConfig
 {
