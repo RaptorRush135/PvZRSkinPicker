@@ -61,8 +61,10 @@ internal sealed class SkinSelectionSet<T>
 
     public Dictionary<string, string> ToStringMap()
     {
-        return this.Selections.ToDictionary(
-            pair => pair.Key.ToString(),
-            pair => pair.Value.Id);
+        return this.Selections
+            .Where(pair => pair.Value.Type != SkinType.Normal)
+            .ToDictionary(
+                pair => pair.Key.ToString(),
+                pair => pair.Value.Id);
     }
 }
