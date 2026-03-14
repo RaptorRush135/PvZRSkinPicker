@@ -39,7 +39,7 @@ internal sealed class SkinSelectionPersistence(
 
         try
         {
-            using var fileStream = file.OpenWrite();
+            using var fileStream = file.Create();
             selections.ToConfig().Write(fileStream);
         }
         catch (Exception ex)
