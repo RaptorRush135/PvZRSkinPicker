@@ -88,13 +88,9 @@ public sealed class Core : MelonMod
     {
         var button = SkinSwapUI.CreateButton(type);
 
-        // TODO: Move to AlmanacSelection?
-        var nameBinder = AlmanacUI.GetSelectedItemNameBinder(type);
-
-        var selection = new AlmanacSelection<T>(entriesModel.m_selectedModel);
+        var selection = AlmanacSelection<T>.Create(type, entriesModel.m_selectedModel);
 
         var controller = new SkinPickerController<T>(
-            nameBinder,
             selection,
             definitions,
             extraSkins,

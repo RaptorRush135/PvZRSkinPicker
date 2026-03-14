@@ -4,8 +4,6 @@ using System.Diagnostics.Contracts;
 
 using Il2CppReloaded.Services;
 
-using Il2CppTekly.DataModels.Binders;
-
 using PvZRSkinPicker.Almanac;
 using PvZRSkinPicker.Almanac.UI;
 using PvZRSkinPicker.Api;
@@ -16,26 +14,21 @@ using PvZRSkinPicker.Skins.Picker.Selection;
 internal sealed class SkinPickerController<T>
     where T : struct, Enum
 {
-    private readonly StringBinder nameBinder;
-
     private readonly AlmanacSelection<T> selection;
 
     private readonly IReadOnlyDictionary<T, SkinPicker<T>> pickers;
 
     public SkinPickerController(
-        StringBinder nameBinder,
         AlmanacSelection<T> selection,
         IEnumerable<ISkinDataDefinition<T>> definitions,
         IReadOnlyDictionary<T, IReadOnlyList<Skin>> extraSkins,
         Action<T, Skin> onSelect)
     {
-        ArgumentNullException.ThrowIfNull(nameBinder);
         ArgumentNullException.ThrowIfNull(selection);
         ArgumentNullException.ThrowIfNull(definitions);
         ArgumentNullException.ThrowIfNull(extraSkins);
         ArgumentNullException.ThrowIfNull(onSelect);
 
-        this.nameBinder = nameBinder;
         this.selection = selection;
         this.pickers = definitions
             .Select(d => SkinPicker<T>.TryCreate(d, extraSkins.GetValueOrDefault(d.Type) ?? [], onSelect))
@@ -78,7 +71,7 @@ internal sealed class SkinPickerController<T>
 
             Skin skin = picker.Next();
             this.selection.Refresh();
-            this.nameBinder.m_text.text = skin.Name;
+            this.selection.SetName(skin.Name);
         }
     }
 
