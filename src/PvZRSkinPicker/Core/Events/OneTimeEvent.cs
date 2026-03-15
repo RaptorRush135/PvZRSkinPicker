@@ -1,15 +1,11 @@
 ﻿namespace PvZRSkinPicker.Events;
 
-using System.Diagnostics.CodeAnalysis;
-
 using MelonLoader;
 
-internal sealed class OneTimeEvent<T>(
+internal sealed class OneTimeEvent(
     MelonLogger.Instance logger)
 {
-    private readonly MelonEvent<T> @event = new();
-
-    private T? value;
+    private readonly MelonEvent @event = new();
 
     public OneTimeEvent()
         : this(Melon<Core>.Logger)
@@ -18,10 +14,9 @@ internal sealed class OneTimeEvent<T>(
 
     public bool Disposed => this.@event.Disposed;
 
-    [MemberNotNullWhen(true, nameof(value))]
     public bool Invoked { get; private set; }
 
-    public void Subscribe(Action<T> action)
+    public void Subscribe(Action action)
     {
         if (this.Disposed)
         {
@@ -30,18 +25,18 @@ internal sealed class OneTimeEvent<T>(
 
         if (this.Invoked)
         {
-            action.Invoke(this.value);
+            action.Invoke();
             return;
         }
 
         this.@event.Subscribe(new(action));
     }
 
-    public void Invoke(T value)
+    public void Invoke()
     {
         if (this.Invoked)
         {
-            logger.Warning($"One-time event was already invoked ({typeof(T).Name})");
+            logger.Warning("One-time event was already invoked");
             return;
         }
 
@@ -50,8 +45,7 @@ internal sealed class OneTimeEvent<T>(
             return;
         }
 
-        this.value = value;
         this.Invoked = true;
-        this.@event.Invoke(value);
+        this.@event.Invoke();
     }
 }

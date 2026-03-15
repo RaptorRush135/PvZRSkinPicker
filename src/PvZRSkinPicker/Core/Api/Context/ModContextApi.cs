@@ -37,7 +37,7 @@ internal static class ModContextApi
         }
 
         AppCoreApi.OnDataServiceReady.Subscribe(value => OnResolve(ref dataService, value));
-        PlatformServiceApi.OnReady.Subscribe(value => OnResolve(ref platformService, value));
+        AppCoreApi.OnPlatformServiceReady.Subscribe(value => OnResolve(ref platformService, value));
         AppCoreApi.OnLocalizerReady.Subscribe(value => OnResolve(ref localizer, value));
         AppDataApi.OnAlmanacBound.Subscribe(value => OnResolve(ref almanac, value));
     }

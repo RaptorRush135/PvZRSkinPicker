@@ -16,26 +16,28 @@ internal static class AppCoreApi
 
     public static readonly OneTimeEvent<IDataService> OnDataServiceReady = new();
 
+    public static readonly OneTimeEvent<IPlatformService> OnPlatformServiceReady = new();
+
     public static readonly OneTimeEvent<ILocalizer> OnLocalizerReady = new();
 
     public static readonly OneTimeEvent<IAudioService> OnAudioServiceReady = new();
 
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(AppCore), nameof(AppCore.Provide))]
-    private static void Provide()
+    static AppCoreApi()
     {
-        PlatformServiceApi.OnReady.Subscribe(_ => ResolveServices());
+        FrontendApi.OnFirstActivation.Subscribe(ResolveServices);
     }
 
     private static void ResolveServices()
     {
         var gameplayService = AppCore.GetService<IGameplayService>();
         var dataService = AppCore.GetService<IDataService>();
+        var platformService = AppCore.GetService<IPlatformService>();
         var localizer = GetLocalizer();
         var audioService = AppCore.GetService<IAudioService>();
 
         OnGameplayServiceReady.Invoke(gameplayService);
         dataService.add_OnReady((Action)(() => OnDataServiceReady.Invoke(dataService)));
+        platformService.add_MainUserIdentified((Action)(() => OnPlatformServiceReady.Invoke(platformService)));
         OnLocalizerReady.Invoke(localizer);
         OnAudioServiceReady.Invoke(audioService);
     }
