@@ -31,24 +31,16 @@ internal sealed class SanityCheckDetourBypass : IDisposable
             return;
         }
 
-        try
-        {
-            PatchShieldBypass.Bypass = true;
-            this.harmony.Patch(Target, prefix: PatchMethod);
-        }
-        finally
-        {
-            PatchShieldBypass.Bypass = false;
-        }
+        PatchShieldBypass.ExecuteWithBypass(
+            () => this.harmony.Patch(Target, prefix: PatchMethod));
     }
 
     public void Dispose()
     {
         if (Target != null)
         {
-            this.harmony.Unpatch(
-                Target,
-                PatchMethod.method);
+            PatchShieldBypass.ExecuteWithBypass(
+                () => this.harmony.Unpatch(Target, PatchMethod.method));
         }
     }
 

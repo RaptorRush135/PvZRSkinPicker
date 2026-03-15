@@ -12,7 +12,21 @@ using MelonLoader;
 [HarmonyPatch]
 internal static class PatchShieldBypass
 {
-    public static bool Bypass { get; set; }
+    public static bool Bypass { get; private set; }
+
+    public static void ExecuteWithBypass(Action action)
+    {
+        Bypass = true;
+
+        try
+        {
+            action();
+        }
+        finally
+        {
+            Bypass = false;
+        }
+    }
 
     [HarmonyTargetMethod]
     private static MethodBase TargetMethod()
