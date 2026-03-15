@@ -87,6 +87,7 @@ internal static class CustomSkinAssetReplacer
             return false;
         }
 
+        animation.initialSkinName = null;
         animation.skeletonDataAsset = newSkeleton;
         animation.Initialize(overwrite: true);
 
