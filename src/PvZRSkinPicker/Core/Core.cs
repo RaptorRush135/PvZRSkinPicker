@@ -10,6 +10,7 @@ using MelonLoader;
 
 using PvZRSkinPicker.Almanac;
 using PvZRSkinPicker.Almanac.UI;
+using PvZRSkinPicker.Api;
 using PvZRSkinPicker.Api.Context;
 using PvZRSkinPicker.Data;
 using PvZRSkinPicker.Environment;
@@ -98,6 +99,18 @@ public sealed class Core : MelonMod
 
         controller.ApplySelections(selectionSet);
         controller.Bind(button);
+
+        bool firstOpen = true;
+        AlmanacApi.OnAlmanacOpened.Subscribe(openType =>
+        {
+            if (openType != type)
+            {
+                return;
+            }
+
+            controller.RefreshName(overrideNextNameSet: firstOpen);
+            firstOpen = false;
+        });
 
         return controller;
     }

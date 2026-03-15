@@ -9,6 +9,9 @@ using MelonLoader;
 
 using PvZRSkinPicker.Almanac.UI;
 
+using UnityEngine;
+using UnityEngine.Events;
+
 internal sealed class AlmanacSelection<T>
     where T : struct, Enum
 {
@@ -42,6 +45,29 @@ internal sealed class AlmanacSelection<T>
     {
         this.selectedModel.Emit(
             this.selectedModel.Value);
+    }
+
+    public void OverrideNextNameSet(string name)
+    {
+        var @event = this.nameBinder.OnTextSet;
+        int frame = Time.frameCount;
+
+        UnityAction<string> wrapper = null!;
+        wrapper = (Action<string>)(_ =>
+        {
+            @event.RemoveListener(wrapper);
+            if (Time.frameCount != frame)
+            {
+                Melon<Core>.Logger.Warning(
+                    $"OnTextSet invoked on wrong frame. Expected {frame}, actual {Time.frameCount}");
+
+                return;
+            }
+
+            this.SetName(name);
+        });
+
+        @event.AddListener(wrapper);
     }
 
     public void SetName(string name)

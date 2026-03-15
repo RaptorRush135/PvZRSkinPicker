@@ -43,12 +43,11 @@ internal sealed class SkinPickerController<T>
             if (selectionSet.Selections.TryGetValue(type, out SkinId? id))
             {
                 picker.Select(id);
+                continue;
             }
-            else
-            {
-                // TODO: Remove when skin deselection is implemented
-                picker.ApplySelection();
-            }
+
+            // TODO: Remove when skin deselection is implemented
+            picker.ApplySelection();
         }
     }
 
@@ -56,8 +55,14 @@ internal sealed class SkinPickerController<T>
     {
         this.selection.SelectionChanged += type =>
         {
-            bool typeHasPicker = this.pickers.ContainsKey(type);
-            button.SetActive(typeHasPicker);
+            if (!this.pickers.TryGetValue(type, out var picker))
+            {
+                button.SetActive(false);
+                return;
+            }
+
+            button.SetActive(true);
+            this.RefreshName(picker, overrideNextNameSet: true);
         };
 
         button.AddOnClick(this.CycleSkin);
@@ -69,9 +74,16 @@ internal sealed class SkinPickerController<T>
         {
             AudioServiceApi.PlayWithRandomPitch(FoleyType.LimbsPop);
 
-            Skin skin = picker.Next();
+            picker.Next();
             this.selection.Refresh();
-            this.selection.SetName(skin.Name);
+        }
+    }
+
+    public void RefreshName(bool overrideNextNameSet)
+    {
+        if (this.pickers.TryGetValue(this.selection.Value, out var picker))
+        {
+            this.RefreshName(picker, overrideNextNameSet);
         }
     }
 
@@ -84,5 +96,22 @@ internal sealed class SkinPickerController<T>
                 pair => pair.Value.GetSelectedSkin().Id);
 
         return new SkinSelectionSet<T>(selections);
+    }
+
+    private void RefreshName(SkinPicker<T> picker, bool overrideNextNameSet)
+    {
+        Skin skin = picker.GetSelectedSkin();
+        if (skin.Id.Type != SkinType.Custom)
+        {
+            return;
+        }
+
+        if (overrideNextNameSet)
+        {
+            this.selection.OverrideNextNameSet(skin.Name);
+            return;
+        }
+
+        this.selection.SetName(skin.Name);
     }
 }

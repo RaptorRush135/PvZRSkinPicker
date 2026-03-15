@@ -13,6 +13,8 @@ using MelonLoader;
 [HarmonyPatch]
 internal static class AlmanacApi
 {
+    public static readonly MelonEvent<AlmanacEntryType> OnAlmanacOpened = new();
+
     public static readonly MelonEvent<AlmanacEntryType> OnAlmanacClosed = new();
 
     private const string PlantAlmanacId = "almanacPlants";
@@ -20,16 +22,28 @@ internal static class AlmanacApi
     private const string ZombieAlmanacId = "almanacZombies";
 
     [HarmonyPostfix]
+    [HarmonyPatch(typeof(PanelViewActivity), nameof(PanelViewActivity.IsDoneLoading))]
+    private static void IsDoneLoading(PanelViewActivity __instance)
+    {
+        RaiseAlmanacEvent(__instance, OnAlmanacOpened);
+    }
+
+    [HarmonyPostfix]
     [HarmonyPatch(typeof(PanelViewActivity), nameof(PanelViewActivity.UnloadingStarted))]
     private static void UnloadingStarted(PanelViewActivity __instance)
     {
-        switch (__instance.m_panelId)
+        RaiseAlmanacEvent(__instance, OnAlmanacClosed);
+    }
+
+    private static void RaiseAlmanacEvent(PanelViewActivity panelViewActivity, MelonEvent<AlmanacEntryType> @event)
+    {
+        switch (panelViewActivity.m_panelId)
         {
             case PlantAlmanacId:
-                OnAlmanacClosed.Invoke(AlmanacEntryType.Plant);
+                @event.Invoke(AlmanacEntryType.Plant);
                 break;
             case ZombieAlmanacId:
-                OnAlmanacClosed.Invoke(AlmanacEntryType.Zombie);
+                @event.Invoke(AlmanacEntryType.Zombie);
                 break;
         }
     }
