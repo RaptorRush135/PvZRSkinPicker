@@ -8,7 +8,7 @@ using Newtonsoft.Json.Serialization;
 
 internal static class ModConfig
 {
-    private const string FormatVersionKey = "format_version";
+    public const string FormatVersionKey = "format_version";
 
     private static readonly JsonLoadSettings LoadSettings = new()
     {

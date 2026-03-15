@@ -1,5 +1,6 @@
 ﻿namespace PvZRSkinPicker.Tests;
 
+using PvZRSkinPicker.Configuration;
 using PvZRSkinPicker.Skins.Custom.Manifest;
 
 public class FormatVersionTests
@@ -8,7 +9,7 @@ public class FormatVersionTests
     public void FormatVersionMustBeDefined()
     {
         var ex = Assert.Throws<InvalidDataException>(() => SkinPackManifest.Parse("{}"));
-        Assert.Contains(SkinPackManifest.FormatVersionKey, ex.Message);
+        Assert.Contains(ModConfig.FormatVersionKey, ex.Message);
     }
 
     [Fact]
@@ -19,6 +20,6 @@ public class FormatVersionTests
                     "format_version": "invalid"
                 }
                 """));
-        Assert.Contains(SkinPackManifest.FormatVersionKey, ex.Message);
+        Assert.Contains(ModConfig.FormatVersionKey, ex.Message);
     }
 }
