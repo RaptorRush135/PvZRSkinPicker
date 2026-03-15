@@ -134,6 +134,7 @@ internal sealed class CustomSkinLoader(
             if (!skinDirectory.Exists)
             {
                 logger.Warning($"Skin directory not found: '{skinDirectory.FullName}'");
+                LogFailure();
                 return null;
             }
 
@@ -141,6 +142,7 @@ internal sealed class CustomSkinLoader(
                 || !targetType.IsInAlmanac())
             {
                 logger.Warning($"Could not parse skin type: '{skin.Type}'");
+                LogFailure();
                 return null;
             }
 
@@ -159,6 +161,8 @@ internal sealed class CustomSkinLoader(
                         "Failed to replace skin assets in the prefab. " +
                         "Check Unity debug logs for more details");
 
+                    LogFailure();
+
                     return null;
                 }
 
@@ -174,8 +178,21 @@ internal sealed class CustomSkinLoader(
         }
         catch (Exception ex)
         {
-            logger.Error("Could not load skin", ex);
+            LogFailure(ex);
             return null;
+        }
+
+        void LogFailure(Exception? exception = null)
+        {
+            const string message = "Failed to load skin";
+            if (exception != null)
+            {
+                logger.Error(message, exception);
+            }
+            else
+            {
+                logger.Error(message);
+            }
         }
     }
 

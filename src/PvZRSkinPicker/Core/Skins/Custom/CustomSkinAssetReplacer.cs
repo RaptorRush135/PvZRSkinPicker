@@ -172,7 +172,7 @@ internal static class CustomSkinAssetReplacer
         var pageName = RemoveOptionalSuffix(text[..index], ".png");
         if (!pageName.SequenceEqual(expectedPageName))
         {
-            Logger.Warning($"Page name did not match (Expected: '{expectedPageName}'. Actual: '{pageName}')");
+            Logger.Warning($"Atlas page name did not match (Expected: '{expectedPageName}'. Actual: '{pageName}')");
             return false;
         }
 
