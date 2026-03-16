@@ -5,7 +5,7 @@
 
 namespace System.Linq;
 
-internal static class Enumerable
+internal static class EnumerableExtensions
 {
     public static IEnumerable<(int Index, TSource Item)> Index<TSource>(this IEnumerable<TSource> source)
     {
