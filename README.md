@@ -7,7 +7,7 @@
 > [!WARNING]
 > **This mod does NOT unlock pre-order content.**
 >
-> 🔒 Pre-order skins will **only appear in the skin picker if the player already owns them**.
+> 🔒 The pre-orde skins will **only appear in the skin picker if the player already owns it**.
 
 ## 📦 Download
 
@@ -22,6 +22,8 @@
 
 * 🎭 Pick specific skins for plants and zombies.
 * 🐛 Fixes the Retro Peashooter bug where incorrect projectiles and visual effects are used.
+* 💾 Selection persistence
+* 🎨 [Custom plant skins](./CustomSkinPacks.md)
 * 🚧 ...
 
 ## 🚀 How to use
@@ -42,3 +44,4 @@
 * 🌏 China
 * 🥚 EasterEgg
 * 🎄 Xmas
+* 🎨 Custom
