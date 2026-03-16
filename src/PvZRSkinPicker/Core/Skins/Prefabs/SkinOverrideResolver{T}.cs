@@ -47,7 +47,20 @@ internal abstract class SkinOverrideResolver<T>
         }
     }
 
-    public virtual void ClearSkinConditions()
+    public void OnForcedDecember()
+    {
+        if (this.currentContext.Get() == null)
+        {
+            Melon<Core>.Logger.Warning(
+                $"{nameof(this.OnForcedDecember)} was called but no spawn context is active");
+
+            return;
+        }
+
+        GameplayServiceApi.RetroContentActiveOverride = false;
+    }
+
+    public void ClearSkinConditions()
     {
         this.currentContext.Clear();
         GameplayServiceApi.SetOverrides(null);

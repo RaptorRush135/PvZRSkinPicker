@@ -36,6 +36,7 @@ internal static class GetZombieControllerPatch
 
         if (forceDecember)
         {
+            ZombieSkinOverrideResolver.Instance.OnForcedDecember();
             return;
         }
 
