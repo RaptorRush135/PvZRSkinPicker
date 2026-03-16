@@ -62,7 +62,7 @@ internal sealed class SkinPickerController<T>
             }
 
             button.SetActive(true);
-            this.RefreshName(picker, overrideNextNameSet: true);
+            this.RefreshName(picker, overrideUntilNextNameSet: true);
         };
 
         button.AddOnClick(this.CycleSkin);
@@ -79,11 +79,11 @@ internal sealed class SkinPickerController<T>
         }
     }
 
-    public void RefreshName(bool overrideNextNameSet)
+    public void RefreshName(bool overrideUntilNextNameSet)
     {
         if (this.pickers.TryGetValue(this.selection.Value, out var picker))
         {
-            this.RefreshName(picker, overrideNextNameSet);
+            this.RefreshName(picker, overrideUntilNextNameSet);
         }
     }
 
@@ -98,7 +98,7 @@ internal sealed class SkinPickerController<T>
         return new SkinSelectionSet<T>(selections);
     }
 
-    private void RefreshName(SkinPicker<T> picker, bool overrideNextNameSet)
+    private void RefreshName(SkinPicker<T> picker, bool overrideUntilNextNameSet)
     {
         Skin skin = picker.GetSelectedSkin();
         if (skin.Id.Type != SkinType.Custom)
@@ -106,7 +106,7 @@ internal sealed class SkinPickerController<T>
             return;
         }
 
-        if (overrideNextNameSet)
+        if (overrideUntilNextNameSet)
         {
             this.selection.OverrideNextNameSet(skin.Name);
             return;

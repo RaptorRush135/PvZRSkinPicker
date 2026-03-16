@@ -108,7 +108,7 @@ public sealed class Core : MelonMod
                 return;
             }
 
-            controller.RefreshName(overrideNextNameSet: firstOpen);
+            controller.RefreshName(overrideUntilNextNameSet: firstOpen);
             firstOpen = false;
         });
 
