@@ -4,6 +4,8 @@ using System.Diagnostics.Contracts;
 
 using Newtonsoft.Json;
 
+using PvZRSkinPicker.Configuration;
+
 internal sealed record SkinPackHeader(
     [property: JsonRequired] string Name,
     [property: JsonRequired] Guid Id,
@@ -22,6 +24,15 @@ internal sealed record SkinPackHeader(
     [Pure]
     public string? Validate()
     {
+        if (ModConfigValidator.ValidateString(
+            this.Name,
+            nameof(this.Name),
+            ModConfigValidator.IsPrintableAscii,
+            30) is { } nameError)
+        {
+            return nameError;
+        }
+
         if (this.Id == Guid.Empty)
         {
             return $"Skin pack '{nameof(this.Id)}' can not be a empty Guid";
@@ -35,6 +46,15 @@ internal sealed record SkinPackHeader(
         if (this.Authors.Count < 1)
         {
             return "Skin pack must contain at least one author";
+        }
+
+        if (ModConfigValidator.ValidateStrings(
+            this.Authors,
+            nameof(this.Authors),
+            ModConfigValidator.IsPrintableAscii,
+            30) is { } authors)
+        {
+            return authors;
         }
 
         return null;

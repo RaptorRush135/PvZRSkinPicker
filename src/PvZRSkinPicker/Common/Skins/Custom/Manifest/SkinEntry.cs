@@ -4,6 +4,8 @@ using System.Diagnostics.Contracts;
 
 using Newtonsoft.Json;
 
+using PvZRSkinPicker.Configuration;
+
 internal sealed record SkinEntry(
     [property: JsonRequired] string Type,
     [property: JsonRequired] string Name,
@@ -15,16 +17,30 @@ internal sealed record SkinEntry(
     [Pure]
     public string? Validate()
     {
-        if (ValidateString(
+        if (ModConfigValidator.ValidateString(
+            this.Type,
+            nameof(this.Type),
+            ch => (ch is '-') || (char.IsAscii(ch) && char.IsLetter(ch)),
+            40) is { } typeError)
+        {
+            return typeError;
+        }
+
+        if (ModConfigValidator.ValidateString(
             this.Name,
             nameof(this.Name),
-            IsPrintableAscii,
+            ModConfigValidator.IsPrintableAscii,
             30) is { } nameError)
         {
             return nameError;
         }
 
-        if (ValidateString(
+        if (this.Id == Guid.Empty)
+        {
+            return $"Skin '{nameof(this.Id)}' can not be a empty Guid";
+        }
+
+        if (ModConfigValidator.ValidateString(
             this.Directory,
             nameof(this.Directory),
             ch => (ch is '-' or '_') || (char.IsAscii(ch) && char.IsLetterOrDigit(ch)),
@@ -33,55 +49,6 @@ internal sealed record SkinEntry(
             return directoryError;
         }
 
-        if (this.Id == Guid.Empty)
-        {
-            return $"Skin '{nameof(this.Id)}' can not be a empty Guid";
-        }
-
         return null;
     }
-
-    [Pure]
-    private static string? ValidateString(
-        string @string,
-        string stringName,
-        Predicate<char> validator,
-        int maxLength)
-    {
-        if (ValidateStringLength(@string, stringName, maxLength) is { } lengthError)
-        {
-            return lengthError;
-        }
-
-        char invalid = @string.FirstOrDefault(ch => !validator(ch));
-
-        return invalid != default
-            ? $"Invalid character on '{stringName}' ({GetCharDisplay(invalid)})"
-            : null;
-
-        static string GetCharDisplay(char ch)
-            => IsPrintableAscii(ch) ? $"{ch}" : $"U+{(int)ch:X4}";
-    }
-
-    [Pure]
-    private static string? ValidateStringLength(
-        string @string,
-        string stringName,
-        int maxLength)
-    {
-        if (string.IsNullOrEmpty(@string))
-        {
-            return $"{stringName} must not be empty";
-        }
-
-        if (@string.Length > maxLength)
-        {
-            return $"{stringName} length must not be greater than {maxLength}";
-        }
-
-        return null;
-    }
-
-    [Pure]
-    private static bool IsPrintableAscii(char ch) => ch >= ' ' && ch <= '~';
 }
