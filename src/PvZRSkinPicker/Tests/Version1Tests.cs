@@ -14,7 +14,8 @@ public class Version1Tests
                     {
                         "name": "Test skin pack",
                         "id": "0016f97b-25af-46d5-8caa-0cf0c190196a",
-                        "version": 1
+                        "version": 1,
+                        "authors": [ "Test Author" ]
                     },
                     "skins":
                     {
@@ -42,7 +43,8 @@ public class Version1Tests
                     {
                         "name": "Test skin pack",
                         "id": "0016f97b-25af-46d5-8caa-0cf0c190196a",
-                        "version": 1
+                        "version": 1,
+                        "authors": [ "Test Author" ]
                     },
                     "skins": { }
                 }

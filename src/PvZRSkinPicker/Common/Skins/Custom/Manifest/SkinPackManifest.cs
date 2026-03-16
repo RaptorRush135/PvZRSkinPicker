@@ -17,9 +17,37 @@ internal sealed record SkinPackManifest(
     public int FormatVersion { get; init; }
 
     [Pure]
-    public static SkinPackManifest Load(Stream stream)
+    public static SkinPackManifest Load(Stream stream, Action<string>? logger)
     {
-        return ModConfig.Load<SkinPackManifest>(CurrentFormatVersion, stream);
+        var manifest = ModConfig.Load<SkinPackManifest>(CurrentFormatVersion, stream);
+
+        var authors = manifest.Header.Authors;
+
+        var nonEmptyAuthors = authors.Select(a => a?.Trim() ?? string.Empty)
+            .Where((author, index) =>
+            {
+                if (author.Length == 0)
+                {
+                    logger?.Invoke($"Skin pack '{manifest}': Empty author name (Index: {index})");
+                    return false;
+                }
+
+                return true;
+            })
+            .ToArray();
+
+        if (nonEmptyAuthors.SequenceEqual(authors, StringComparer.Ordinal))
+        {
+            return manifest;
+        }
+
+        return manifest with
+        {
+            Header = manifest.Header with
+            {
+                Authors = nonEmptyAuthors,
+            },
+        };
     }
 
     public override string ToString() => this.Header.ToString();

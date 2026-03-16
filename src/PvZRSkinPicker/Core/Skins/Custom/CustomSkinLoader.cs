@@ -86,7 +86,7 @@ internal sealed class CustomSkinLoader(
             try
             {
                 using var fileStream = manifestFile.OpenRead();
-                var manifest = SkinPackManifest.Load(fileStream);
+                var manifest = SkinPackManifest.Load(fileStream, logger.Warning);
 
                 if (!manifest.Validate(out string? error))
                 {

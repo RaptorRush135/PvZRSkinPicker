@@ -13,7 +13,7 @@ internal static class SkinPackManifestExtensions
             [StringSyntax(StringSyntaxAttribute.Json)] string json)
         {
             using var stream = StringToStream(json);
-            var manifest = SkinPackManifest.Load(stream);
+            var manifest = SkinPackManifest.Load(stream, logger: null);
 
             if (!manifest.Validate(out string? error))
             {

@@ -8,9 +8,8 @@ internal sealed record SkinPackHeader(
     [property: JsonRequired] string Name,
     [property: JsonRequired] Guid Id,
     [property: JsonRequired] int Version,
-    IReadOnlyList<string>? Authors)
+    [property: JsonRequired] IReadOnlyList<string> Authors)
 {
-    // TODO: Make required?
     public string FormattedAuthors
         => field ??= this.Authors switch
         {
@@ -31,6 +30,11 @@ internal sealed record SkinPackHeader(
         if (this.Version <= 0)
         {
             return $"Skin pack '{nameof(this.Version)}' must be greater than 0";
+        }
+
+        if (this.Authors.Count < 1)
+        {
+            return "Skin pack must contain at least one author";
         }
 
         return null;
