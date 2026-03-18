@@ -51,12 +51,13 @@ Container for all available skins in the pack
 
 Represents a single skin within the pack
 
-| Field       | Type        | Constraints                                                              | Description                                 |
-|-------------|-------------|--------------------------------------------------------------------------|---------------------------------------------|
-| `type`      | `PlantType` | <ul><li>Must be a valid [PlantType](#plant-types)</li></ul>                              | The type of plant of the skin               |
-| `name`      | `string`    | <ul><li>Max 30 chars</li><li>Printable ASCII only</li></ul>              | Display name of the skin                    |
-| `id`        | `GUID`      | <ul><li>Must not be empty GUID</li></ul>                                 | Unique identifier for this skin             |
-| `directory` | `string`    | <ul><li>Max 30 chars</li><li>`a–z` `A–Z` `0–9`</li><li>`-` `_`</li></ul> | Name of directory containing the skin files |
+| Field         | Type        | Constraints                                                              | Description                                                                                               |
+|---------------|-------------|--------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
+| `type`        | `PlantType` | <ul><li>Must be a valid [PlantType](#plant-types)</li></ul>              | The type of plant of the skin                                                                             |
+| `name`        | `string`    | <ul><li>Max 30 chars</li><li>Printable ASCII only</li></ul>              | Display name of the skin                                                                                  |
+| `id`          | `GUID`      | <ul><li>Must not be empty GUID</li></ul>                                 | Unique identifier for this skin                                                                           |
+| `directory`   | `string`    | <ul><li>Max 30 chars</li><li>`a–z` `A–Z` `0–9`</li><li>`-` `_`</li></ul> | Name of directory containing the skin files                                                               |
+| `<pixelated>` | `boolean`   | <ul><li>`true` or `false`</li></ul>                                      | `true` disables smoothing (sharp pixels, useful for pixel art skins), `false` enables smoothing (default) |
 
 ## Example Manifest
 
