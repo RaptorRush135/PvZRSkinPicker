@@ -77,6 +77,12 @@ internal sealed class CustomSkinLoader(
 
         try
         {
+            if (!DirectoryHasVersionSuffix(out int directoryVersion))
+            {
+                logger.Error($"Directory '{directory.FullName}' does not have a valid -V{{N}} suffix");
+                return null;
+            }
+
             var manifestFile = directory.GetFile("manifest.json");
             if (!manifestFile.Exists)
             {
@@ -95,6 +101,14 @@ internal sealed class CustomSkinLoader(
                     return null;
                 }
 
+                if (directoryVersion != manifest.Header.Version)
+                {
+                    logger.Error(
+                        $"Directory version mismatch: directory has version {directoryVersion} but manifest " +
+                        $"specifies version {manifest.Header.Version}");
+                    return null;
+                }
+
                 return new(manifest, directory);
             }
             catch (Exception ex)
@@ -107,6 +121,36 @@ internal sealed class CustomSkinLoader(
         {
             logger.Error($"Could not load file manifest at '{directory.FullName}'", ex);
             return null;
+        }
+
+        bool DirectoryHasVersionSuffix(out int directoryVersion)
+        {
+            const string versionPattern = "-V";
+            string directoryName = directory.Name;
+
+            directoryVersion = 0;
+            int suffixIndex = directoryName.LastIndexOf(versionPattern, StringComparison.OrdinalIgnoreCase);
+            if (suffixIndex < 0)
+            {
+                logger.Warning($"Directory '{directoryName}' does not contain '{versionPattern}' suffix");
+                return false;
+            }
+
+            string versionPart = directoryName[(suffixIndex + versionPattern.Length)..];
+            if (versionPart.Length == 0)
+            {
+                logger.Warning($"Directory '{directoryName}' has no version number after '{versionPattern}'");
+                return false;
+            }
+
+            if (!versionPart.All(ch => char.IsAscii(ch) && char.IsDigit(ch))
+                || !int.TryParse(versionPart, out directoryVersion))
+            {
+                logger.Warning($"Directory '{directoryName}' has invalid version format: '{versionPart}'");
+                return false;
+            }
+
+            return true;
         }
     }
 

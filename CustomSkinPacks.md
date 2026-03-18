@@ -133,7 +133,7 @@ Texture (`.png`), atlas (`.atlas`) & skeleton (`.skel`) files must be named `ski
 
 ### Directory naming convention
 
-Skin pack directories should use the `V-{N}` suffix to indicate the version:
+Skin pack directories should use the `-V{N}` suffix to indicate the version:
 
 ```
 📁 SkinPacks/
@@ -148,7 +148,7 @@ Skin pack directories should use the `V-{N}` suffix to indicate the version:
     └── ...
 ```
 
-- Each version update should create a **new directory** with the updated version suffix (`V-1`, `V-2`, etc.)
+- Each version update must create a **new directory** with the updated version suffix (`-V1`, `-V2`, etc.)
 
 - This prevents files from different versions from being accidentally combined when a newer version is unpacked over an existing installation
 
@@ -156,10 +156,10 @@ Skin pack directories should use the `V-{N}` suffix to indicate the version:
 
 ### Version header field
 
-The `version` field in the `SkinPackHeader` should:
+The `version` field in the `SkinPackHeader` must:
 
 - Increment with each release
-- Match the `V-{N}` suffix in the directory name
+- Match the `-V{N}` suffix in the directory name
 
 Example:
 - Directory: `MySkinPack-V1/` → Header `"version": 1`
