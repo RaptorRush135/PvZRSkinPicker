@@ -21,10 +21,14 @@
 ## ✨ Features
 
 * 🎭 Pick specific skins for plants and zombies.
-* 🐛 Fixes the Retro Peashooter bug where incorrect projectiles and visual effects are used.
-* 💾 Selection persistence
-* 🎨 [Custom plant skins](./CustomSkinPacks.md)
+* 💾 Selection persistence.
+* 🎨 [Custom plant skins](./CustomSkinPacks.md).
 * 🚧 ...
+
+## 🐛 Vanilla bug fixes
+
+* Fixes the Retro Peashooter bug where incorrect projectiles and visual effects are used if it is toggled mid game.
+* Fixes an incompatibility of deserialized December zombies with retro zombie toggle (exception & wrong drops).
 
 ## 🚀 How to use
 
