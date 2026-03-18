@@ -18,11 +18,7 @@ internal static class PrefabCloner
 
         GameObject prefab = LoadPrefabReference(reference, expectLoaded);
 
-        GameObject clone = InstantiateInactiveFromPrefabAsset(prefab);
-
-        Addressables.Release(reference.OperationHandle);
-
-        return clone;
+        return InstantiateInactiveFromPrefabAsset(prefab);
     }
 
     public static GameObject InstantiateInactiveFromPrefabAsset(
