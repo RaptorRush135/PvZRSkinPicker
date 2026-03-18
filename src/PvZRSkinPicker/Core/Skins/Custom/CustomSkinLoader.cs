@@ -129,7 +129,7 @@ internal sealed class CustomSkinLoader(
             string directoryName = directory.Name;
 
             directoryVersion = 0;
-            int suffixIndex = directoryName.LastIndexOf(versionPattern, StringComparison.OrdinalIgnoreCase);
+            int suffixIndex = directoryName.LastIndexOf(versionPattern, StringComparison.Ordinal);
             if (suffixIndex < 0)
             {
                 logger.Warning($"Directory '{directoryName}' does not contain '{versionPattern}' suffix");
