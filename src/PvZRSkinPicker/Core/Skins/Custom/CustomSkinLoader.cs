@@ -153,7 +153,7 @@ internal sealed class CustomSkinLoader(
             try
             {
                 var controller = prefab.GetComponent<PlantController>();
-                if (!this.TryLoadSkin(skinDirectory, controller))
+                if (!this.TryLoadSkin(skinDirectory, controller, usePointFilter: skin.Pixelated))
                 {
                     Object.Destroy(prefab);
 
@@ -196,13 +196,15 @@ internal sealed class CustomSkinLoader(
         }
     }
 
-    private bool TryLoadSkin(DirectoryInfo skinDirectory, PlantController controller)
+    private bool TryLoadSkin(DirectoryInfo skinDirectory, PlantController controller, bool usePointFilter)
     {
         var animation = controller.AnimationController.GetComponent<SkeletonAnimation>();
 
+        var filterMode = usePointFilter ? FilterMode.Point : FilterMode.Bilinear;
+
         BytesAsset? textureData = skinDirectory.GetFileIfExists("skin.png")?.ReadBytesAsset();
         Texture2D? texture = textureData != null
-            ? ModAssets.LoadTexture(textureData)
+            ? ModAssets.LoadTexture(textureData, filterMode)
             : null;
 
         try

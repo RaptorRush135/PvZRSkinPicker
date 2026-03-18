@@ -10,7 +10,8 @@ internal sealed record SkinEntry(
     [property: JsonRequired] string Type,
     [property: JsonRequired] string Name,
     [property: JsonRequired] Guid Id,
-    [property: JsonRequired] string Directory)
+    [property: JsonRequired] string Directory,
+    bool Pixelated)
 {
     public override string ToString() => $"{this.Name}({this.Type})({this.Id})";
 
