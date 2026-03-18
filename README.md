@@ -7,7 +7,7 @@
 > [!WARNING]
 > **This mod does NOT unlock pre-order content.**
 >
-> 🔒 The pre-orde skin will **only appear in the skin picker if the player already owns it**.
+> 🔒 The pre-order skin will **only appear in the skin picker if the player already owns it**.
 
 ## 📦 Download
 
