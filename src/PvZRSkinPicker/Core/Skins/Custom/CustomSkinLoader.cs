@@ -33,6 +33,7 @@ internal sealed class CustomSkinLoader(
 
         List<SkinPackManifestSource> sources = [.. ModEnvironment.SkinPacksDirectory
             .GetDirectories()
+            .OrderBy(d => d.Name, StringComparer.OrdinalIgnoreCase)
             .Select(this.TryGetManifest)
             .WhereNotNull()
             .GroupBy(s => s.Manifest.Header.Id)
