@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Skins.Picker;
+namespace PvZRSkinPicker.Skins.Picker;
 
 using System.Diagnostics.Contracts;
 
