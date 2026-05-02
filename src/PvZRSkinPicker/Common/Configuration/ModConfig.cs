@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Configuration;
+namespace PvZRSkinPicker.Configuration;
 
 using System.Diagnostics.Contracts;
 
@@ -18,7 +18,7 @@ internal static class ModConfig
 
     private static readonly JsonSerializerSettings SerializerSettings = new()
     {
-        MissingMemberHandling = MissingMemberHandling.Error,
+        MissingMemberHandling = MissingMemberHandling.Ignore,
         ContractResolver = new DefaultContractResolver
         {
             NamingStrategy = new SnakeCaseNamingStrategy(),
@@ -28,7 +28,7 @@ internal static class ModConfig
     private static JsonSerializer Serializer => field ??= JsonSerializer.Create(SerializerSettings);
 
     [Pure]
-    public static T Load<T>(int formatVersion, Stream stream)
+    public static T Load<T>(int formatVersion, Stream stream, Action<string>? logger = null)
         where T : IModConfig
     {
         using var reader = new StreamReader(stream);
@@ -39,15 +39,19 @@ internal static class ModConfig
         if (!root.TryGetValue(FormatVersionKey, out var token) ||
             token.Type != JTokenType.Integer)
         {
-            throw new InvalidDataException($"Missing or invalid {FormatVersionKey}.");
+            // Default to current format version if missing
+            return root.ToObject<T>(Serializer)
+                ?? throw new JsonSerializationException(
+                    $"Failed to deserialize {nameof(T)}: JSON root was null.");
         }
 
         var version = token.Value<int>();
         if (version != formatVersion)
         {
-            throw new NotSupportedException(
-                $"Unsupported manifest format version {version}. " +
-                $"Expected {formatVersion}.");
+            // Log a warning instead of throwing, as per developer request
+            logger?.Invoke(
+                $"Manifest format version mismatch (found {version}, expected {formatVersion}). " +
+                "Continuing anyway as requested by developer.");
         }
 
         return root.ToObject<T>(Serializer)

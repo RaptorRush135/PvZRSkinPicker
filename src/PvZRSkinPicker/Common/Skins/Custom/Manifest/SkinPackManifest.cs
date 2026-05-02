@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Skins.Custom.Manifest;
+namespace PvZRSkinPicker.Skins.Custom.Manifest;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -19,7 +19,7 @@ internal sealed record SkinPackManifest(
     [Pure]
     public static SkinPackManifest Load(Stream stream, Action<string>? logger)
     {
-        var manifest = ModConfig.Load<SkinPackManifest>(CurrentFormatVersion, stream);
+        var manifest = ModConfig.Load<SkinPackManifest>(CurrentFormatVersion, stream, logger);
 
         var authors = manifest.Header.Authors;
 

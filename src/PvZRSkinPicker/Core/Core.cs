@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker;
+namespace PvZRSkinPicker;
 
 using System.Collections.Immutable;
 
@@ -9,6 +9,7 @@ using Il2CppReloaded.Gameplay;
 using MelonLoader;
 
 using PvZRSkinPicker.Almanac;
+using PvZRSkinPicker.Almanac.Extensions;
 using PvZRSkinPicker.Almanac.UI;
 using PvZRSkinPicker.Api;
 using PvZRSkinPicker.Api.Context;
@@ -49,9 +50,7 @@ public sealed class Core : MelonMod
     private static void Ready(ModContext context)
     {
         var skinLocator = new SkinLocator(context.PlatformService, context.Localizer);
-
         var customSkinLoader = new CustomSkinLoader(Melon<Core>.Logger, context.DataService);
-
         var skinSelectionPersistence = new SkinSelectionPersistence(
             ModEnvironment.ModDataDirectory.GetFile("selections.json"));
 
@@ -71,7 +70,7 @@ public sealed class Core : MelonMod
             context.Almanac.m_zombiesModel,
             context.DataService.ZombieDefinitions.AsEnumerable()
                 .Select(d => new ZombieSkinDataDefinition(d, skinLocator)),
-            ImmutableDictionary<ZombieType, IReadOnlyList<Skin>>.Empty,
+            customSkinLoader.GetZombieSkins(),
             ZombieSkinOverrideResolver.Instance,
             skinSelections.Zombies);
 
@@ -88,14 +87,13 @@ public sealed class Core : MelonMod
         where T : struct, Enum
     {
         var button = SkinSwapUI.CreateButton(type);
-
         var selection = AlmanacSelection<T>.Create(type, entriesModel.m_selectedModel);
 
         var controller = new SkinPickerController<T>(
             selection,
             definitions,
             extraSkins,
-            onSelect: skinOverrideResolver.SetOverride);
+            skinOverrideResolver.SetOverride);
 
         controller.ApplySelections(selectionSet);
         controller.Bind(button);

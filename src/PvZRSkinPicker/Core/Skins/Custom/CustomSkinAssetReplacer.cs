@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Skins.Custom;
+namespace PvZRSkinPicker.Skins.Custom;
 
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
@@ -87,8 +87,9 @@ internal static class CustomSkinAssetReplacer
             return false;
         }
 
-        animation.initialSkinName = null;
+        string initialSkinName = animation.initialSkinName;
         animation.skeletonDataAsset = newSkeleton;
+        animation.initialSkinName = initialSkinName;
         animation.Initialize(overwrite: true);
 
         if (!animation.valid)
@@ -106,9 +107,14 @@ internal static class CustomSkinAssetReplacer
         TextAsset? atlasText,
         out AtlasAssetBase atlas)
     {
-        var currentAtlas = animation.SkeletonDataAsset.atlasAssets[0];
+        var currentAtlasAssets = animation.SkeletonDataAsset.atlasAssets;
+        var currentAtlas = currentAtlasAssets[0];
         var currentTexture = currentAtlas.PrimaryMaterial.mainTexture.Cast<Texture2D>();
-        texture.Ref()?.name = currentTexture.name;
+
+        if (texture != null)
+        {
+            texture.name = currentTexture.name;
+        }
 
         if (atlasText == null)
         {
@@ -118,7 +124,7 @@ internal static class CustomSkinAssetReplacer
                 return true;
             }
 
-            atlas = CreateAtlas(currentAtlas.Cast<SpineAtlasAsset>().atlasFile, texture, currentAtlas.PrimaryMaterial);
+            atlas = CreateAtlas(currentAtlas.Cast<SpineAtlasAsset>().atlasFile, texture, currentAtlas);
         }
         else
         {
@@ -129,7 +135,7 @@ internal static class CustomSkinAssetReplacer
             }
 
             var atlasTexture = texture.Ref() ?? currentTexture;
-            atlas = CreateAtlas(atlasText, atlasTexture, currentAtlas.PrimaryMaterial);
+            atlas = CreateAtlas(atlasText, atlasTexture, currentAtlas);
         }
 
         if (atlas.GetAtlas() == null)
@@ -144,20 +150,27 @@ internal static class CustomSkinAssetReplacer
     private static SpineAtlasAsset CreateAtlas(
         TextAsset atlasText,
         Texture2D texture,
-        Material material)
+        AtlasAssetBase originalAtlas)
     {
         ArgumentNullException.ThrowIfNull(atlasText);
         ArgumentNullException.ThrowIfNull(texture);
-        ArgumentNullException.ThrowIfNull(material);
+        ArgumentNullException.ThrowIfNull(originalAtlas);
 
-        var newMaterial = new Material(material)
+        var materials = new List<Material>();
+        for (int i = 0; i < originalAtlas.MaterialCount; i++)
         {
-            mainTexture = texture,
-        };
+            var mat = new Material(originalAtlas.PrimaryMaterial)
+            {
+                mainTexture = texture,
+            };
+            materials.Add(mat);
+        }
+
+        var materialsArray = new Il2CppReferenceArray<Material>(materials.ToArray());
 
         return SpineAtlasAsset.CreateRuntimeInstance(
             atlasText,
-            new([newMaterial]),
+            materialsArray,
             initialize: false);
     }
 

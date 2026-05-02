@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Skins.Custom;
+namespace PvZRSkinPicker.Skins.Custom;
 
 using System.Diagnostics;
 
@@ -19,17 +19,31 @@ using PvZRSkinPicker.Skins.Custom.Manifest;
 using PvZRSkinPicker.Unity;
 
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 internal sealed class CustomSkinLoader(
     MelonLogger.Instance logger,
     IDataService dataService)
 {
     public IReadOnlyDictionary<SeedType, IReadOnlyList<Skin>> GetPlantSkins()
+        => this.GetSkins<SeedType>(
+            m => m.Skins.Plants,
+            this.TryLoadPlantSkin);
+
+    public IReadOnlyDictionary<ZombieType, IReadOnlyList<Skin>> GetZombieSkins()
+        => this.GetSkins<ZombieType>(
+            m => m.Skins.Zombies,
+            this.TryLoadZombieSkin);
+
+    private IReadOnlyDictionary<T, IReadOnlyList<Skin>> GetSkins<T>(
+        Func<SkinPackManifest, IEnumerable<SkinEntry>> entriesSelector,
+        Func<SkinEntry, DirectoryInfo, SkinPrototype<T>?> loadFunc)
+        where T : struct, Enum
     {
         var stopwatch = Stopwatch.StartNew();
 
         logger.WriteSpacer();
-        logger.Msg("Reading skin manifests...");
+        logger.Msg($"Reading {typeof(T).Name} skin manifests...");
 
         List<SkinPackManifestSource> sources = [.. ModEnvironment.SkinPacksDirectory
             .GetDirectories()
@@ -45,14 +59,16 @@ internal sealed class CustomSkinLoader(
 
                 foreach (var ignored in ordered.Skip(1))
                 {
-                    logger.Warning($"Ignoring '{ignored}' since a new version exists");
+                logger.Warning($"Ignoring '{ignored}' since a new version exists");
                 }
 
                 return ordered[0];
             })];
 
         var skins = sources
-            .SelectMany(this.LoadManifestSkins)
+            .SelectMany(source => entriesSelector(source.Manifest)
+                .Select(skin => loadFunc(skin, source.Directory))
+                .WhereNotNull())
             .GroupBy(
                 s => s.Type,
                 s => Skin.CreateCustom(s.Name, s.Id, s.Prefab))
@@ -65,7 +81,7 @@ internal sealed class CustomSkinLoader(
         int totalSkins = skins.Values.Sum(list => list.Count);
 
         logger.WriteSpacer();
-        logger.Msg($"Loaded {totalSkins} custom skins in {stopwatch.ElapsedMilliseconds} ms");
+        logger.Msg($"Loaded {totalSkins} custom {typeof(T).Name} skins in {stopwatch.ElapsedMilliseconds} ms");
         logger.WriteSpacer();
 
         return skins;
@@ -154,24 +170,37 @@ internal sealed class CustomSkinLoader(
         }
     }
 
-    private IReadOnlyCollection<SkinPrototype<SeedType>> LoadManifestSkins(SkinPackManifestSource manifestSource)
+    private SkinPrototype<SeedType>? TryLoadPlantSkin(SkinEntry skin, DirectoryInfo packDirectory)
     {
-        ArgumentNullException.ThrowIfNull(manifestSource);
-
-        var header = manifestSource.Manifest.Header;
-
-        logger.WriteSpacer();
-        logger.Msg($"Processing skin pack '{header}' by {header.FormattedAuthors}");
-
-        return [.. manifestSource.Manifest.Skins.Plants
-            .Select(skin => this.TryLoadSkin(skin, manifestSource.Directory))
-            .WhereNotNull()];
+        return this.TryLoadSkin<SeedType, PlantController>(
+            skin,
+            packDirectory,
+            dataService.GetPlantDefinition,
+            d => d.m_prefab,
+            controller => controller.AnimationController.GetComponent<SkeletonAnimation>());
     }
 
-    private SkinPrototype<SeedType>? TryLoadSkin(SkinEntry skin, DirectoryInfo packDirectory)
+    private SkinPrototype<ZombieType>? TryLoadZombieSkin(SkinEntry skin, DirectoryInfo packDirectory)
+    {
+        return this.TryLoadSkin<ZombieType, ZombieController>(
+            skin,
+            packDirectory,
+            dataService.GetZombieDefinition,
+            d => d.m_prefab,
+            controller => controller.GetComponentInChildren<SkeletonAnimation>());
+    }
+
+    private SkinPrototype<T>? TryLoadSkin<T, TController>(
+        SkinEntry skin,
+        DirectoryInfo packDirectory,
+        Func<T, dynamic> definitionSelector,
+        Func<dynamic, AssetReferenceGameObject> prefabSelector,
+        Func<TController, SkeletonAnimation> animationSelector)
+        where T : struct, Enum
+        where TController : Component
     {
         logger.WriteLine();
-        logger.Msg($"Processing skin '{skin}'");
+        logger.Msg($"Processing {typeof(T).Name} skin '{skin}'");
 
         try
         {
@@ -183,22 +212,30 @@ internal sealed class CustomSkinLoader(
                 return null;
             }
 
-            if (!Enum.TryParse<SeedType>(skin.Type, ignoreCase: true, out var targetType)
-                || !targetType.IsInAlmanac())
+            if (!Enum.TryParse<T>(skin.Type, ignoreCase: true, out var targetType))
             {
                 logger.Warning($"Could not parse skin type: '{skin.Type}'");
                 LogFailure();
                 return null;
             }
 
-            var definition = dataService.GetPlantDefinition(targetType);
+            if (targetType is SeedType seed && !seed.IsInAlmanac())
+            {
+                logger.Warning($"Seed type not in almanac: '{seed}'");
+                LogFailure();
+                return null;
+            }
 
-            var prefab = PrefabCloner.InstantiateInactiveFromPrefabAsset(definition.m_prefab, expectLoaded: true);
+            var definition = definitionSelector(targetType);
+
+            var prefab = PrefabCloner.InstantiateInactiveFromPrefabAsset(prefabSelector(definition), expectLoaded: true);
 
             try
             {
-                var controller = prefab.GetComponent<PlantController>();
-                if (!this.TryLoadSkin(skinDirectory, controller, usePointFilter: skin.Pixelated))
+                var controller = prefab.GetComponent<TController>();
+                var animation = animationSelector(controller);
+
+                if (!this.TryReplaceAssets(skinDirectory, animation, usePointFilter: skin.Pixelated))
                 {
                     Object.Destroy(prefab);
 
@@ -241,10 +278,8 @@ internal sealed class CustomSkinLoader(
         }
     }
 
-    private bool TryLoadSkin(DirectoryInfo skinDirectory, PlantController controller, bool usePointFilter)
+    private bool TryReplaceAssets(DirectoryInfo skinDirectory, SkeletonAnimation animation, bool usePointFilter)
     {
-        var animation = controller.AnimationController.GetComponent<SkeletonAnimation>();
-
         var filterMode = usePointFilter ? FilterMode.Point : FilterMode.Bilinear;
 
         BytesAsset? textureData = skinDirectory.GetFileIfExists("skin.png")?.ReadBytesAsset();
