@@ -17,4 +17,14 @@ internal sealed class PlantSkinOverrideResolver : SkinOverrideResolver<SeedType>
     {
         return new ReloadedDeserializePatch<Plant, SeedType>(Instance).Initialize();
     }
+
+    public override ReadOnlySpan<SeedType> GetExtraTypeOverrides(SeedType type)
+    {
+        return type switch
+        {
+            SeedType.Wallnut => [SeedType.ExplodeONut, SeedType.GiantWallnut],
+            SeedType.Repeater => [SeedType.Leftpeater],
+            _ => [],
+        };
+    }
 }

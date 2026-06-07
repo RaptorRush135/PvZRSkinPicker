@@ -18,7 +18,13 @@ internal abstract class SkinOverrideResolver<T>
     public void SetOverride(T type, Skin skin)
     {
         this.overrides[type] = skin;
+        foreach (var extraOverride in this.GetExtraTypeOverrides(type))
+        {
+            this.overrides[extraOverride] = skin;
+        }
     }
+
+    public virtual ReadOnlySpan<T> GetExtraTypeOverrides(T type) => [];
 
     public bool TryGetContextOverride(T type, [MaybeNullWhen(false)] out Skin skin)
     {
