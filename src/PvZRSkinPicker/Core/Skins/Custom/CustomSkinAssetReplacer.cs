@@ -105,6 +105,14 @@ internal static class CustomSkinAssetReplacer
             return false;
         }
 
+        if (animation.meshRenderer.sharedMaterial == null)
+        {
+            Logger.Warning("No material in the mesh renderer. " +
+                "This is likely caused by not having visible attachments in the default pose");
+
+            return false;
+        }
+
         return true;
     }
 
