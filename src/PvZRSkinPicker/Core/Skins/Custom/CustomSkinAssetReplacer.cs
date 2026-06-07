@@ -63,20 +63,28 @@ internal static class CustomSkinAssetReplacer
             return false;
         }
 
-        bool atlasChanged = atlas != animation.SkeletonDataAsset.atlasAssets[0];
+        var originalSkeletonData = animation.SkeletonDataAsset;
+
+        bool atlasChanged = atlas != originalSkeletonData.atlasAssets[0];
 
         if (skeletonData == null && !atlasChanged)
         {
             return true;
         }
 
-        var skeletonSource = skeletonData.Ref() ?? animation.skeletonDataAsset.skeletonJSON;
+        var skeletonSource = skeletonData.Ref() ?? originalSkeletonData.skeletonJSON;
 
         var newSkeleton = SkeletonDataAsset.CreateRuntimeInstance(
            skeletonSource,
            atlas,
            initialize: false,
-           scale: animation.skeletonDataAsset.scale);
+           scale: originalSkeletonData.scale);
+
+        // TODO: Allow override
+        newSkeleton.fromAnimation = originalSkeletonData.fromAnimation;
+        newSkeleton.toAnimation = originalSkeletonData.toAnimation;
+        newSkeleton.duration = originalSkeletonData.duration;
+        newSkeleton.defaultMix = originalSkeletonData.defaultMix;
 
         if (newSkeleton.GetSkeletonData(quiet: false) == null)
         {
