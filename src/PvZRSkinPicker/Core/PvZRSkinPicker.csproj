@@ -19,21 +19,33 @@ internal static class ModInfo
     </VersionFile>
   </PropertyGroup>
 
-	<Target Name="GenerateVersionFile" BeforeTargets="BeforeCompile;CoreCompile" Outputs="Metadata/ModInfo.g.cs">
-		<ItemGroup>
-			<FileWrites Include="Metadata/ModInfo.g.cs" />
-		</ItemGroup>
-		<WriteLinesToFile File="Metadata/ModInfo.g.cs" Lines="$(VersionFile)" WriteOnlyWhenDifferent="true" Overwrite="true" />
-	</Target>
-
   <ItemGroup>
     <EmbeddedResource Include="Assets/SkinSwap.png" />
   </ItemGroup>
 
-	<Target Name="CheckPvzReDir" BeforeTargets="BeforeBuild">
-		<Error Condition="'$(PvzReDir)' == ''" Text="Environment variable 'PvzReDir' is required but not set." />
-		<Message Text="PvzReDir is: $(PvzReDir)" Importance="high" />
-	</Target>
+  <Target Name="GenerateVersionFile" BeforeTargets="BeforeCompile;CoreCompile" Inputs="$(MSBuildAllProjects)" Outputs="$(IntermediateOutputPath)ModInfo.cs">
+    <PropertyGroup>
+      <GeneratedFilePath>$(IntermediateOutputPath)ModInfo.cs</GeneratedFilePath>
+    </PropertyGroup>
+    <ItemGroup>
+      <Compile Include="$(GeneratedFilePath)" />
+      <FileWrites Include="$(GeneratedFilePath)" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(GeneratedFilePath)" Lines="$(VersionFile)" WriteOnlyWhenDifferent="true" Overwrite="true" />
+  </Target>
+
+  <PropertyGroup>
+    <PvzReDir Condition="'$(PvzReDir)' == ''">C:\Program Files (x86)\Steam\steamapps\common\PVZ Replanted</PvzReDir>
+  </PropertyGroup>
+
+  <Target Name="ValidatePvzReDir" BeforeTargets="BeforeBuild">
+    <Error Condition="!Exists('$(PvzReDir)')" Text="PvzReDir '$(PvzReDir)' does not exist. Set PvzReDir to a valid installation path." />
+    <Error Condition="Exists('$(PvzReDir)') and !Exists('$(PvzReDir)\MelonLoader')" Text="MelonLoader folder not found under '$(PvzReDir)'. Ensure MelonLoader is installed." />
+  </Target>
+
+  <Target Name="PrintPvzReDir" BeforeTargets="BeforeBuild">
+    <Message Text="PvzReDir is: $(PvzReDir)" Importance="high" />
+  </Target>
 
   <ItemDefinitionGroup>
     <Reference>
