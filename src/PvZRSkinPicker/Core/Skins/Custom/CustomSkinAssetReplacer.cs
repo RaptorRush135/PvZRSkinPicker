@@ -18,11 +18,12 @@ internal static class CustomSkinAssetReplacer
         SkeletonAnimation animation,
         Texture2D? texture,
         string? atlasText,
-        byte[]? skeletonData)
+        byte[]? skeletonData,
+        string? initialSkinName)
     {
         ArgumentNullException.ThrowIfNull(animation);
 
-        return TryReplace(animation, texture, ConvertAtlasTextFile(), ConvertSkeletonDataFile());
+        return TryReplace(animation, texture, ConvertAtlasTextFile(), ConvertSkeletonDataFile(), initialSkinName);
 
         TextAsset? ConvertAtlasTextFile()
         {
@@ -50,7 +51,8 @@ internal static class CustomSkinAssetReplacer
         SkeletonAnimation animation,
         Texture2D? texture,
         TextAsset? atlasText,
-        TextAsset? skeletonData)
+        TextAsset? skeletonData,
+        string? initialSkinName)
     {
         if (texture == null && atlasText == null && skeletonData == null)
         {
@@ -95,7 +97,10 @@ internal static class CustomSkinAssetReplacer
             return false;
         }
 
-        animation.initialSkinName = null;
+        animation.initialSkinName = newSkeleton.skeletonData.FindSkin(initialSkinName) != null
+            ? initialSkinName
+            : null;
+
         animation.skeletonDataAsset = newSkeleton;
         animation.Initialize(overwrite: true);
 

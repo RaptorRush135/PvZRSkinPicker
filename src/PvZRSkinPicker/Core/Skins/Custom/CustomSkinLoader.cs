@@ -198,7 +198,7 @@ internal sealed class CustomSkinLoader(
             try
             {
                 var controller = prefab.GetComponent<PlantController>();
-                if (!this.TryLoadSkin(skinDirectory, controller, usePointFilter: skin.Pixelated))
+                if (!this.TryLoadSkin(skinDirectory, controller, targetType, usePointFilter: skin.Pixelated))
                 {
                     Object.Destroy(prefab);
 
@@ -241,9 +241,15 @@ internal sealed class CustomSkinLoader(
         }
     }
 
-    private bool TryLoadSkin(DirectoryInfo skinDirectory, PlantController controller, bool usePointFilter)
+    private bool TryLoadSkin(
+        DirectoryInfo skinDirectory,
+        PlantController controller,
+        SeedType type,
+        bool usePointFilter)
     {
         var animation = controller.AnimationController.GetComponent<SkeletonAnimation>();
+
+        string? initialSkinName = GetInitialSkinName(animation, type);
 
         var filterMode = usePointFilter ? FilterMode.Point : FilterMode.Bilinear;
 
@@ -264,7 +270,13 @@ internal sealed class CustomSkinLoader(
                 $"atlas={PresenceMark(atlas)} " +
                 $"skeleton={PresenceMark(skeleton)}");
 
-            bool replaced = CustomSkinAssetReplacer.TryReplace(animation, texture, atlas, skeleton);
+            bool replaced = CustomSkinAssetReplacer.TryReplace(
+                animation,
+                texture,
+                atlas,
+                skeleton,
+                initialSkinName);
+
             if (!replaced)
             {
                 Object.Destroy(texture);
@@ -280,6 +292,19 @@ internal sealed class CustomSkinLoader(
 
         static string PresenceMark(object? value)
             => value != null ? "[x]" : "[ ]";
+
+        static string? GetInitialSkinName(
+            SkeletonAnimation animation,
+            SeedType type)
+        {
+            // Initial skin is Repeater in vanilla
+            if (type == SeedType.Peashooter)
+            {
+                return nameof(SeedType.Peashooter);
+            }
+
+            return animation.initialSkinName;
+        }
     }
 
     private sealed record SkinPackManifestSource(
