@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Skins.Custom.Manifest;
+namespace PvZRSkinPicker.Skins.Custom.Manifest;
 
 using System.Diagnostics.Contracts;
 
@@ -6,12 +6,19 @@ internal sealed record SkinCatalog
 {
     public IReadOnlyList<SkinEntry> Plants { get; init; } = [];
 
+    public IReadOnlyList<SkinEntry> Zombies { get; init; } = [];
+
     [Pure]
     public string? Validate()
     {
         if (ValidateSkins(this.Plants, "Plant") is { } plantsError)
         {
             return plantsError;
+        }
+
+        if (ValidateSkins(this.Zombies, "Zombie") is { } zombiesError)
+        {
+            return zombiesError;
         }
 
         return null;

@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Skins;
+namespace PvZRSkinPicker.Skins;
 
 using PvZRSkinPicker.Unity.Extensions;
 

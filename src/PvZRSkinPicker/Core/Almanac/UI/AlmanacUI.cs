@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Almanac.UI;
+namespace PvZRSkinPicker.Almanac.UI;
 
 using Il2CppReloaded.Data;
 

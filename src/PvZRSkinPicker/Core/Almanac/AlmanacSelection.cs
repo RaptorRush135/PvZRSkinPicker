@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Almanac;
+namespace PvZRSkinPicker.Almanac;
 
 using Il2CppReloaded.Data;
 
@@ -11,6 +11,7 @@ using PvZRSkinPicker.Almanac.UI;
 
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 internal sealed class AlmanacSelection<T>
     where T : struct, Enum
