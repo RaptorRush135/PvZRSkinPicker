@@ -2,6 +2,7 @@
 
 using Il2CppReloaded.Gameplay;
 
+using PvZRSkinPicker.Almanac;
 using PvZRSkinPicker.Hooks;
 using PvZRSkinPicker.Skins.Prefabs;
 using PvZRSkinPicker.Skins.Prefabs.Serialization;
@@ -12,6 +13,8 @@ internal sealed class PlantSkinOverrideResolver : SkinOverrideResolver<SeedType>
 
     public static EmulateSkinConditionsPatcher<Plant, SeedType> SkinConditionsPatcher { get; }
         = new EmulateSkinConditionsPatcher<Plant, SeedType>(Instance, p => new(p.mSeedType, p.mBoard, p.mRow));
+
+    protected override PacketThumbnailLookup<SeedType> PacketThumbnailLookup => PlantPacketThumbnailLookup.Instance;
 
     public static IFunctionHook Initialize()
     {

@@ -4,8 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 
 using MelonLoader;
 
+using PvZRSkinPicker.Almanac;
+using PvZRSkinPicker.Almanac.Extensions;
 using PvZRSkinPicker.Api;
-
 using PvZRSkinPicker.Skins;
 
 internal abstract class SkinOverrideResolver<T>
@@ -15,12 +16,22 @@ internal abstract class SkinOverrideResolver<T>
 
     private readonly Dictionary<T, Skin> overrides = [];
 
+    protected abstract PacketThumbnailLookup<T>? PacketThumbnailLookup { get; }
+
     public void SetOverride(T type, Skin skin)
     {
         this.overrides[type] = skin;
         foreach (var extraOverride in this.GetExtraTypeOverrides(type))
         {
             this.overrides[extraOverride] = skin;
+        }
+
+        if (this.PacketThumbnailLookup != null)
+        {
+            foreach (var thumbnail in this.PacketThumbnailLookup.GetThumbnails(type))
+            {
+                thumbnail.SetThumbnail(skin.Image);
+            }
         }
     }
 

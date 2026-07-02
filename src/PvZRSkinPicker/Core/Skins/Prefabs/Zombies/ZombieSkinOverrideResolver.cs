@@ -2,6 +2,7 @@
 
 using Il2CppReloaded.Gameplay;
 
+using PvZRSkinPicker.Almanac;
 using PvZRSkinPicker.Hooks;
 using PvZRSkinPicker.Skins.Prefabs;
 using PvZRSkinPicker.Skins.Prefabs.Serialization;
@@ -12,6 +13,8 @@ internal sealed class ZombieSkinOverrideResolver : SkinOverrideResolver<ZombieTy
 
     public static EmulateSkinConditionsPatcher<Zombie, ZombieType> SkinConditionsPatcher { get; }
         = new EmulateSkinConditionsPatcher<Zombie, ZombieType>(Instance, z => new(z.mZombieType, z.mBoard, z.mRow));
+
+    protected override PacketThumbnailLookup<ZombieType>? PacketThumbnailLookup => null;
 
     public static IFunctionHook Initialize()
     {

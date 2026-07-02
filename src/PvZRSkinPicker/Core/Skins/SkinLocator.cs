@@ -25,11 +25,14 @@ internal sealed class SkinLocator(
 
         string name = this.Localize(definition.PlantName);
 
+        var defaultPreview = SkinPreview.FromDefinition(definition);
+        var chinaPreview = SkinPreview.FromChinaDefinition(definition);
+
         IEnumerable<Skin?> skins =
         [
             TryCreateSkin(SkinType.Normal, definition.m_prefab),
             TryCreateSkin(SkinType.PreOrderPlant, definition.m_preorderGameObject, platformService.PreOrderDLCAvailable),
-            TryCreateSkin(SkinType.China, definition.m_chinaGameObject),
+            TryCreateSkin(SkinType.China, definition.m_chinaGameObject, true, definition.m_chinaPlantImage, chinaPreview),
             TryCreateSkin(SkinType.EasterEgg, definition.m_easterEggGameObject),
             TryCreateSkin(SkinType.December, definition.m_decemberGameObject),
         ];
@@ -39,9 +42,12 @@ internal sealed class SkinLocator(
         Skin? TryCreateSkin(
             SkinType skinType,
             AssetReferenceGameObject prefab,
-            bool enabled = true)
+            bool enabled = true,
+            AssetReferenceSprite? image = null,
+            SkinPreview? preview = null)
         {
-            return SkinLocator.TryCreateSkin(name, skinType, prefab, enabled);
+            return SkinLocator.TryCreateSkin(
+                name, skinType, prefab, enabled, image ?? definition.m_plantImage, preview ?? defaultPreview);
         }
     }
 
@@ -74,7 +80,7 @@ internal sealed class SkinLocator(
             AssetReferenceGameObject prefab,
             bool enabled = true)
         {
-            return SkinLocator.TryCreateSkin(name, skinType, prefab, enabled);
+            return SkinLocator.TryCreateSkin(name, skinType, prefab, enabled, image: null, preview: null);
         }
     }
 
@@ -82,10 +88,12 @@ internal sealed class SkinLocator(
         string name,
         SkinType skinType,
         AssetReferenceGameObject prefab,
-        bool enabled)
+        bool enabled,
+        AssetReferenceSprite? image,
+        SkinPreview? preview)
     {
         return string.IsNullOrEmpty(prefab.AssetGUID) || !enabled
-            ? null : Skin.Create(name, skinType, prefab);
+            ? null : Skin.Create(name, skinType, prefab, image, preview);
     }
 
     private string Localize(string name) => localizer.Localize($"${name}");
