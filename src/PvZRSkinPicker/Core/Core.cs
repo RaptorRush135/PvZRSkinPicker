@@ -25,6 +25,8 @@ using PvZRSkinPicker.Skins.Prefabs.Zombies;
 
 public sealed class Core : MelonMod
 {
+    private static IDisposable? quickSwap;
+
     public override void OnLateInitializeMelon()
     {
         try
@@ -44,6 +46,7 @@ public sealed class Core : MelonMod
     public override void OnDeinitializeMelon()
     {
         ModContextApi.Dispose();
+        quickSwap?.Dispose();
     }
 
     private static void Ready(ModContext context)
@@ -76,6 +79,8 @@ public sealed class Core : MelonMod
             skinSelections.Zombies);
 
         skinSelectionPersistence.BindControllers(plantPickerController, zombiePickerController);
+
+        quickSwap = new PlantSkinQuickSwap(plantPickerController.Pickers);
     }
 
     private static SkinPickerController<T> SetupSkinPicker<T>(

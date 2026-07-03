@@ -51,11 +51,9 @@ internal sealed class SkinPicker<T>
             : new SkinPicker<T>(type, skinArray, onSelect);
     }
 
-    public Skin Next()
-    {
-        this.selectedIndex = (this.selectedIndex + 1) % this.Skins.Count;
-        return this.ApplySelection();
-    }
+    public Skin Next() => this.ShiftSelection(1);
+
+    public Skin Previous() => this.ShiftSelection(-1);
 
     public void Select(SkinId id)
     {
@@ -79,4 +77,10 @@ internal sealed class SkinPicker<T>
 
     [Pure]
     public Skin GetSelectedSkin() => this.Skins[this.selectedIndex];
+
+    private Skin ShiftSelection(int offset)
+    {
+        this.selectedIndex = (this.selectedIndex + offset + this.Skins.Count) % this.Skins.Count;
+        return this.ApplySelection();
+    }
 }
