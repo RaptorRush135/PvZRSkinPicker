@@ -16,8 +16,6 @@ internal sealed class SkinPickerController<T>
 {
     private readonly AlmanacSelection<T> selection;
 
-    private readonly IReadOnlyDictionary<T, SkinPicker<T>> pickers;
-
     public SkinPickerController(
         AlmanacSelection<T> selection,
         IEnumerable<ISkinDataDefinition<T>> definitions,
@@ -30,15 +28,17 @@ internal sealed class SkinPickerController<T>
         ArgumentNullException.ThrowIfNull(onSelect);
 
         this.selection = selection;
-        this.pickers = definitions
+        this.Pickers = definitions
             .Select(d => SkinPicker<T>.TryCreate(d, extraSkins.GetValueOrDefault(d.Type) ?? [], onSelect))
             .WhereNotNull()
             .ToDictionary(picker => picker.Type);
     }
 
+    public IReadOnlyDictionary<T, SkinPicker<T>> Pickers { get; }
+
     public void ApplySelections(SkinSelectionSet<T> selectionSet)
     {
-        foreach (var (type, picker) in this.pickers)
+        foreach (var (type, picker) in this.Pickers)
         {
             if (selectionSet.Selections.TryGetValue(type, out SkinId? id))
             {
@@ -55,7 +55,7 @@ internal sealed class SkinPickerController<T>
     {
         this.selection.SelectionChanged += type =>
         {
-            if (!this.pickers.TryGetValue(type, out var picker))
+            if (!this.Pickers.TryGetValue(type, out var picker))
             {
                 button.SetActive(false);
                 return;
@@ -70,7 +70,7 @@ internal sealed class SkinPickerController<T>
 
     public void CycleSkin()
     {
-        if (this.pickers.TryGetValue(this.selection.Value, out var picker))
+        if (this.Pickers.TryGetValue(this.selection.Value, out var picker))
         {
             AudioServiceApi.PlayWithRandomPitch(FoleyType.LimbsPop);
 
@@ -81,7 +81,7 @@ internal sealed class SkinPickerController<T>
 
     public void RefreshName(bool overrideUntilNextNameSet)
     {
-        if (this.pickers.TryGetValue(this.selection.Value, out var picker))
+        if (this.Pickers.TryGetValue(this.selection.Value, out var picker))
         {
             this.RefreshName(picker, overrideUntilNextNameSet);
         }
@@ -90,7 +90,7 @@ internal sealed class SkinPickerController<T>
     [Pure]
     public SkinSelectionSet<T> GetSelections()
     {
-        var selections = this.pickers
+        var selections = this.Pickers
             .ToDictionary(
                 pair => pair.Key,
                 pair => pair.Value.GetSelectedSkin().Id);
