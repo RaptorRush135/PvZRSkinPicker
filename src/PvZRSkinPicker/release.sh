@@ -3,6 +3,8 @@ set -e
 
 trap 'echo "Error occurred! Press Enter to exit..."; read' ERR
 
+dotnet test
+
 dotnet clean -c Release
 
 dotnet build -c Release -v:diag
