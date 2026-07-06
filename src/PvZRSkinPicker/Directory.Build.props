@@ -1,80 +1,17 @@
 <Project>
 
   <PropertyGroup>
-    <ModVersion>1.1.0</ModVersion>
     <ModAuthor>RaptorRush</ModAuthor>
     <ModDownloadLink>https://github.com/RaptorRush135/PvZRSkinPicker</ModDownloadLink>
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>true</ImplicitUsings>
-    <LangVersion>latest</LangVersion>
-    <Version>$(ModVersion)</Version>
-    <GenerateDependencyFile>false</GenerateDependencyFile>
-    <PlatformTarget>x64</PlatformTarget>
+    <IsModBuild>false</IsModBuild>
     <IsPackable>false</IsPackable>
-    <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
-    <SourceRoot Include="$(MSBuildThisFileDirectory)" />
+    <Reference Include="$(PvzReDir)\MelonLoader\net6\Newtonsoft.Json.dll" />
   </ItemGroup>
-
-  <Target Name="PrintSourceRoot" BeforeTargets="BeforeBuild">
-    <Message Text="SourceRoot is: @(SourceRoot)" Importance="high" />
-  </Target>
-
-	<PropertyGroup>
-    <GenerateDocumentationFile Condition="'$(Configuration)' != 'Release'">true</GenerateDocumentationFile>
-    <NoWarn>CS1591;SA1600;SA1601;SA1602;SA1629;SA1633</NoWarn>
-    <NoWarn Condition="'$(Configuration)' == 'Release'">$(NoWarn);SA0001</NoWarn>
-	</PropertyGroup>
-
-  <ItemGroup>
-
-    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.*">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.*">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-
-    <PackageReference Include="Roslynator.Analyzers" Version="4.*">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-
-  </ItemGroup>
-
-  <Target Name="CleanZipFiles" BeforeTargets="Clean">
-    <ItemGroup>
-      <ZipFilesToDelete Include="$(OutputPath)*.zip" />
-    </ItemGroup>
-    <Delete Files="@(ZipFilesToDelete)" />
-  </Target>
-
-  <Target Name="ZipPublishWithFolder" AfterTargets="Build" Condition="'$(Configuration)'=='Release'">
-
-    <PropertyGroup>
-      <ZipStage>$(BaseIntermediateOutputPath)ZipStage</ZipStage>
-      <ZipFolderName>Mods</ZipFolderName>
-      <ZipFileName>$(AssemblyName)$(ModVersion.Replace('.', '-')).zip</ZipFileName>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <FilesToZip Include="$(TargetDir)**\*" Exclude="$(TargetDir)**\*.zip" />
-    </ItemGroup>
-    <RemoveDir Directories="$(ZipStage)" />
-    <MakeDir Directories="$(ZipStage)\$(ZipFolderName)" />
-    <Copy SourceFiles="@(FilesToZip)" DestinationFolder="$(ZipStage)\$(ZipFolderName)" />
-    <ZipDirectory SourceDirectory="$(ZipStage)" DestinationFile="$(OutputPath)$(ZipFileName)" Overwrite="true" />
-    <RemoveDir Directories="$(ZipStage)" />
-
-  </Target>
 
 </Project>

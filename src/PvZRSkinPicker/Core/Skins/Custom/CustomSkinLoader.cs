@@ -49,7 +49,7 @@ internal sealed class CustomSkinLoader(
                 }
 
                 return ordered[0];
-            })];
+            }),];
 
         var skins = sources
             .SelectMany(this.LoadManifestSkins)
@@ -165,7 +165,7 @@ internal sealed class CustomSkinLoader(
 
         return [.. manifestSource.Manifest.Skins.Plants
             .Select(skin => this.TryLoadSkin(skin, manifestSource.Directory))
-            .WhereNotNull()];
+            .WhereNotNull(),];
     }
 
     private SkinPrototype<SeedType>? TryLoadSkin(SkinEntry skin, DirectoryInfo packDirectory)

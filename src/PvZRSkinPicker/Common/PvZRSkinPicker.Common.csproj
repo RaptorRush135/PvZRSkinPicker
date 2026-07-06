@@ -1,18 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="RaptorRush135.PvZR.Sdk">
 
   <PropertyGroup>
     <RootNamespace>PvZRSkinPicker</RootNamespace>
   </PropertyGroup>
-
-  <ItemDefinitionGroup>
-    <Reference>
-      <Private>false</Private>
-    </Reference>
-  </ItemDefinitionGroup>
-
-	<ItemGroup>
-    <Reference Include="$(PvzReDir)\MelonLoader\net6\Newtonsoft.Json.dll" />
-  </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="PvZRSkinPicker" />

@@ -12,6 +12,14 @@ internal static class UnityExtensions
     private const string UnityNullJustification =
         "UnityEngine.Object does not support ?. or ?? for detached objects; explicit null check required.";
 
+    extension(GameObject)
+    {
+        public static GameObject FindOrThrow(string name)
+            => GameObject.Find(name).Ref()
+            ?? throw new InvalidOperationException(
+                $"'{name}' was not found in the scene.");
+    }
+
     [SuppressMessage(
         "Style",
         "IDE0029:Use coalesce expression",
@@ -33,13 +41,5 @@ internal static class UnityExtensions
         {
             OperationHandle = handle,
         };
-    }
-
-    extension(GameObject)
-    {
-        public static GameObject FindOrThrow(string name)
-            => GameObject.Find(name).Ref()
-            ?? throw new InvalidOperationException(
-                $"'{name}' was not found in the scene.");
     }
 }

@@ -3,6 +3,7 @@
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path="Directory.Build.props" />
+    <File Path="global.json" />
   </Folder>
   <Project Path="Core/PvZRSkinPicker.csproj" />
   <Project Path="Common/PvZRSkinPicker.Common.csproj" />
