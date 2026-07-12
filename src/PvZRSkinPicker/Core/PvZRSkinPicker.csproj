@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <IsModBuild>true</IsModBuild>
+    <ModMelonType>$(RootNamespace).Core</ModMelonType>
+    <ModColor>255, 220, 40, 40</ModColor>
   </PropertyGroup>
 
   <PropertyGroup>
