@@ -4,8 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 using MelonLoader;
 
-using PvZRSkinPicker.Almanac;
-using PvZRSkinPicker.Almanac.Extensions;
+using PvZRSkinPicker.Almanac.SeedPackets;
 using PvZRSkinPicker.Api;
 using PvZRSkinPicker.Skins;
 
@@ -30,7 +29,7 @@ internal abstract class SkinOverrideResolver<T>
         {
             foreach (var thumbnail in this.PacketThumbnailLookup.GetThumbnails(type))
             {
-                thumbnail.SetThumbnail(skin.Image);
+                thumbnail.Reference = skin.Image;
             }
         }
     }

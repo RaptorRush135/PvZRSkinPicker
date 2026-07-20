@@ -1,4 +1,4 @@
-﻿namespace PvZRSkinPicker.Almanac;
+﻿namespace PvZRSkinPicker.Almanac.SeedPackets;
 
 using Il2CppInterop.Runtime.InteropTypes;
 

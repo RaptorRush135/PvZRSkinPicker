@@ -17,8 +17,7 @@ internal static class PlantDefinitionPlantImagePatch
         PlantDefinition __instance,
         ref AssetReferenceSprite __result)
     {
-        if (PlantSkinOverrideResolver.Instance.TryGetContextOverride(__instance.SeedType, out var skin)
-            && skin.Image != null)
+        if (PlantSkinOverrideResolver.Instance.TryGetContextOverride(__instance.SeedType, out var skin))
         {
             __result = skin.Image;
             return false;

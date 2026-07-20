@@ -2,7 +2,7 @@
 
 using Il2CppReloaded.Gameplay;
 
-using PvZRSkinPicker.Almanac;
+using PvZRSkinPicker.Almanac.SeedPackets;
 using PvZRSkinPicker.Hooks;
 using PvZRSkinPicker.Skins.Prefabs;
 using PvZRSkinPicker.Skins.Prefabs.Serialization;

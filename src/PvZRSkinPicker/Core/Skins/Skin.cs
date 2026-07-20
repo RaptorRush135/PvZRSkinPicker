@@ -9,16 +9,19 @@ internal sealed record Skin(
     SkinId Id,
     string Name,
     AssetReferenceGameObject Prefab,
-    AssetReferenceSprite? Image,
+    AssetReferenceSprite Image,
     SkinPreview? Preview)
 {
     public static Skin Create(
         string name,
         SkinType skinType,
         AssetReferenceGameObject prefab,
-        AssetReferenceSprite? image,
+        AssetReferenceSprite image,
         SkinPreview? preview)
     {
+        ArgumentNullException.ThrowIfNull(prefab);
+        ArgumentNullException.ThrowIfNull(image);
+
         if (skinType == SkinType.Custom)
         {
             throw new InvalidOperationException("Vanilla skins cannot be Custom.");
@@ -30,8 +33,12 @@ internal sealed record Skin(
     public static Skin CreateCustom(
         string name,
         Guid id,
-        GameObject prefab)
+        GameObject prefab,
+        AssetReferenceSprite sprite)
     {
-        return new(SkinId.CreateCustom(id), name, prefab.ToAssetReference(), null, null);
+        ArgumentNullException.ThrowIfNull(prefab.Ref());
+        ArgumentNullException.ThrowIfNull(sprite);
+
+        return new(SkinId.CreateCustom(id), name, prefab.ToAssetReference(), sprite, null);
     }
 }

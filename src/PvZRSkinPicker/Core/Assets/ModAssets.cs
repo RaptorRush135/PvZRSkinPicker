@@ -8,6 +8,9 @@ internal static class ModAssets
 {
     public static readonly EmbeddedResourceAsset SkinSwap = new("SkinSwap.png");
 
+    // TODO: Move
+    public static readonly EmbeddedResourceAsset GreenSeedPacket = new("GreenSeedPacket.png");
+
     private const FilterMode DefaultFilterMode = FilterMode.Bilinear;
 
     [Pure]

@@ -32,7 +32,7 @@ internal sealed class SkinLocator(
         [
             TryCreateSkin(SkinType.Normal, definition.m_prefab),
             TryCreateSkin(SkinType.PreOrderPlant, definition.m_preorderGameObject, platformService.PreOrderDLCAvailable),
-            TryCreateSkin(SkinType.China, definition.m_chinaGameObject, true, definition.m_chinaPlantImage, chinaPreview),
+            TryCreateSkin(SkinType.China, definition.m_chinaGameObject, image: definition.m_chinaPlantImage, preview: chinaPreview),
             TryCreateSkin(SkinType.EasterEgg, definition.m_easterEggGameObject),
             TryCreateSkin(SkinType.December, definition.m_decemberGameObject),
         ];
@@ -80,7 +80,8 @@ internal sealed class SkinLocator(
             AssetReferenceGameObject prefab,
             bool enabled = true)
         {
-            return SkinLocator.TryCreateSkin(name, skinType, prefab, enabled, image: null, preview: null);
+            return SkinLocator.TryCreateSkin(
+                name, skinType, prefab, enabled, definition.m_previewSprite, preview: null);
         }
     }
 
@@ -89,7 +90,7 @@ internal sealed class SkinLocator(
         SkinType skinType,
         AssetReferenceGameObject prefab,
         bool enabled,
-        AssetReferenceSprite? image,
+        AssetReferenceSprite image,
         SkinPreview? preview)
     {
         return string.IsNullOrEmpty(prefab.AssetGUID) || !enabled

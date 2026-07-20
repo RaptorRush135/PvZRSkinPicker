@@ -15,6 +15,7 @@ using PvZRSkinPicker.Api.Context;
 using PvZRSkinPicker.Data;
 using PvZRSkinPicker.Environment;
 using PvZRSkinPicker.Extensions;
+using PvZRSkinPicker.Metadata;
 using PvZRSkinPicker.Skins;
 using PvZRSkinPicker.Skins.Custom;
 using PvZRSkinPicker.Skins.Picker;
@@ -22,6 +23,7 @@ using PvZRSkinPicker.Skins.Picker.Selection;
 using PvZRSkinPicker.Skins.Prefabs;
 using PvZRSkinPicker.Skins.Prefabs.Plants;
 using PvZRSkinPicker.Skins.Prefabs.Zombies;
+using PvZRSkinPicker.Unity.Resources;
 
 public sealed class Core : MelonMod
 {
@@ -53,7 +55,9 @@ public sealed class Core : MelonMod
     {
         var skinLocator = new SkinLocator(context.PlatformService, context.Localizer);
 
-        var customSkinLoader = new CustomSkinLoader(Melon<Core>.Logger, context.DataService);
+        var assetRegistry = AddressableAssetRegistry.Create(ModInfo.Name);
+
+        using var customSkinLoader = new CustomSkinLoader(Melon<Core>.Logger, context.DataService, assetRegistry);
 
         var skinSelectionPersistence = new SkinSelectionPersistence(
             ModEnvironment.ModDataDirectory.GetFile("selections.json"));

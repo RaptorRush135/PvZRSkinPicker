@@ -11,6 +11,7 @@ internal sealed record SkinEntry(
     [property: JsonRequired] string Name,
     [property: JsonRequired] Guid Id,
     [property: JsonRequired] string Directory,
+    SeedPacketOverride? SeedPacketOverride,
     bool Pixelated)
 {
     public override string ToString() => $"{this.Name}({this.Type})({this.Id})";

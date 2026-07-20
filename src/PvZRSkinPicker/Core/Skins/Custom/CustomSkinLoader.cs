@@ -12,18 +12,30 @@ using Il2CppSpine.Unity;
 using MelonLoader;
 
 using PvZRSkinPicker.Almanac.Extensions;
+using PvZRSkinPicker.Almanac.SeedPackets.Renderer;
 using PvZRSkinPicker.Assets;
 using PvZRSkinPicker.Environment;
 using PvZRSkinPicker.Extensions;
 using PvZRSkinPicker.Skins.Custom.Manifest;
 using PvZRSkinPicker.Unity;
+using PvZRSkinPicker.Unity.Resources;
 
 using UnityEngine;
 
 internal sealed class CustomSkinLoader(
     MelonLogger.Instance logger,
-    IDataService dataService)
+    IDataService dataService,
+    AddressableAssetRegistry assetRegistry)
+    : IDisposable
 {
+    // TODO: Move
+    private readonly PacketRenderer packetRenderer = PacketRenderer.Create(new Vector2(0, -200));
+
+    public void Dispose()
+    {
+        this.packetRenderer.Dispose();
+    }
+
     public IReadOnlyDictionary<SeedType, IReadOnlyList<Skin>> GetPlantSkins()
     {
         var stopwatch = Stopwatch.StartNew();
@@ -55,7 +67,7 @@ internal sealed class CustomSkinLoader(
             .SelectMany(this.LoadManifestSkins)
             .GroupBy(
                 s => s.Type,
-                s => Skin.CreateCustom(s.Name, s.Id, s.Prefab))
+                s => s.Build(assetRegistry))
             .ToDictionary(
                 g => g.Key,
                 g => (IReadOnlyList<Skin>)[.. g]);
@@ -211,9 +223,11 @@ internal sealed class CustomSkinLoader(
                     return null;
                 }
 
+                var sprite = this.RenderSrite(prefab, targetType, skin.SeedPacketOverride);
+
                 logger.Msg("Successfully processed skin");
 
-                return new(targetType, skin.Name, skin.Id, prefab);
+                return new(targetType, skin.Name, skin.Id, prefab, sprite);
             }
             catch (Exception)
             {
@@ -307,6 +321,74 @@ internal sealed class CustomSkinLoader(
         }
     }
 
+    private Sprite RenderSrite(GameObject prefab, SeedType type, SeedPacketOverride? seedPacketOverride)
+    {
+        var transform = this.GetDefaultSeedPacketTypeTransform(type)
+            .Apply(seedPacketOverride?.Transform);
+
+        var renderSpec = new PacketRenderSpec<SeedType>(type, transform);
+
+        return this.packetRenderer.RenderPlantToSprite(prefab, renderSpec);
+    }
+
+    private SkinTransform GetDefaultSeedPacketTypeTransform(SeedType seedType)
+    {
+        return seedType switch
+        {
+            SeedType.Peashooter => new(0.2f, -1.55f),
+            SeedType.Sunflower => new(0.5f, -1.7f, 0.95f),
+            SeedType.Cherrybomb => new(-0.15f, -1.45f, 0.75f),
+            SeedType.Wallnut => new(-0.09f, -2.12f, 0.9f),
+            SeedType.Potatomine => new(.17f, -1.06f, 0.75f),
+            SeedType.Snowpea => new(0.27f, -1.38f, 0.95f),
+            SeedType.Chomper => new(-0.15f, -1.92f, 0.7f),
+            SeedType.Repeater => new(0.26f, -1.54f),
+            // TODO: Complete
+            // SeedType.Puffshroom = 8,
+            // SeedType.Sunshroom = 9,
+            // SeedType.Fumeshroom = 10,
+            // SeedType.Gravebuster = 11,
+            // SeedType.Hypnoshroom = 12,
+            // SeedType.Scaredyshroom = 13,
+            // SeedType.Iceshroom = 14,
+            // SeedType.Doomshroom = 15,
+            // SeedType.Lilypad = 16,
+            // SeedType.Squash = 17,
+            // SeedType.Threepeater = 18,
+            // SeedType.Tanglekelp = 19,
+            // SeedType.Jalapeno = 20,
+            // SeedType.Spikeweed = 21,
+            // SeedType.Torchwood = 22,
+            // SeedType.Tallnut = 23,
+            // SeedType.Seashroom = 24,
+            // SeedType.Plantern = 25,
+            // SeedType.Cactus = 26,
+            // SeedType.Blover = 27,
+            // SeedType.Splitpea = 28,
+            // SeedType.Starfruit = 29,
+            // SeedType.Pumpkinshell = 30,
+            // SeedType.Magnetshroom = 31,
+            // SeedType.Cabbagepult = 32,
+            // SeedType.Flowerpot = 33,
+            // SeedType.Kernelpult = 34,
+            // SeedType.InstantCoffee = 35,
+            // SeedType.Garlic = 36,
+            // SeedType.Umbrella = 37,
+            // SeedType.Marigold = 38,
+            // SeedType.Melonpult = 39,
+            // SeedType.Gatlingpea = 40,
+            // SeedType.Twinsunflower = 41,
+            // SeedType.Gloomshroom = 42,
+            // SeedType.Cattail = 43,
+            // SeedType.Wintermelon = 44,
+            // SeedType.GoldMagnet = 45,
+            // SeedType.Spikerock = 46,
+            // SeedType.Cobcannon = 47,
+            // SeedType.Imitater = 48,
+            _ => new(.5f, -1.75f), // TODO: throw
+        };
+    }
+
     private sealed record SkinPackManifestSource(
         SkinPackManifest Manifest,
         DirectoryInfo Directory);
@@ -315,6 +397,14 @@ internal sealed class CustomSkinLoader(
         T Type,
         string Name,
         Guid Id,
-        GameObject Prefab)
-        where T : struct, Enum;
+        GameObject Prefab,
+        Sprite Sprite)
+        where T : struct, Enum
+    {
+        public Skin Build(AddressableAssetRegistry assetRegistry)
+        {
+            var spriteRef = assetRegistry.AddSprite(this.Id.ToString(), this.Sprite);
+            return Skin.CreateCustom(this.Name, this.Id, this.Prefab, spriteRef);
+        }
+    }
 }
