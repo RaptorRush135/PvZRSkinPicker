@@ -73,9 +73,9 @@ internal sealed class PacketRenderer : IDisposable
         Object.Destroy(this.root);
     }
 
-    public Sprite RenderPlantToSprite(GameObject prefab, PacketRenderSpec<SeedType> abc)
+    public Sprite RenderPlantToSprite(GameObject prefab, PacketRenderSpec<SeedType> renderSpec)
     {
-        var texture = this.Render(prefab, SetupPlant, abc);
+        var texture = this.Render(prefab, SetupPlant, renderSpec);
 
         return Sprite.Create(
             texture,
@@ -84,7 +84,7 @@ internal sealed class PacketRenderer : IDisposable
             100f);
     }
 
-    private static void SetupPlant(GameObject target, PacketRenderSpec<SeedType> a)
+    private static void SetupPlant(GameObject target, PacketRenderSpec<SeedType> renderSpec)
     {
         var controller = target.GetComponent<PlantController>();
 
@@ -92,15 +92,15 @@ internal sealed class PacketRenderer : IDisposable
 
         controller.Init(plant);
 
-        plant.PlantInitialize(0, 0, a.Type, SeedType.None, controller);
+        plant.PlantInitialize(0, 0, renderSpec.Type, SeedType.None, controller);
 
         var skelAnim = controller.AnimationController.m_skeletonAnimation;
         skelAnim.Update(0);
         skelAnim.LateUpdate();
 
         var targetT = target.transform;
-        targetT.localPosition = new Vector2(a.Transform.X, a.Transform.Y);
-        targetT.localScale = Vector2.one * (a.Transform.Scale * 0.025f);
+        targetT.localPosition = new Vector2(renderSpec.Transform.X, renderSpec.Transform.Y);
+        targetT.localScale = Vector2.one * (renderSpec.Transform.Scale * 0.025f);
     }
 
     private Texture2D Render<T>(
