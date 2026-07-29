@@ -3,6 +3,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 
+using Microsoft.Extensions.Logging;
+
 using Newtonsoft.Json;
 
 using PvZRSkinPicker.Configuration;
@@ -17,7 +19,7 @@ internal sealed record SkinPackManifest(
     public int FormatVersion { get; init; }
 
     [Pure]
-    public static SkinPackManifest Load(Stream stream, Action<string>? logger)
+    public static SkinPackManifest Load(Stream stream, ILogger? logger)
     {
         var manifest = ModConfig.Load<SkinPackManifest>(CurrentFormatVersion, stream);
 
@@ -28,7 +30,7 @@ internal sealed record SkinPackManifest(
             {
                 if (author.Length == 0)
                 {
-                    logger?.Invoke($"Skin pack '{manifest}': Empty author name (Index: {index})");
+                    logger?.LogWarning("Skin pack '{Manifest}': Empty author name (Index: {Index})", manifest, index);
                     return false;
                 }
 

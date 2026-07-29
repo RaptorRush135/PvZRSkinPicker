@@ -1,11 +1,11 @@
 ﻿namespace PvZRSkinPicker.Skins.Picker.Selection;
 
 using Il2CppReloaded.Data;
-using Il2CppReloaded.Gameplay;
 
 using MelonLoader;
 
 using PvZRSkinPicker.Api;
+using PvZRSkinPicker.Skins.Picker;
 
 internal sealed class SkinSelectionPersistence(
     FileInfo file)
@@ -48,9 +48,7 @@ internal sealed class SkinSelectionPersistence(
         }
     }
 
-    public void BindControllers(
-        SkinPickerController<SeedType> plantPickerController,
-        SkinPickerController<ZombieType> zombiePickerController)
+    public void BindControllers(SkinPickerControllerPair controllerPair)
     {
         AlmanacApi.OnAlmanacClosed.Subscribe(closeType =>
         {
@@ -64,11 +62,11 @@ internal sealed class SkinSelectionPersistence(
                 {
                     AlmanacEntryType.Plant => this.Current with
                     {
-                        Plants = plantPickerController.GetSelections(),
+                        Plants = controllerPair.Plant.GetSelections(),
                     },
                     AlmanacEntryType.Zombie => this.Current with
                     {
-                        Zombies = zombiePickerController.GetSelections(),
+                        Zombies = controllerPair.Zombie.GetSelections(),
                     },
                 };
             }

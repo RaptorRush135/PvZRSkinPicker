@@ -27,9 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ModEnvironmentReference Include="System.Diagnostics.DiagnosticSource.dll" />
-    <ModEnvironmentReference Include="Microsoft.Extensions.Logging.Abstractions.dll" />
-    <ModEnvironmentReference Include="Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
     <ProjectReference Include="..\..\SolarApi\src\SolarApi\Core\SolarApi.csproj" />
   </ItemGroup>
 

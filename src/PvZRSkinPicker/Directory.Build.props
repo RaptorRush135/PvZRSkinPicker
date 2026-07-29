@@ -12,6 +12,9 @@
 
   <ItemGroup>
     <ModEnvironmentReference Include="Newtonsoft.Json.dll" />
+    <ModEnvironmentReference Include="System.Diagnostics.DiagnosticSource.dll" />
+    <ModEnvironmentReference Include="Microsoft.Extensions.Logging.Abstractions.dll" />
+    <ModEnvironmentReference Include="Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
   </ItemGroup>
 
 </Project>

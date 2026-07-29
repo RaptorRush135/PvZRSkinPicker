@@ -1,5 +1,6 @@
 ﻿namespace PvZRSkinPicker.Skins.Custom;
 
+using System.Collections.Immutable;
 using System.Diagnostics;
 
 using Il2CppReloaded.Gameplay;
@@ -9,7 +10,7 @@ using Il2CppSource.Controllers;
 
 using Il2CppSpine.Unity;
 
-using MelonLoader;
+using Microsoft.Extensions.Logging;
 
 using PvZRSkinPicker.Almanac.Extensions;
 using PvZRSkinPicker.Almanac.SeedPackets.Renderer;
@@ -20,32 +21,25 @@ using PvZRSkinPicker.Skins.Custom.Manifest;
 
 using SolarApi.Collections.Extensions;
 using SolarApi.IO.Extensions;
+using SolarApi.Logging.Extensions;
 using SolarApi.Unity;
 using SolarApi.Unity.Resources;
 
 using UnityEngine;
 
 internal sealed class CustomSkinLoader(
-    MelonLogger.Instance logger,
+    ILogger<CustomSkinLoader> logger,
     IDataService dataService,
     SkinPickerModEnvironment environment,
-    AddressableAssetRegistry assetRegistry)
-    : IDisposable
+    AddressableAssetRegistry assetRegistry,
+    PacketRenderer packetRenderer)
 {
-    // TODO: Move
-    private readonly PacketRenderer packetRenderer = PacketRenderer.Create(new Vector2(0, -200));
-
-    public void Dispose()
-    {
-        this.packetRenderer.Dispose();
-    }
-
-    public IReadOnlyDictionary<SeedType, IReadOnlyList<Skin>> GetPlantSkins()
+    public CustomSkinSet GetSkins()
     {
         var stopwatch = Stopwatch.StartNew();
 
-        logger.WriteSpacer();
-        logger.Msg("Reading skin manifests...");
+        logger.LogSpacer();
+        logger.LogInformation("Reading skin manifests...");
 
         List<SkinPackManifestSource> sources = [.. environment.SkinPacksDirectory
             .GetDirectories()
@@ -61,7 +55,7 @@ internal sealed class CustomSkinLoader(
 
                 foreach (var ignored in ordered.Skip(1))
                 {
-                    logger.Warning($"Ignoring '{ignored}' since a new version exists");
+                    logger.LogWarning("Ignoring '{IgnoredSource}' since a new version exists", ignored);
                 }
 
                 return ordered[0];
@@ -80,11 +74,16 @@ internal sealed class CustomSkinLoader(
 
         int totalSkins = skins.Values.Sum(list => list.Count);
 
-        logger.WriteSpacer();
-        logger.Msg($"Loaded {totalSkins} custom skins in {stopwatch.ElapsedMilliseconds} ms");
-        logger.WriteSpacer();
+        logger.LogSpacer();
 
-        return skins;
+        logger.LogInformation(
+            "Loaded {TotalSkins} custom skins in {ElapsedMilliseconds} ms",
+            totalSkins,
+            stopwatch.ElapsedMilliseconds);
+
+        logger.LogSpacer();
+
+        return new(skins, ImmutableDictionary<ZombieType, IReadOnlyList<Skin>>.Empty);
     }
 
     private SkinPackManifestSource? TryGetManifest(DirectoryInfo directory)
@@ -95,33 +94,44 @@ internal sealed class CustomSkinLoader(
         {
             if (!DirectoryHasVersionSuffix(out int directoryVersion))
             {
-                logger.Error($"Directory '{directory.FullName}' does not have a valid -V{{N}} suffix");
+                logger.LogError(
+                    "Directory '{DirectoryName}' does not have a valid -V{{N}} suffix",
+                    directory.FullName);
+
                 return null;
             }
 
             var manifestFile = directory.GetFile("manifest.json");
             if (!manifestFile.Exists)
             {
-                logger.Warning($"No file manifest at '{directory.FullName}'");
+                logger.LogWarning("No file manifest at '{DirectoryName}'", directory.FullName);
+
                 return null;
             }
 
             try
             {
                 using var fileStream = manifestFile.OpenRead();
-                var manifest = SkinPackManifest.Load(fileStream, logger.Warning);
+                var manifest = SkinPackManifest.Load(fileStream, logger);
 
                 if (!manifest.Validate(out string? error))
                 {
-                    logger.Error($"Manifest validation of '{manifestFile.FullName}' failed: {error}");
+                    logger.LogError(
+                        "Manifest validation of '{ManifestFileName}' failed: {Error}",
+                        manifestFile.FullName,
+                        error);
+
                     return null;
                 }
 
                 if (directoryVersion != manifest.Header.Version)
                 {
-                    logger.Error(
-                        $"Directory version mismatch: directory has version {directoryVersion} but manifest " +
-                        $"specifies version {manifest.Header.Version}");
+                    logger.LogError(
+                        "Directory version mismatch: directory has version {DirectoryVersion} but manifest " +
+                        "specifies version {HeaderVersion}",
+                        directoryVersion,
+                        manifest.Header.Version);
+
                     return null;
                 }
 
@@ -129,13 +139,13 @@ internal sealed class CustomSkinLoader(
             }
             catch (Exception ex)
             {
-                logger.Error($"Could not load file manifest '{manifestFile.FullName}'", ex);
+                logger.LogError(ex, "Could not load file manifest '{ManifestFileName}'", manifestFile.FullName);
                 return null;
             }
         }
         catch (Exception ex)
         {
-            logger.Error($"Could not load file manifest at '{directory.FullName}'", ex);
+            logger.LogError(ex, "Could not load file manifest at '{DirectoryName}'", directory.FullName);
             return null;
         }
 
@@ -148,21 +158,33 @@ internal sealed class CustomSkinLoader(
             int suffixIndex = directoryName.LastIndexOf(versionPattern, StringComparison.Ordinal);
             if (suffixIndex < 0)
             {
-                logger.Warning($"Directory '{directoryName}' does not contain '{versionPattern}' suffix");
+                logger.LogWarning(
+                    "Directory '{DirectoryName}' does not contain '{VersionPattern}' suffix",
+                    directoryName,
+                    versionPattern);
+
                 return false;
             }
 
             string versionPart = directoryName[(suffixIndex + versionPattern.Length)..];
             if (versionPart.Length == 0)
             {
-                logger.Warning($"Directory '{directoryName}' has no version number after '{versionPattern}'");
+                logger.LogWarning(
+                    "Directory '{DirectoryName}' has no version number after '{VersionPattern}'",
+                    directoryName,
+                    versionPattern);
+
                 return false;
             }
 
             if (!versionPart.All(ch => char.IsAscii(ch) && char.IsDigit(ch))
                 || !int.TryParse(versionPart, out directoryVersion))
             {
-                logger.Warning($"Directory '{directoryName}' has invalid version format: '{versionPart}'");
+                logger.LogWarning(
+                    "Directory '{DirectoryName}' has invalid version format: '{VersionPart}'",
+                    directoryName,
+                    versionPart);
+
                 return false;
             }
 
@@ -176,8 +198,8 @@ internal sealed class CustomSkinLoader(
 
         var header = manifestSource.Manifest.Header;
 
-        logger.WriteSpacer();
-        logger.Msg($"Processing skin pack '{header}' by {header.FormattedAuthors}");
+        logger.LogSpacer();
+        logger.LogInformation("Processing skin pack '{Header}' by {Authors}", header, header.FormattedAuthors);
 
         return [.. manifestSource.Manifest.Skins.Plants
             .Select(skin => this.TryLoadSkin(skin, manifestSource.Directory))
@@ -186,15 +208,15 @@ internal sealed class CustomSkinLoader(
 
     private SkinPrototype<SeedType>? TryLoadSkin(SkinEntry skin, DirectoryInfo packDirectory)
     {
-        logger.WriteLine();
-        logger.Msg($"Processing skin '{skin}'");
+        logger.LogLine();
+        logger.LogInformation("Processing skin '{Skin}'", skin);
 
         try
         {
             DirectoryInfo skinDirectory = packDirectory.GetDirectory(skin.Directory);
             if (!skinDirectory.Exists)
             {
-                logger.Warning($"Skin directory not found: '{skinDirectory.FullName}'");
+                logger.LogWarning("Skin directory not found: '{SkinDirectory}'", skinDirectory.FullName);
                 LogFailure();
                 return null;
             }
@@ -202,7 +224,7 @@ internal sealed class CustomSkinLoader(
             if (!Enum.TryParse<SeedType>(skin.Type, ignoreCase: true, out var targetType)
                 || !targetType.IsInAlmanac())
             {
-                logger.Warning($"Could not parse skin type: '{skin.Type}'");
+                logger.LogWarning("Could not parse skin type: '{SkinType}'", skin.Type);
                 LogFailure();
                 return null;
             }
@@ -218,7 +240,7 @@ internal sealed class CustomSkinLoader(
                 {
                     Object.Destroy(prefab);
 
-                    logger.Warning(
+                    logger.LogWarning(
                         "Failed to replace skin assets in the prefab. " +
                         "Check Unity debug logs for more details");
 
@@ -229,7 +251,7 @@ internal sealed class CustomSkinLoader(
 
                 var sprite = this.RenderSrite(prefab, targetType, skin.SeedPacketOverride);
 
-                logger.Msg("Successfully processed skin");
+                logger.LogInformation("Successfully processed skin");
 
                 return new(targetType, skin.Name, skin.Id, prefab, sprite);
             }
@@ -247,15 +269,7 @@ internal sealed class CustomSkinLoader(
 
         void LogFailure(Exception? exception = null)
         {
-            const string message = "Failed to load skin";
-            if (exception != null)
-            {
-                logger.Error(message, exception);
-            }
-            else
-            {
-                logger.Error(message);
-            }
+            logger.LogError(exception, "Failed to load skin");
         }
     }
 
@@ -282,11 +296,11 @@ internal sealed class CustomSkinLoader(
 
             var skeleton = skinDirectory.GetFileIfExists("skin.skel")?.ReadAllBytes();
 
-            logger.Msg(
-                "Assets: " +
-                $"texture={PresenceMark(texture)} " +
-                $"atlas={PresenceMark(atlas)} " +
-                $"skeleton={PresenceMark(skeleton)}");
+            logger.LogInformation(
+                "Assets: texture={TextureMark} atlas={AtlasMark} skeleton={SkeletonMark}",
+                PresenceMark(texture),
+                PresenceMark(atlas),
+                PresenceMark(skeleton));
 
             bool replaced = CustomSkinAssetReplacer.TryReplace(
                 animation,
@@ -332,7 +346,7 @@ internal sealed class CustomSkinLoader(
 
         var renderSpec = new PacketRenderSpec<SeedType>(type, transform);
 
-        return this.packetRenderer.RenderPlantToSprite(prefab, renderSpec);
+        return packetRenderer.RenderPlantToSprite(prefab, renderSpec);
     }
 
     private SkinTransform GetDefaultSeedPacketTypeTransform(SeedType seedType)
