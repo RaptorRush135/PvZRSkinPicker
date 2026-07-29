@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 using MelonLoader;
 
-using PvZRSkinPicker.Extensions;
+using SolarApi.Collections.Extensions;
 
 internal sealed class SkinSelectionSet<T>
     where T : struct, Enum

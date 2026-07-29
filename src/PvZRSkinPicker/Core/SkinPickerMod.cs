@@ -15,7 +15,6 @@ using PvZRSkinPicker.Almanac.UI;
 using PvZRSkinPicker.Api;
 using PvZRSkinPicker.Data;
 using PvZRSkinPicker.Environment;
-using PvZRSkinPicker.Extensions;
 using PvZRSkinPicker.Hooks;
 using PvZRSkinPicker.Metadata;
 using PvZRSkinPicker.Skins;
@@ -28,6 +27,8 @@ using PvZRSkinPicker.Skins.Prefabs.Zombies;
 
 using SolarApi;
 using SolarApi.Il2Cpp.Extensions;
+using SolarApi.IO.Extensions;
+using SolarApi.MelonLoader;
 using SolarApi.Unity.Resources;
 
 internal sealed class SkinPickerMod(

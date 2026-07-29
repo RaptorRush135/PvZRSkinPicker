@@ -3,7 +3,7 @@
 using System.Diagnostics.Contracts;
 using System.Reflection;
 
-using PvZRSkinPicker.Extensions;
+using SolarApi.IO.Extensions;
 
 internal sealed class EmbeddedResourceAsset(string fileName) : IModAsset
 {

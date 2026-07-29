@@ -18,6 +18,8 @@ using PvZRSkinPicker.Environment;
 using PvZRSkinPicker.Extensions;
 using PvZRSkinPicker.Skins.Custom.Manifest;
 
+using SolarApi.Collections.Extensions;
+using SolarApi.IO.Extensions;
 using SolarApi.Unity;
 using SolarApi.Unity.Resources;
 

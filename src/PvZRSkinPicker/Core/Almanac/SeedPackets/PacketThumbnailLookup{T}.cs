@@ -10,8 +10,7 @@ using Il2CppTekly.DataModels.Models;
 
 using MelonLoader;
 
-using PvZRSkinPicker.Extensions;
-
+using SolarApi.Collections.Extensions;
 using SolarApi.Il2Cpp.Extensions;
 
 internal abstract class PacketThumbnailLookup<T>

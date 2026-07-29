@@ -1,5 +1,7 @@
 ﻿namespace PvZRSkinPicker.Hooks;
 
+using SolarApi.Hooks;
+
 internal sealed class HookStore
 {
     private readonly List<IFunctionHook> hooks = [];

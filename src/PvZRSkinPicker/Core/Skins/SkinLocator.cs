@@ -7,7 +7,8 @@ using Il2CppReloaded.Services;
 using Il2CppTekly.Localizations;
 
 using PvZRSkinPicker.Almanac.Extensions;
-using PvZRSkinPicker.Extensions;
+
+using SolarApi.Collections.Extensions;
 
 using UnityEngine.AddressableAssets;
 

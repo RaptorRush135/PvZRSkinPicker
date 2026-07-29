@@ -3,9 +3,10 @@
 using Il2CppReloaded.Gameplay;
 
 using PvZRSkinPicker.Almanac.SeedPackets;
-using PvZRSkinPicker.Hooks;
 using PvZRSkinPicker.Skins.Prefabs;
 using PvZRSkinPicker.Skins.Prefabs.Serialization;
+
+using SolarApi.Hooks;
 
 internal sealed class PlantSkinOverrideResolver : SkinOverrideResolver<SeedType>
 {

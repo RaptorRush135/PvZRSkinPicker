@@ -8,8 +8,9 @@ using PvZRSkinPicker.Almanac;
 using PvZRSkinPicker.Almanac.UI;
 using PvZRSkinPicker.Api;
 using PvZRSkinPicker.Data;
-using PvZRSkinPicker.Extensions;
 using PvZRSkinPicker.Skins.Picker.Selection;
+
+using SolarApi.Collections.Extensions;
 
 internal sealed class SkinPickerController<T>
     where T : struct, Enum

@@ -5,8 +5,9 @@ using System.Diagnostics.Contracts;
 using MelonLoader;
 
 using PvZRSkinPicker.Data;
-using PvZRSkinPicker.Extensions;
 using PvZRSkinPicker.Skins;
+
+using SolarApi.Collections.Extensions;
 
 internal sealed class SkinPicker<T>
     where T : struct, Enum

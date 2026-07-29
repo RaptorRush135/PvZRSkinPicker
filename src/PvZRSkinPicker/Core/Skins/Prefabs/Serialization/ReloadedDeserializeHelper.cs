@@ -9,7 +9,8 @@ using Il2CppReloaded.Gameplay;
 
 using Il2CppSource.Serialization;
 
-using PvZRSkinPicker.Extensions;
+using SolarApi.Il2Cpp.Extensions;
+using SolarApi.Reflection.Extensions;
 
 internal static class ReloadedDeserializeHelper
 {
