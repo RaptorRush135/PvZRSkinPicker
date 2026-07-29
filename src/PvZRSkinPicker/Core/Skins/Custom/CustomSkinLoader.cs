@@ -17,8 +17,9 @@ using PvZRSkinPicker.Assets;
 using PvZRSkinPicker.Environment;
 using PvZRSkinPicker.Extensions;
 using PvZRSkinPicker.Skins.Custom.Manifest;
-using PvZRSkinPicker.Unity;
-using PvZRSkinPicker.Unity.Resources;
+
+using SolarApi.Unity;
+using SolarApi.Unity.Resources;
 
 using UnityEngine;
 
@@ -205,7 +206,7 @@ internal sealed class CustomSkinLoader(
 
             var definition = dataService.GetPlantDefinition(targetType);
 
-            var prefab = PrefabCloner.InstantiateInactiveFromPrefabAsset(definition.m_prefab, expectLoaded: true);
+            var prefab = AssetPrefabCloner.Clone(definition.m_prefab, expectLoaded: true);
 
             try
             {

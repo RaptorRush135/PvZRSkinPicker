@@ -6,7 +6,7 @@ using Il2CppSpine.Unity;
 
 using MelonLoader;
 
-using PvZRSkinPicker.Unity.Extensions;
+using SolarApi.Unity.Extensions;
 
 using UnityEngine;
 

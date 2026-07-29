@@ -5,7 +5,8 @@ using Il2CppReloaded.Gameplay;
 using Il2CppSource.Controllers;
 
 using PvZRSkinPicker.Assets;
-using PvZRSkinPicker.Unity.Extensions;
+
+using SolarApi.Unity.Extensions;
 
 using UnityEngine;
 

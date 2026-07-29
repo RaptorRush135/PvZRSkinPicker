@@ -25,10 +25,10 @@ using PvZRSkinPicker.Skins.Picker.Selection;
 using PvZRSkinPicker.Skins.Prefabs;
 using PvZRSkinPicker.Skins.Prefabs.Plants;
 using PvZRSkinPicker.Skins.Prefabs.Zombies;
-using PvZRSkinPicker.Unity.Resources;
 
 using SolarApi;
 using SolarApi.Il2Cpp.Extensions;
+using SolarApi.Unity.Resources;
 
 internal sealed class SkinPickerMod(
     ModContext context,

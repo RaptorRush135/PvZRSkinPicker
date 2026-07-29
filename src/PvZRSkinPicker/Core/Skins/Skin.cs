@@ -1,6 +1,6 @@
 ﻿namespace PvZRSkinPicker.Skins;
 
-using PvZRSkinPicker.Unity.Extensions;
+using SolarApi.Unity.Extensions;
 
 using UnityEngine;
 using UnityEngine.AddressableAssets;

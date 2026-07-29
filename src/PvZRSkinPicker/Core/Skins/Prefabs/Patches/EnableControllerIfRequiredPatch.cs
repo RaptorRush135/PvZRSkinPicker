@@ -6,7 +6,7 @@ using HarmonyLib;
 
 using Il2CppSource.Controllers;
 
-using PvZRSkinPicker.Unity;
+using SolarApi.Unity;
 
 [HarmonyPatch]
 internal static class EnableControllerIfRequiredPatch

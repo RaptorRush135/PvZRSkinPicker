@@ -4,7 +4,7 @@ using Il2CppReloaded.Data;
 
 using Il2CppTekly.DataModels.Binders;
 
-using PvZRSkinPicker.Unity.Extensions;
+using SolarApi.Unity.Extensions;
 
 using UnityEngine;
 using UnityEngine.UI;
