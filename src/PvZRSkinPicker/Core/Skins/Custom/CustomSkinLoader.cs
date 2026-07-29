@@ -28,6 +28,7 @@ using UnityEngine;
 internal sealed class CustomSkinLoader(
     MelonLogger.Instance logger,
     IDataService dataService,
+    SkinPickerModEnvironment environment,
     AddressableAssetRegistry assetRegistry)
     : IDisposable
 {
@@ -46,7 +47,7 @@ internal sealed class CustomSkinLoader(
         logger.WriteSpacer();
         logger.Msg("Reading skin manifests...");
 
-        List<SkinPackManifestSource> sources = [.. ModEnvironment.SkinPacksDirectory
+        List<SkinPackManifestSource> sources = [.. environment.SkinPacksDirectory
             .GetDirectories()
             .OrderBy(d => d.Name, StringComparer.OrdinalIgnoreCase)
             .Select(this.TryGetManifest)

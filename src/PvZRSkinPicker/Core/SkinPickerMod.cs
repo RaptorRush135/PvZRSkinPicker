@@ -30,6 +30,7 @@ using SolarApi.Unity.Resources;
 
 internal sealed class SkinPickerMod(
     SkinOverrideResolverManager skinOverrideResolverManager,
+    SkinPickerModEnvironment environment,
     ModContext context,
     SkinLocator skinLocator,
     DisposeGroup disposeGroup)
@@ -41,10 +42,10 @@ internal sealed class SkinPickerMod(
 
         var assetRegistry = AddressableAssetRegistry.Create(ModInfo.Name);
 
-        using var customSkinLoader = new CustomSkinLoader(Melon<Core>.Logger, context.DataService, assetRegistry);
+        using var customSkinLoader = new CustomSkinLoader(Melon<Core>.Logger, context.DataService, environment, assetRegistry);
 
         var skinSelectionPersistence = new SkinSelectionPersistence(
-            ModEnvironment.ModDataDirectory.GetFile("selections.json"));
+            environment.ModUserDataDirectory.GetFile("selections.json"));
 
         SkinSelections skinSelections = skinSelectionPersistence.TryReadSelections();
 
