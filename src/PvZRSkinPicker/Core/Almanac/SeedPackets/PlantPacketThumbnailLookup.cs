@@ -5,24 +5,19 @@ using Il2CppReloaded.Gameplay;
 
 using Il2CppSource.DataModels;
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using PvZRSkinPicker.Api;
 
-using SolarApi;
-
-internal sealed class PlantPacketThumbnailLookup : PacketThumbnailLookup<SeedType>
+internal sealed class PlantPacketThumbnailLookup(
+    ILogger<PlantPacketThumbnailLookup> logger,
+    AlmanacModel almanac)
+    : PacketThumbnailLookup<SeedType>(logger)
 {
-    private AlmanacEntriesModel? almanacEntries;
-
-    private PlantPacketThumbnailLookup()
-    {
-    }
-
-    public static PlantPacketThumbnailLookup Instance { get; } = new();
+    private readonly AlmanacEntriesModel? almanacEntries = almanac.m_plantsModel;
 
     protected override AlmanacEntriesModel? GetAlmanacEntries()
-        => this.almanacEntries ??= Solar<SkinPickerMod>.Provider.GetRequiredService<AlmanacModel>().m_plantsModel;
+        => this.almanacEntries;
 
     protected override SeedChooserDataModel? GetChooserEntries()
         => GameplayDataProviderApi.CurrentModel?.m_seedChooserDataModel;

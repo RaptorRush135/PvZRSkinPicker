@@ -8,12 +8,13 @@ using Il2CppSource.DataModels;
 
 using Il2CppTekly.DataModels.Models;
 
-using MelonLoader;
+using Microsoft.Extensions.Logging;
 
 using SolarApi.Collections.Extensions;
 using SolarApi.Il2Cpp.Extensions;
 
-internal abstract class PacketThumbnailLookup<T>
+internal abstract class PacketThumbnailLookup<T>(
+    ILogger<PacketThumbnailLookup<T>> logger)
     where T : struct, Enum
 {
     public IEnumerable<AddressableSpriteValueModel> GetThumbnails(T type)
@@ -31,22 +32,22 @@ internal abstract class PacketThumbnailLookup<T>
     }
 
     public AddressableSpriteValueModel? GetAlmanacThumbnail(T type)
-        => GetEntries<AlmanacEntriesModel, AlmanacEntryModel>(
+        => this.GetEntries<AlmanacEntriesModel, AlmanacEntryModel>(
         type, this.GetAlmanacEntries, c => c.m_entriesModel, this.GetEntryDataType, true)
         .FirstOrDefault()?.m_thumbnailModel;
 
     public AddressableSpriteValueModel? GetChooserThumbnail(T type)
-        => GetEntries<SeedChooserDataModel, SeedChooserEntryModel>(
+        => this.GetEntries<SeedChooserDataModel, SeedChooserEntryModel>(
         type, this.GetChooserEntries, c => c.m_entriesUnlockedModel, this.GetEntryDataType)
         .FirstOrDefault()?.m_thumbnail;
 
     public AddressableSpriteValueModel? GetImitaterChooserThumbnail(T type)
-        => GetEntries<SeedChooserDataModel, SeedChooserEntryModel>(
+        => this.GetEntries<SeedChooserDataModel, SeedChooserEntryModel>(
         type, this.GetChooserEntries, c => c.m_imitaterEntriesModel, this.GetEntryDataType)
         .FirstOrDefault()?.m_thumbnail;
 
     public IEnumerable<AddressableSpriteValueModel> GetBankThumbnails(T type, bool player2 = false)
-        => GetEntries<SeedBankDataModel, SeedBankEntryModel>(
+        => this.GetEntries<SeedBankDataModel, SeedBankEntryModel>(
         type, () => this.GetBankEntries(player2), c => c.m_entriesModel, this.GetEntryDataType)
         .Select(e => e.m_thumbnail);
 
@@ -62,7 +63,7 @@ internal abstract class PacketThumbnailLookup<T>
 
     protected abstract T GetEntryDataType(SeedBankEntryModel entry);
 
-    private static IEnumerable<TEntry> GetEntries<TContainer, TEntry>(
+    private IEnumerable<TEntry> GetEntries<TContainer, TEntry>(
         T type,
         Func<TContainer?> containerGetter,
         Func<TContainer, ObjectModel> entriesGetter,
@@ -77,7 +78,10 @@ internal abstract class PacketThumbnailLookup<T>
         {
             if (warnIfContainerMissing)
             {
-                Melon<Core>.Logger.Warning($"{typeof(TContainer).Name} not available ({typeof(T).Name})");
+                logger.LogWarning(
+                    "{ContainerName} not available ({TypeName})",
+                    typeof(TContainer).Name,
+                    typeof(T).Name);
             }
 
             return [];

@@ -14,7 +14,8 @@ using SolarApi.Hooks;
 
 internal sealed class PlantSkinOverrideResolver(
     ILogger<PlantSkinOverrideResolver> logger,
-    SpawnContextContainer<SeedType> currentContext)
+    SpawnContextContainer<SeedType> currentContext,
+    PacketThumbnailLookup<SeedType> packetThumbnailLookup)
     : SkinOverrideResolver<SeedType>(logger, currentContext)
 {
     public static PlantSkinOverrideResolver Instance { get; }
@@ -23,7 +24,7 @@ internal sealed class PlantSkinOverrideResolver(
     public static EmulateSkinConditionsPatcher<Plant, SeedType> SkinConditionsPatcher { get; }
         = new EmulateSkinConditionsPatcher<Plant, SeedType>(Instance, p => new(p.mSeedType, p.mBoard, p.mRow));
 
-    protected override PacketThumbnailLookup<SeedType> PacketThumbnailLookup => PlantPacketThumbnailLookup.Instance;
+    protected override PacketThumbnailLookup<SeedType> PacketThumbnailLookup => packetThumbnailLookup;
 
     public static IFunctionHook Initialize()
     {

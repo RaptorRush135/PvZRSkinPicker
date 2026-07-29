@@ -4,6 +4,7 @@ using Il2CppReloaded.Gameplay;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using PvZRSkinPicker.Almanac.SeedPackets;
 using PvZRSkinPicker.Almanac.SeedPackets.Renderer;
 using PvZRSkinPicker.Environment;
 using PvZRSkinPicker.Metadata;
@@ -34,6 +35,8 @@ internal sealed class SkinPickerModBuilder
         services.AddSingleton(_ => PacketRenderer.Create(new Vector2(0, -200)));
 
         AddSkinOverrideResolver<SeedType, PlantSkinOverrideResolver>();
+        services.AddSingleton<PacketThumbnailLookup<SeedType>, PlantPacketThumbnailLookup>();
+
         AddSkinOverrideResolver<ZombieType, ZombieSkinOverrideResolver>();
 
         services.AddSingleton<CustomSkinLoader>();
