@@ -422,7 +422,7 @@ internal sealed class CustomSkinLoader(
     {
         public Skin Build(AddressableAssetRegistry assetRegistry)
         {
-            var spriteRef = assetRegistry.AddSprite(this.Id.ToString(), this.Sprite);
+            var spriteRef = assetRegistry.AddSprite(this.Id, this.Sprite);
             return Skin.CreateCustom(this.Name, this.Id, this.Prefab, spriteRef);
         }
     }
