@@ -8,4 +8,5 @@
   <Project Path="Core/PvZRSkinPicker.csproj" />
   <Project Path="Common/PvZRSkinPicker.Common.csproj" />
   <Project Path="Tests/PvZRSkinPicker.Tests.csproj" />
+  <Project Path="../SolarApi/src/SolarApi/Core/SolarApi.csproj" />
 </Solution>

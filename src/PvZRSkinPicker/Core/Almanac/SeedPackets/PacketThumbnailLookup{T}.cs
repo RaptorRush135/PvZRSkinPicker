@@ -12,6 +12,8 @@ using MelonLoader;
 
 using PvZRSkinPicker.Extensions;
 
+using SolarApi.Il2Cpp.Extensions;
+
 internal abstract class PacketThumbnailLookup<T>
     where T : struct, Enum
 {
@@ -71,11 +73,12 @@ internal abstract class PacketThumbnailLookup<T>
         where TEntry : Il2CppObjectBase
     {
         TContainer? container = containerGetter();
+
         if (container == null)
         {
             if (warnIfContainerMissing)
             {
-                Melon<Core>.Logger.Msg($"{typeof(TContainer).Name} not available ({typeof(T).Name})");
+                Melon<Core>.Logger.Warning($"{typeof(TContainer).Name} not available ({typeof(T).Name})");
             }
 
             return [];

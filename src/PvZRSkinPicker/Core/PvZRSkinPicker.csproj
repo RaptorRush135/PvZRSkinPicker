@@ -11,9 +11,9 @@
     <MinVerDefaultPreReleaseIdentifiers>dev</MinVerDefaultPreReleaseIdentifiers>
   </PropertyGroup>
 
-  <Target Name="DisableZipVersionDotReplacementForPreRelease" AfterTargets="MinVer" Condition="'$(MinVerPreRelease)' != ''">
+  <Target Name="EnableZipVersionDotReplacementForStableRelease" AfterTargets="MinVer" Condition="'$(MinVerPreRelease)' == ''">
     <PropertyGroup>
-      <ModZipReplaceVersionDots>false</ModZipReplaceVersionDots>
+      <ModZipReplaceVersionDots>true</ModZipReplaceVersionDots>
     </PropertyGroup>
   </Target>
 
@@ -24,6 +24,13 @@
 
   <ItemGroup>
     <Compile Include="..\Common\**\*.cs" Exclude="**\obj\**" Link="%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ModEnvironmentReference Include="System.Diagnostics.DiagnosticSource.dll" />
+    <ModEnvironmentReference Include="Microsoft.Extensions.Logging.Abstractions.dll" />
+    <ModEnvironmentReference Include="Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+    <ProjectReference Include="..\..\SolarApi\src\SolarApi\Core\SolarApi.csproj" />
   </ItemGroup>
 
 </Project>

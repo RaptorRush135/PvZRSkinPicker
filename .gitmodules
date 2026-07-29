@@ -1,0 +1,3 @@
+[submodule "src/SolarApi"]
+	path = src/SolarApi
+	url = https://github.com/RaptorRush135/SolarApi.git

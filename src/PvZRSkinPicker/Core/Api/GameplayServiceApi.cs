@@ -7,16 +7,13 @@ using HarmonyLib;
 
 using Il2CppReloaded.Services;
 
-using MelonLoader;
+using Microsoft.Extensions.DependencyInjection;
+
+using SolarApi;
 
 [HarmonyPatch]
 internal static class GameplayServiceApi
 {
-    static GameplayServiceApi()
-    {
-        AppCoreApi.OnGameplayServiceReady.Subscribe(service => Instance = service);
-    }
-
     public static bool? PreOrderContentActiveOverride { get; set; }
 
     public static bool? RetroContentActiveOverride { get; set; }
@@ -26,18 +23,7 @@ internal static class GameplayServiceApi
     public static bool? ChinaModeActiveOverride { get; set; }
 
     public static IGameplayService? Instance
-    {
-        get
-        {
-            if (field == null)
-            {
-                Melon<Core>.Logger.Warning("GameplayService not ready");
-            }
-
-            return field;
-        }
-        private set;
-    }
+        => field ??= Solar<SkinPickerMod>.Provider.GetRequiredService<IGameplayService>();
 
     public static void SetOverrides(bool? value)
     {
