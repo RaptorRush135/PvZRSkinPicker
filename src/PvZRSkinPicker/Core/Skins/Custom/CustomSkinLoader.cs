@@ -346,6 +346,7 @@ internal sealed class CustomSkinLoader(
             SeedType.Snowpea => new(0.27f, -1.38f, 0.95f),
             SeedType.Chomper => new(-0.15f, -1.92f, 0.7f),
             SeedType.Repeater => new(0.26f, -1.54f),
+
             // TODO: Complete
             // SeedType.Puffshroom = 8,
             // SeedType.Sunshroom = 9,

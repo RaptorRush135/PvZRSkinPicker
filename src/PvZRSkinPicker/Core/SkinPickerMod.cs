@@ -2,8 +2,6 @@
 
 using System.Collections.Immutable;
 
-using HarmonyLib;
-
 using Il2CppReloaded.Data;
 using Il2CppReloaded.DataModels;
 using Il2CppReloaded.Gameplay;
@@ -15,7 +13,6 @@ using PvZRSkinPicker.Almanac.UI;
 using PvZRSkinPicker.Api;
 using PvZRSkinPicker.Data;
 using PvZRSkinPicker.Environment;
-using PvZRSkinPicker.Hooks;
 using PvZRSkinPicker.Metadata;
 using PvZRSkinPicker.Skins;
 using PvZRSkinPicker.Skins.Custom;
@@ -26,28 +23,21 @@ using PvZRSkinPicker.Skins.Prefabs.Plants;
 using PvZRSkinPicker.Skins.Prefabs.Zombies;
 
 using SolarApi;
+using SolarApi.Collections;
 using SolarApi.Il2Cpp.Extensions;
 using SolarApi.IO.Extensions;
-using SolarApi.MelonLoader;
 using SolarApi.Unity.Resources;
 
 internal sealed class SkinPickerMod(
+    SkinOverrideResolverManager skinOverrideResolverManager,
     ModContext context,
     SkinLocator skinLocator,
-    Harmony harmony)
+    DisposeGroup disposeGroup)
     : SolarMod
 {
-    private readonly HookStore hookStore = new();
-
-    private IDisposable? quickSwap;
-
     protected override void OnInitialize()
     {
-        using (var scope = new SanityCheckDetourBypass(harmony))
-        {
-            this.hookStore.Add(PlantSkinOverrideResolver.Initialize());
-            this.hookStore.Add(ZombieSkinOverrideResolver.Initialize());
-        }
+        skinOverrideResolverManager.Initialize();
 
         var assetRegistry = AddressableAssetRegistry.Create(ModInfo.Name);
 
@@ -78,13 +68,12 @@ internal sealed class SkinPickerMod(
 
         skinSelectionPersistence.BindControllers(plantPickerController, zombiePickerController);
 
-        this.quickSwap = new PlantSkinQuickSwap(plantPickerController.Pickers);
+        disposeGroup.Collect(new PlantSkinQuickSwap(plantPickerController.Pickers));
     }
 
     protected override void OnDeinitialize()
     {
-        this.hookStore.DetachAll();
-        this.quickSwap?.Dispose();
+        disposeGroup.Dispose();
     }
 
     private static SkinPickerController<T> SetupSkinPicker<T>(
