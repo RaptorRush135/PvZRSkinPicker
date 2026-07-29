@@ -1,12 +1,11 @@
 ﻿namespace PvZRSkinPicker.Skins;
 
 using Il2CppReloaded.Data;
-using Il2CppReloaded.Gameplay;
 using Il2CppReloaded.Services;
 
 using Il2CppTekly.Localizations;
 
-using PvZRSkinPicker.Almanac.Extensions;
+using PvZRSkinPicker.Skins.Picker;
 
 using SolarApi.Collections.Extensions;
 
@@ -19,7 +18,7 @@ internal sealed class SkinLocator(
     public IEnumerable<Skin> GetSkins(PlantDefinition definition)
     {
         var type = definition.SeedType;
-        if (!type.IsInAlmanac())
+        if (!type.IsSkinPickerSupported())
         {
             return [];
         }
@@ -56,8 +55,7 @@ internal sealed class SkinLocator(
     {
         var type = definition.ZombieType;
 
-        // "DuckyTube" uses the skins of "Normal", so do not scan for skins
-        if (!type.IsInAlmanac() || type == ZombieType.DuckyTube)
+        if (!type.IsSkinPickerSupported())
         {
             return [];
         }

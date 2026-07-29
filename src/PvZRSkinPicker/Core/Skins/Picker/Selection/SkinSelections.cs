@@ -6,7 +6,7 @@ using Il2CppReloaded.Gameplay;
 
 using MelonLoader;
 
-using PvZRSkinPicker.Almanac.Extensions;
+using PvZRSkinPicker.Skins.Picker;
 
 internal sealed record SkinSelections(
     SkinSelectionSet<SeedType> Plants,
@@ -20,8 +20,8 @@ internal sealed record SkinSelections(
     public static SkinSelections Parse(SkinSelectionConfig config)
     {
         return new(
-            ParseSet<SeedType>(config.Plants, p => p.IsInAlmanac()),
-            ParseSet<ZombieType>(config.Zombies, z => z.IsInAlmanac()));
+            ParseSet<SeedType>(config.Plants, p => p.IsSkinPickerSupported()),
+            ParseSet<ZombieType>(config.Zombies, z => z.IsSkinPickerSupported()));
 
         static SkinSelectionSet<T> ParseSet<T>(
             IReadOnlyDictionary<string, string> typeToIdMap,

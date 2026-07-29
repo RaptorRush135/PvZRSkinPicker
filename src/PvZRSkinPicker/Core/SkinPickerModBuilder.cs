@@ -1,5 +1,7 @@
 ﻿namespace PvZRSkinPicker;
 
+using Il2CppReloaded.Gameplay;
+
 using Microsoft.Extensions.DependencyInjection;
 
 using PvZRSkinPicker.Almanac.SeedPackets.Renderer;
@@ -28,6 +30,8 @@ internal sealed class SkinPickerModBuilder
         services.AddSingleton(_ => AddressableAssetRegistry.Create(ModInfo.Name));
         services.AddSingleton(_ => PacketRenderer.Create(new Vector2(0, -200)));
         services.AddSingleton<CustomSkinLoader>();
+        services.AddSingleton<ISkinTypeHandler<SeedType>, PlantSkinHandler>();
+        services.AddSingleton<SkinLoaderFactory>();
         services.AddSingleton<SkinPickerControllerInitializer>();
         services.AddSingleton<SkinLocator>();
         services.AddSingleton<DisposeGroup>();
