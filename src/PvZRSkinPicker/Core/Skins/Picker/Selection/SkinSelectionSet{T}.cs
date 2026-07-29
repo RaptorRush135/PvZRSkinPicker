@@ -2,7 +2,7 @@
 
 using System.Collections.Immutable;
 
-using MelonLoader;
+using Microsoft.Extensions.Logging;
 
 using SolarApi.Collections.Extensions;
 
@@ -12,7 +12,7 @@ internal sealed class SkinSelectionSet<T>
     public SkinSelectionSet(
         IReadOnlyDictionary<string, string> typeToIdMap,
         Predicate<T> typeValidator,
-        MelonLogger.Instance logger)
+        ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(typeToIdMap);
         ArgumentNullException.ThrowIfNull(typeValidator);
@@ -28,13 +28,13 @@ internal sealed class SkinSelectionSet<T>
             if (!Enum.TryParse<T>(pair.Key, ignoreCase: true, out var targetType)
                 || !typeValidator.Invoke(targetType))
             {
-                logger.Warning($"Could not parse skin type: '{pair.Key}'");
+                logger.LogWarning("Could not parse skin type: '{SkinType}'", pair.Key);
                 return null;
             }
 
             if (!SkinId.TryParse(pair.Value, out var skinId))
             {
-                logger.Warning($"Could not parse skin id: '{pair.Value}'");
+                logger.LogWarning("Could not parse skin id: '{SkinId}'", pair.Value);
                 return null;
             }
 

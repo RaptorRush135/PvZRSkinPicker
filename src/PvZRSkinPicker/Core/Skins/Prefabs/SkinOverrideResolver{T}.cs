@@ -2,17 +2,17 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-using MelonLoader;
+using Microsoft.Extensions.Logging;
 
 using PvZRSkinPicker.Almanac.SeedPackets;
 using PvZRSkinPicker.Api;
 using PvZRSkinPicker.Skins;
 
-internal abstract class SkinOverrideResolver<T>
+internal abstract class SkinOverrideResolver<T>(
+    ILogger<SkinOverrideResolver<T>> logger,
+    SpawnContextContainer<T> currentContext)
     where T : struct, Enum
 {
-    private readonly SpawnContextContainer<T> currentContext = new(Melon<Core>.Logger);
-
     private readonly Dictionary<T, Skin> overrides = [];
 
     protected abstract PacketThumbnailLookup<T>? PacketThumbnailLookup { get; }
@@ -38,14 +38,14 @@ internal abstract class SkinOverrideResolver<T>
 
     public bool TryGetContextOverride(T type, [MaybeNullWhen(false)] out Skin skin)
     {
-        if (this.currentContext.Get() is not { } context)
+        if (currentContext.Get() is not { } context)
         {
             return this.overrides.TryGetValue(type, out skin);
         }
 
         if (!EqualityComparer<T>.Default.Equals(context.Type, type))
         {
-            this.currentContext.Warning($"type mismatch ({context.Type} / {type})");
+            currentContext.Warning($"type mismatch ({context.Type} / {type})");
             skin = null;
             return false;
         }
@@ -55,7 +55,7 @@ internal abstract class SkinOverrideResolver<T>
 
     public void EmulateSkinConditions(SpawnContext<T> context)
     {
-        this.currentContext.Set(context);
+        currentContext.Set(context);
 
         if (this.TryGetOverride(context, out var skin))
         {
@@ -65,9 +65,9 @@ internal abstract class SkinOverrideResolver<T>
 
     public void OnForcedDecember()
     {
-        if (this.currentContext.Get() == null)
+        if (currentContext.Get() == null)
         {
-            Melon<Core>.Logger.Warning(
+            logger.LogWarning(
                 $"{nameof(this.OnForcedDecember)} was called but no spawn context is active");
 
             return;
@@ -78,7 +78,7 @@ internal abstract class SkinOverrideResolver<T>
 
     public void ClearSkinConditions()
     {
-        this.currentContext.Clear();
+        currentContext.Clear();
         GameplayServiceApi.SetOverrides(null);
     }
 

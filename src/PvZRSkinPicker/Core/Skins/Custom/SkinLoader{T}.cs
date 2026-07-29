@@ -22,6 +22,8 @@ internal sealed class SkinLoader<T>(
     ISkinTypeHandler<T> skinTypeHandler)
     where T : struct, Enum
 {
+    private readonly CustomSkinAssetReplacer assetReplacer = new(logger);
+
     public SkinPrototype<T>? TryLoadSkin(
         SkinEntry skin,
         DirectoryInfo packDirectory)
@@ -118,7 +120,7 @@ internal sealed class SkinLoader<T>(
                 PresenceMark(atlas),
                 PresenceMark(skeleton));
 
-            bool replaced = CustomSkinAssetReplacer.TryReplace(
+            bool replaced = this.assetReplacer.TryReplace(
                 animation,
                 texture,
                 atlas,

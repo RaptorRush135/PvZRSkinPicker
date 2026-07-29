@@ -6,10 +6,11 @@ using Il2CppReloaded.Gameplay;
 
 using Il2CppSource.Serialization;
 
-using MelonLoader;
+using Microsoft.Extensions.Logging;
 
 using PvZRSkinPicker.Skins.Prefabs;
 
+using SolarApi;
 using SolarApi.Hooks;
 
 internal sealed class ReloadedDeserializePatch<TClass, T>
@@ -19,6 +20,9 @@ internal sealed class ReloadedDeserializePatch<TClass, T>
     private readonly SkinOverrideResolver<T> skinOverrideResolver;
 
     private readonly Il2CppHook<ReloadedDeserializeDelegate> hook;
+
+    private readonly ILogger<ReloadedDeserializePatch<TClass, T>> logger
+        = Solar<SkinPickerMod>.GetLogger<ReloadedDeserializePatch<TClass, T>>();
 
     public ReloadedDeserializePatch(SkinOverrideResolver<T> skinOverrideResolver)
     {
@@ -72,7 +76,7 @@ internal sealed class ReloadedDeserializePatch<TClass, T>
             }
             catch (Exception ex)
             {
-                Melon<Core>.Logger.Error("Failed to read SpawnContext", ex);
+                this.logger.LogError(ex, "Failed to read SpawnContext");
                 return null;
             }
             finally

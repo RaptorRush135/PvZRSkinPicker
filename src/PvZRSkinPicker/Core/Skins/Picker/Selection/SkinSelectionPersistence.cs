@@ -2,14 +2,19 @@
 
 using Il2CppReloaded.Data;
 
-using MelonLoader;
+using Microsoft.Extensions.Logging;
 
 using PvZRSkinPicker.Api;
 using PvZRSkinPicker.Skins.Picker;
 
+using SolarApi;
+
 internal sealed class SkinSelectionPersistence(
     FileInfo file)
 {
+    private static readonly ILogger<SkinSelectionPersistence> Logger
+        = Solar<SkinPickerMod>.GetLogger<SkinSelectionPersistence>();
+
     public SkinSelections Current { get; private set; } = SkinSelections.Empty;
 
     public SkinSelections TryReadSelections()
@@ -23,12 +28,12 @@ internal sealed class SkinSelectionPersistence(
 
             using var fileStream = file.OpenRead();
             var config = SkinSelectionConfig.Load(fileStream);
-            this.Current = SkinSelections.Parse(config);
+            this.Current = SkinSelections.Parse(config, Logger);
             return this.Current;
         }
         catch (Exception ex)
         {
-            Melon<Core>.Logger.Error($"Failed to load skin selections at '{file.FullName}'", ex);
+            Logger.LogError(ex, "Failed to load skin selections at '{FileName}'", file.FullName);
             return SkinSelections.Empty;
         }
     }
@@ -44,7 +49,7 @@ internal sealed class SkinSelectionPersistence(
         }
         catch (Exception ex)
         {
-            Melon<Core>.Logger.Error($"Failed to save skin selections at '{file.FullName}'", ex);
+            Logger.LogError(ex, "Failed to save skin selections at '{FileName}'", file.FullName);
         }
     }
 

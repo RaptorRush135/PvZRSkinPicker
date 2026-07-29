@@ -4,7 +4,7 @@ using System.Diagnostics.Contracts;
 
 using Il2CppReloaded.Gameplay;
 
-using MelonLoader;
+using Microsoft.Extensions.Logging;
 
 using PvZRSkinPicker.Skins.Picker;
 
@@ -17,17 +17,17 @@ internal sealed record SkinSelections(
         SkinSelectionSet<ZombieType>.Empty);
 
     [Pure]
-    public static SkinSelections Parse(SkinSelectionConfig config)
+    public static SkinSelections Parse(SkinSelectionConfig config, ILogger logger)
     {
         return new(
             ParseSet<SeedType>(config.Plants, p => p.IsSkinPickerSupported()),
             ParseSet<ZombieType>(config.Zombies, z => z.IsSkinPickerSupported()));
 
-        static SkinSelectionSet<T> ParseSet<T>(
+        SkinSelectionSet<T> ParseSet<T>(
             IReadOnlyDictionary<string, string> typeToIdMap,
             Predicate<T> typeValidator)
             where T : struct, Enum
-            => new(typeToIdMap, typeValidator, Melon<Core>.Logger);
+            => new(typeToIdMap, typeValidator, logger);
     }
 
     [Pure]

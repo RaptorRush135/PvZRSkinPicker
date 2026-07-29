@@ -1,9 +1,9 @@
 ﻿namespace PvZRSkinPicker.Skins.Prefabs;
 
-using MelonLoader;
+using Microsoft.Extensions.Logging;
 
-internal class SpawnContextContainer<T>(
-    MelonLogger.Instance logger)
+internal sealed class SpawnContextContainer<T>(
+    ILogger<SpawnContextContainer<T>> logger)
     where T : struct, Enum
 {
     private SpawnContext<T>? value;
@@ -33,6 +33,6 @@ internal class SpawnContextContainer<T>(
 
     public void Warning(string message)
     {
-        logger.Warning($"Context<{typeof(T).Name}> {message}");
+        logger.LogWarning("Context<{TypeName}> {Message}", typeof(T).Name, message);
     }
 }
