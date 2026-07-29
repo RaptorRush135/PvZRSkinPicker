@@ -19,6 +19,8 @@ using UnityEngine;
 internal sealed class SkinPickerModBuilder
     : SolarModBuilder<SkinPickerMod>
 {
+    public override string ShortName => "SkinPicker";
+
     protected override void ConfigureModServices(IServiceCollection services)
     {
         services.AddSingleton<SkinOverrideResolverManager>();
