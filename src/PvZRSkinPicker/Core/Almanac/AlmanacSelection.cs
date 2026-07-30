@@ -5,9 +5,11 @@ using Il2CppReloaded.Data;
 using Il2CppTekly.DataModels.Binders;
 using Il2CppTekly.DataModels.Models;
 
-using MelonLoader;
+using Microsoft.Extensions.Logging;
 
 using PvZRSkinPicker.Almanac.UI;
+
+using SolarApi;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,6 +17,9 @@ using UnityEngine.Events;
 internal sealed class AlmanacSelection<T>
     where T : struct, Enum
 {
+    private readonly ILogger<AlmanacSelection<T>> logger
+        = Solar<SkinPickerMod>.GetLogger<AlmanacSelection<T>>();
+
     private readonly StringValueModel selectedModel;
 
     private readonly StringBinder nameBinder;
@@ -58,8 +63,10 @@ internal sealed class AlmanacSelection<T>
             @event.RemoveListener(wrapper);
             if (Time.frameCount != frame)
             {
-                Melon<Core>.Logger.Warning(
-                    $"OnTextSet invoked on wrong frame. Expected {frame}, actual {Time.frameCount}");
+                this.logger.LogWarning(
+                    "OnTextSet invoked on wrong frame. Expected {Frame}, actual {FrameCount}",
+                    frame,
+                    Time.frameCount);
 
                 return;
             }
@@ -79,8 +86,8 @@ internal sealed class AlmanacSelection<T>
     {
         if (!int.TryParse(value, out var typeIndex))
         {
-            Melon<Core>.Logger.Warning(
-                $"Expected integer in selection, but received '{value}'");
+            this.logger.LogWarning(
+                "Expected integer in selection, but received '{Value}'", value);
 
             return;
         }

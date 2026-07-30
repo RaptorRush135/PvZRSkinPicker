@@ -2,16 +2,20 @@
 
 using System.Diagnostics.Contracts;
 
-using MelonLoader;
+using Microsoft.Extensions.Logging;
 
 using PvZRSkinPicker.Data;
 using PvZRSkinPicker.Skins;
 
+using SolarApi;
 using SolarApi.Collections.Extensions;
 
 internal sealed class SkinPicker<T>
     where T : struct, Enum
 {
+    private static readonly ILogger<SkinPicker<T>> Logger
+        = Solar<SkinPickerMod>.GetLogger<SkinPicker<T>>();
+
     private int selectedIndex;
 
     private SkinPicker(
@@ -61,7 +65,7 @@ internal sealed class SkinPicker<T>
         Skin? selectedSkin = this.Skins.FirstOrDefault(s => s.Id == id);
         if (selectedSkin == null)
         {
-            Melon<Core>.Logger.Warning($"Skin with id '{id.Id}' not found");
+            Logger.LogWarning("Skin with id '{SkinId}' not found", id.Id);
             return;
         }
 
