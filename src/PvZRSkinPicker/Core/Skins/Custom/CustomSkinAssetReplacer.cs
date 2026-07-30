@@ -10,10 +10,8 @@ using SolarApi.Unity.Extensions;
 
 using UnityEngine;
 
-using ILogger = Microsoft.Extensions.Logging.ILogger;
-
 internal sealed class CustomSkinAssetReplacer(
-    ILogger logger)
+    ILogger<CustomSkinAssetReplacer> logger)
 {
     public bool TryReplace(
         SkeletonAnimation animation,

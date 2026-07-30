@@ -14,7 +14,7 @@ using SolarApi.IO.Extensions;
 internal sealed class SkinPickerMod(
     SkinOverrideResolverManager skinOverrideResolverManager,
     SkinPickerModEnvironment environment,
-    CustomSkinLoader customSkinLoader,
+    SkinPackLoader skinPackLoader,
     SkinPickerControllerInitializer controllerInitializer,
     PacketRenderer packetRenderer,
     DisposeGroup disposeGroup)
@@ -29,7 +29,7 @@ internal sealed class SkinPickerMod(
 
         SkinSelections skinSelections = skinSelectionPersistence.TryReadSelections();
 
-        CustomSkinSet customSkins = customSkinLoader.GetSkins();
+        CustomSkinSet customSkins = skinPackLoader.GetSkins();
 
         SkinPickerControllerPair controllerPair = controllerInitializer.Create(skinSelections, customSkins);
 

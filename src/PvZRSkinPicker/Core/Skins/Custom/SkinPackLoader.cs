@@ -15,10 +15,10 @@ using SolarApi.IO.Extensions;
 using SolarApi.Logging.Extensions;
 using SolarApi.Unity.Resources;
 
-internal sealed class CustomSkinLoader(
-    ILogger<CustomSkinLoader> logger,
+internal sealed class SkinPackLoader(
+    ILogger<SkinPackLoader> logger,
     SkinPickerModEnvironment environment,
-    SkinLoaderFactory skinLoaderFactory,
+    CustomSkinLoader<SeedType> plantSkinLoader,
     AddressableAssetRegistry assetRegistry)
 {
     public CustomSkinSet GetSkins()
@@ -47,8 +47,6 @@ internal sealed class CustomSkinLoader(
 
                 return ordered[0];
             }),];
-
-        var plantSkinLoader = skinLoaderFactory.CreateForPlants(logger);
 
         var skins = sources
             .SelectMany(s => this.LoadManifestSkins(s, plantSkinLoader))
@@ -183,7 +181,7 @@ internal sealed class CustomSkinLoader(
 
     private IReadOnlyCollection<SkinPrototype<SeedType>> LoadManifestSkins(
         SkinPackManifestSource manifestSource,
-        SkinLoader<SeedType> plantSkinLoader)
+        CustomSkinLoader<SeedType> plantSkinLoader)
     {
         ArgumentNullException.ThrowIfNull(manifestSource);
 

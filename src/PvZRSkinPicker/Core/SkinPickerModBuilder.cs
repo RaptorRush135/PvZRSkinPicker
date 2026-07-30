@@ -39,9 +39,10 @@ internal sealed class SkinPickerModBuilder
 
         AddSkinOverrideResolver<ZombieType, ZombieSkinOverrideResolver>();
 
-        services.AddSingleton<CustomSkinLoader>();
+        services.AddSingleton<SkinPackLoader>();
         services.AddSingleton<ISkinTypeHandler<SeedType>, PlantSkinHandler>();
-        services.AddSingleton<SkinLoaderFactory>();
+        services.AddSingleton<CustomSkinLoader<SeedType>>();
+        services.AddSingleton<CustomSkinAssetReplacer>();
 
         services.AddSingleton<SkinPickerControllerInitializer>();
         services.AddSingleton<SkinLocator>();

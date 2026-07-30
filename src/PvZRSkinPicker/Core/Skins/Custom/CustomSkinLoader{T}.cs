@@ -15,15 +15,12 @@ using SolarApi.Unity;
 
 using UnityEngine;
 
-using ILogger = Microsoft.Extensions.Logging.ILogger;
-
-internal sealed class SkinLoader<T>(
-    ILogger logger,
-    ISkinTypeHandler<T> skinTypeHandler)
+internal sealed class CustomSkinLoader<T>(
+    ILogger<CustomSkinLoader<T>> logger,
+    ISkinTypeHandler<T> skinTypeHandler,
+    CustomSkinAssetReplacer assetReplacer)
     where T : struct, Enum
 {
-    private readonly CustomSkinAssetReplacer assetReplacer = new(logger);
-
     public SkinPrototype<T>? TryLoadSkin(
         SkinEntry skin,
         DirectoryInfo packDirectory)
@@ -120,7 +117,7 @@ internal sealed class SkinLoader<T>(
                 PresenceMark(atlas),
                 PresenceMark(skeleton));
 
-            bool replaced = this.assetReplacer.TryReplace(
+            bool replaced = assetReplacer.TryReplace(
                 animation,
                 texture,
                 atlas,
