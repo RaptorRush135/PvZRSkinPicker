@@ -18,11 +18,18 @@ internal sealed class PlantSkinQuickSwap : IDisposable
 
     private bool disposed;
 
-    public PlantSkinQuickSwap(
+    private PlantSkinQuickSwap(
         IReadOnlyDictionary<SeedType, SkinPicker<SeedType>> pickers)
     {
         this.pickers = pickers;
-        MelonEvents.OnUpdate.Subscribe(this.Update);
+    }
+
+    public static PlantSkinQuickSwap Initialize(
+        IReadOnlyDictionary<SeedType, SkinPicker<SeedType>> pickers)
+    {
+        var quickSwap = new PlantSkinQuickSwap(pickers);
+        MelonEvents.OnUpdate.Subscribe(quickSwap.Update);
+        return quickSwap;
     }
 
     public void Dispose()
