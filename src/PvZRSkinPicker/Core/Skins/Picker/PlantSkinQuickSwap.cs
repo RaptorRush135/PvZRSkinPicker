@@ -1,16 +1,17 @@
 ﻿namespace PvZRSkinPicker.Skins.Picker;
 
 using Il2CppReloaded.Gameplay;
+using Il2CppReloaded.TreeStateActivities;
 
 using MelonLoader;
-
-using PvZRSkinPicker.Api;
 
 using UnityEngine;
 
 internal sealed class PlantSkinQuickSwap : IDisposable
 {
     private const float DebounceInterval = 0.15f;
+
+    private readonly GameplayActivity gameplayActivity;
 
     private readonly IReadOnlyDictionary<SeedType, SkinPicker<SeedType>> pickers;
 
@@ -19,15 +20,18 @@ internal sealed class PlantSkinQuickSwap : IDisposable
     private bool disposed;
 
     private PlantSkinQuickSwap(
+        GameplayActivity gameplayActivity,
         IReadOnlyDictionary<SeedType, SkinPicker<SeedType>> pickers)
     {
+        this.gameplayActivity = gameplayActivity;
         this.pickers = pickers;
     }
 
     public static PlantSkinQuickSwap Initialize(
+        GameplayActivity gameplayActivity,
         IReadOnlyDictionary<SeedType, SkinPicker<SeedType>> pickers)
     {
-        var quickSwap = new PlantSkinQuickSwap(pickers);
+        var quickSwap = new PlantSkinQuickSwap(gameplayActivity, pickers);
         MelonEvents.OnUpdate.Subscribe(quickSwap.Update);
         return quickSwap;
     }
@@ -45,7 +49,7 @@ internal sealed class PlantSkinQuickSwap : IDisposable
 
     private void Update()
     {
-        SeedType selectedType = GameplayActivityApi.Instance?.Board?.GetSeedTypeInCursor(0) ?? SeedType.None;
+        SeedType selectedType = this.gameplayActivity.Board?.GetSeedTypeInCursor(0) ?? SeedType.None;
         if (selectedType == SeedType.None)
         {
             return;

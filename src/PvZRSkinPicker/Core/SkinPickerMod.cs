@@ -1,5 +1,7 @@
 ﻿namespace PvZRSkinPicker;
 
+using Il2CppReloaded.TreeStateActivities;
+
 using PvZRSkinPicker.Almanac.SeedPackets.Renderer;
 using PvZRSkinPicker.Environment;
 using PvZRSkinPicker.Skins.Custom;
@@ -16,6 +18,7 @@ internal sealed class SkinPickerMod(
     SkinPickerModEnvironment environment,
     SkinPackLoader skinPackLoader,
     SkinPickerControllerInitializer controllerInitializer,
+    GameplayActivity gameplayActivity,
     PacketRenderer packetRenderer,
     DisposeGroup disposeGroup)
     : SolarMod
@@ -35,7 +38,7 @@ internal sealed class SkinPickerMod(
 
         skinSelectionPersistence.BindControllers(controllerPair);
 
-        disposeGroup.Collect(PlantSkinQuickSwap.Initialize(controllerPair.Plant.Pickers));
+        disposeGroup.Collect(PlantSkinQuickSwap.Initialize(gameplayActivity, controllerPair.Plant.Pickers));
 
         packetRenderer.Dispose();
     }
