@@ -39,9 +39,4 @@ internal sealed class SkinPickerMod(
 
         packetRenderer.Dispose();
     }
-
-    protected override void OnDeinitialize()
-    {
-        disposeGroup.Dispose();
-    }
 }
