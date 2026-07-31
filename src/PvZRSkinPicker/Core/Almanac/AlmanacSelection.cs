@@ -42,7 +42,7 @@ internal sealed class AlmanacSelection<T>
 
     public static AlmanacSelection<T> Create(AlmanacEntryType type, StringValueModel selectedModel)
     {
-        StringBinder nameBinder = AlmanacUI.GetSelectedItemNameBinder(type);
+        StringBinder nameBinder = AlmanacUI.GetSelectedItem(type).NameBinder;
         return new(selectedModel, nameBinder);
     }
 

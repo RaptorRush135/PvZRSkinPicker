@@ -2,21 +2,27 @@
 
 using Il2CppReloaded.Data;
 
-using Il2CppTekly.DataModels.Binders;
+using SolarApi.Unity.Extensions;
 
 using UnityEngine;
 using UnityEngine.UI;
 
 internal static class AlmanacUI
 {
-    private static AlmanacSelectedItem PlantSelectedItem
+    public static Transform PlantAlmanacContainer
+        => field ??= FindAlmanacContainer(AlmanacEntryType.Plant);
+
+    public static Transform ZombieAlmanacContainer
+        => field ??= FindAlmanacContainer(AlmanacEntryType.Zombie);
+
+    public static AlmanacSelectedItem PlantSelectedItem
         => field ??= AlmanacSelectedItem.Setup(AlmanacEntryType.Plant);
 
-    private static AlmanacSelectedItem ZombieSelectedItem
+    public static AlmanacSelectedItem ZombieSelectedItem
         => field ??= AlmanacSelectedItem.Setup(AlmanacEntryType.Zombie);
 
-    public static StringBinder GetSelectedItemNameBinder(AlmanacEntryType type)
-        => GetSelectedItem(type).NameBinder;
+    private static Transform GlobalPanels
+        => field ??= GameObject.FindOrThrow("GlobalPanels(Clone)").transform;
 
     public static ModButton CreatePortraitOverlayButton(
         string name,
@@ -30,12 +36,22 @@ internal static class AlmanacUI
         return CreateOverlayButton(name, selectedItem.PortraitTransform, sprite, 150, new Vector2(50, verticalPadding));
     }
 
-    private static AlmanacSelectedItem GetSelectedItem(AlmanacEntryType type)
+    public static AlmanacSelectedItem GetSelectedItem(AlmanacEntryType type)
     {
         return type == AlmanacEntryType.Plant
             ? PlantSelectedItem
             : ZombieSelectedItem;
     }
+
+    public static Transform GetAlmanacContainer(AlmanacEntryType type)
+    {
+        return type == AlmanacEntryType.Plant
+            ? PlantAlmanacContainer
+            : ZombieAlmanacContainer;
+    }
+
+    private static Transform FindAlmanacContainer(AlmanacEntryType type)
+        => GlobalPanels.FindOrThrow($"P_Almanac_{type}s");
 
     private static ModButton CreateOverlayButton(
         string name,

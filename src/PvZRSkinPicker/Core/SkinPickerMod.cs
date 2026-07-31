@@ -6,6 +6,7 @@ using PvZRSkinPicker.Almanac.SeedPackets.Renderer;
 using PvZRSkinPicker.Environment;
 using PvZRSkinPicker.Skins.Custom;
 using PvZRSkinPicker.Skins.Picker;
+using PvZRSkinPicker.Skins.Picker.SeedChooser;
 using PvZRSkinPicker.Skins.Picker.Selection;
 using PvZRSkinPicker.Skins.Prefabs;
 
@@ -38,6 +39,7 @@ internal sealed class SkinPickerMod(
 
         skinSelectionPersistence.BindControllers(controllerPair);
 
+        disposeGroup.Collect(SeedChooserSkinPicker.Initialize());
         disposeGroup.Collect(PlantSkinQuickSwap.Initialize(gameplayActivity, controllerPair.Plant.Pickers));
 
         packetRenderer.Dispose();

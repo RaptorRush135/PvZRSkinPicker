@@ -4,17 +4,18 @@ using Il2CppReloaded.Data;
 
 using Il2CppTekly.DataModels.Binders;
 
-using SolarApi.Unity.Extensions;
-
 using UnityEngine;
 using UnityEngine.UI;
 
 internal sealed class AlmanacSelectedItem
 {
+    public const string PanelName = "SelectedItem";
+
     private AlmanacSelectedItem(AlmanacEntryType type)
     {
-        var selectedItem = GlobalPanels
-            .Find($"P_Almanac_{type}s/Canvas/Layout/Center/Panel/SelectedItem")
+        var selectedItem = AlmanacUI.
+            GetAlmanacContainer(type)
+            .Find($"Canvas/Layout/Center/Panel/{PanelName}")
             .Cast<RectTransform>();
 
         this.Transform = selectedItem;
@@ -33,9 +34,6 @@ internal sealed class AlmanacSelectedItem
     public RectTransform PortraitTransform { get; }
 
     public StringBinder NameBinder { get; }
-
-    private static Transform GlobalPanels
-        => field ??= GameObject.FindOrThrow("GlobalPanels(Clone)").transform;
 
     public static AlmanacSelectedItem Setup(AlmanacEntryType type)
     {

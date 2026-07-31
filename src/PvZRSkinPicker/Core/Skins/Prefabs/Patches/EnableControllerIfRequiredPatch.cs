@@ -15,6 +15,10 @@ internal static class EnableControllerIfRequiredPatch
     [HarmonyPatch(typeof(ReloadedController), nameof(ReloadedController.Init))]
     private static void Prefix(ReloadedController __instance)
     {
-        RequiresActivationMarker.ActivateIfRequired(__instance.gameObject);
+        var gameObject = __instance.gameObject;
+        if (gameObject != null)
+        {
+            RequiresActivationMarker.ActivateIfRequired(gameObject);
+        }
     }
 }
