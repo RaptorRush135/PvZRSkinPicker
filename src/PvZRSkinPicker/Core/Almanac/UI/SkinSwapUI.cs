@@ -19,4 +19,11 @@ internal static class SkinSwapUI
             Icon,
             type);
     }
+
+    public static ModButton GetButton(AlmanacSelectedItem selectedItem)
+    {
+        return AlmanacUI.GetPortraitOverlayButton(
+            IconAsset.GetNameWithoutExtension(),
+            selectedItem);
+    }
 }

@@ -4,6 +4,8 @@ using Il2CppReloaded.Data;
 
 using Il2CppTekly.DataModels.Binders;
 
+using SolarApi.Unity.Extensions;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,21 +13,16 @@ internal sealed class AlmanacSelectedItem
 {
     public const string PanelName = "SelectedItem";
 
-    private AlmanacSelectedItem(AlmanacEntryType type)
+    private AlmanacSelectedItem(GameObject selectedItem)
     {
-        var selectedItem = AlmanacUI.
-            GetAlmanacContainer(type)
-            .Find($"Canvas/Layout/Center/Panel/{PanelName}")
+        this.Transform = selectedItem.transform.Cast<RectTransform>();
+
+        this.PortraitTransform = this.Transform
+            .FindOrThrow("SelectedItemRenderPortrait")
             .Cast<RectTransform>();
 
-        this.Transform = selectedItem;
-
-        this.PortraitTransform = selectedItem
-            .Find("SelectedItemRenderPortrait")
-            .Cast<RectTransform>();
-
-        this.NameBinder = selectedItem
-            .Find("SelectedItemName")
+        this.NameBinder = this.Transform
+            .FindOrThrow("SelectedItemName")
             .GetComponent<StringBinder>();
     }
 
@@ -37,13 +34,21 @@ internal sealed class AlmanacSelectedItem
 
     public static AlmanacSelectedItem Setup(AlmanacEntryType type)
     {
-        var item = new AlmanacSelectedItem(type);
+        var selectedItem = AlmanacUI.
+            GetAlmanacContainer(type)
+            .FindOrThrow($"Canvas/Layout/Center/Panel/{PanelName}")
+            .gameObject;
+
+        var item = new AlmanacSelectedItem(selectedItem);
 
         item.Transform
-            .Find("SelectedItemPanel")
+            .FindOrThrow("SelectedItemPanel")
             .GetComponent<Image>()
             .raycastTarget = false;
 
         return item;
     }
+
+    public static AlmanacSelectedItem Wrap(GameObject selectedItem)
+        => new(selectedItem);
 }

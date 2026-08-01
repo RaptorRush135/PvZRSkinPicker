@@ -24,16 +24,19 @@ internal sealed class AlmanacSelection<T>
 
     private readonly StringBinder nameBinder;
 
-    private AlmanacSelection(StringValueModel selectedModel, StringBinder nameBinder)
+    private readonly bool ignoreEmptyValues;
+
+    public AlmanacSelection(StringValueModel selectedModel, StringBinder nameBinder, bool ignoreEmptyValues)
     {
         ArgumentNullException.ThrowIfNull(selectedModel);
         ArgumentNullException.ThrowIfNull(nameBinder);
 
-        selectedModel.Subscribe(
-            (Action<string>)this.Changed);
-
         this.selectedModel = selectedModel;
         this.nameBinder = nameBinder;
+        this.ignoreEmptyValues = ignoreEmptyValues;
+
+        selectedModel.Subscribe(
+            (Action<string>)this.Changed);
     }
 
     public event Action<T>? SelectionChanged;
@@ -43,7 +46,7 @@ internal sealed class AlmanacSelection<T>
     public static AlmanacSelection<T> Create(AlmanacEntryType type, StringValueModel selectedModel)
     {
         StringBinder nameBinder = AlmanacUI.GetSelectedItem(type).NameBinder;
-        return new(selectedModel, nameBinder);
+        return new(selectedModel, nameBinder, ignoreEmptyValues: false);
     }
 
     public void Refresh()
@@ -84,6 +87,11 @@ internal sealed class AlmanacSelection<T>
 
     private void Changed(string value)
     {
+        if (this.ignoreEmptyValues && string.IsNullOrEmpty(value))
+        {
+            return;
+        }
+
         if (!int.TryParse(value, out var typeIndex))
         {
             this.logger.LogWarning(

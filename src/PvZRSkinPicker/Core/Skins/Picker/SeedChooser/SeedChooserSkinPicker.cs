@@ -1,13 +1,20 @@
 ﻿namespace PvZRSkinPicker.Skins.Picker.SeedChooser;
 
 using Il2CppReloaded;
+using Il2CppReloaded.Gameplay;
 
 using Il2CppTekly.DataModels.Binders;
+using Il2CppTekly.DataModels.Models;
 
 using MelonLoader;
 
-using PvZRSkinPicker.Almanac.UI;
+using Microsoft.Extensions.Logging;
 
+using PvZRSkinPicker.Almanac;
+using PvZRSkinPicker.Almanac.UI;
+using PvZRSkinPicker.Api;
+
+using SolarApi;
 using SolarApi.Unity.Extensions;
 
 using UnityEngine;
@@ -18,16 +25,24 @@ internal sealed class SeedChooserSkinPicker : IDisposable
 
     public const string PortraitRenderName = "P_AlmanacPortraitRender";
 
+    private readonly ILogger<SeedChooserSkinPicker> logger
+        = Solar<SkinPickerMod>.GetLogger<SeedChooserSkinPicker>();
+
+    private readonly IReadOnlyDictionary<SeedType, SkinPicker<SeedType>> pickers;
+
     private bool disposed;
 
-    private SeedChooserSkinPicker()
+    private SeedChooserSkinPicker(
+        IReadOnlyDictionary<SeedType, SkinPicker<SeedType>> pickers)
     {
+        this.pickers = pickers;
     }
 
-    public static SeedChooserSkinPicker Initialize()
+    public static SeedChooserSkinPicker Initialize(
+        IReadOnlyDictionary<SeedType, SkinPicker<SeedType>> pickers)
     {
-        var instance = new SeedChooserSkinPicker();
-        MelonEvents.OnSceneWasLoaded.Subscribe(OnSceneWasLoaded);
+        var instance = new SeedChooserSkinPicker(pickers);
+        MelonEvents.OnSceneWasLoaded.Subscribe(instance.OnSceneWasLoaded);
         return instance;
     }
 
@@ -39,38 +54,7 @@ internal sealed class SeedChooserSkinPicker : IDisposable
         }
 
         this.disposed = true;
-        MelonEvents.OnSceneWasLoaded.Unsubscribe(OnSceneWasLoaded);
-    }
-
-    private static void OnSceneWasLoaded(int buildIndex, string sceneName)
-    {
-        if (sceneName == Constants.Transition.GAMEPLAY)
-        {
-            GameplaySceneSetup();
-        }
-    }
-
-    private static void GameplaySceneSetup()
-    {
-        // TODO: Bind PortraitRender visbility to chooser
-        // TODO: Bind skin swap button
-
-        var seedChooserTransform = GameObject.FindOrThrow("Panels")
-            .transform.FindOrThrow("SeedChooserPanels/P_SeedChooser/Canvas/Layout/Center/Panel/SeedChooser")
-            .GetComponent<BinderContainer>();
-
-        var selectedPlantPanelTransform = CloneAlmanacSelectedPlantPanel(seedChooserTransform);
-
-        SetupPanel(selectedPlantPanelTransform);
-
-        static void SetupPanel(RectTransform panel)
-        {
-            panel.anchorMin = Vector2.one;
-            panel.anchorMax = Vector2.one;
-            panel.pivot = new Vector2(0, 1);
-            panel.anchoredPosition = new Vector2(-5, 0);
-            panel.localScale = Vector3.one * 0.8f;
-        }
+        MelonEvents.OnSceneWasLoaded.Unsubscribe(this.OnSceneWasLoaded);
     }
 
     private static RectTransform CloneAlmanacSelectedPlantPanel(BinderContainer container)
@@ -111,6 +95,62 @@ internal sealed class SeedChooserSkinPicker : IDisposable
                 portraitTransform.gameObject,
                 portraitTransform.position - new Vector3(1500, 0),
                 Quaternion.identity);
+        }
+    }
+
+    private void OnSceneWasLoaded(int buildIndex, string sceneName)
+    {
+        if (sceneName == Constants.Transition.GAMEPLAY)
+        {
+            var gameplayDataModel = GameplayDataProviderApi.CurrentModel;
+            if (gameplayDataModel == null)
+            {
+                this.logger.LogWarning("Gameplay data model not available");
+                return;
+            }
+
+            this.GameplaySceneSetup(gameplayDataModel.m_seedChooserDataModel.m_selectedModel);
+        }
+    }
+
+    private void GameplaySceneSetup(StringValueModel seedChooserSelectedModel)
+    {
+        // TODO: Bind PortraitRender visbility to chooser
+        // TODO: Set initial skin name in panel
+
+        var seedChooserTransform = GameObject.FindOrThrow("Panels")
+            .transform.FindOrThrow("SeedChooserPanels/P_SeedChooser/Canvas/Layout/Center/Panel/SeedChooser")
+            .GetComponent<BinderContainer>();
+
+        var selectedPlantPanelTransform = CloneAlmanacSelectedPlantPanel(seedChooserTransform);
+
+        var selectedItem = AlmanacSelectedItem.Wrap(selectedPlantPanelTransform.gameObject);
+
+        var pickerController = CreateController();
+
+        var button = SkinSwapUI.GetButton(selectedItem);
+
+        pickerController.Bind(button);
+
+        SetupPanel(selectedPlantPanelTransform);
+
+        SkinPickerController<SeedType> CreateController()
+        {
+            var selection = new AlmanacSelection<SeedType>(
+                seedChooserSelectedModel,
+                selectedItem.NameBinder,
+                ignoreEmptyValues: true);
+
+            return new(selection, this.pickers);
+        }
+
+        static void SetupPanel(RectTransform panel)
+        {
+            panel.anchorMin = Vector2.one;
+            panel.anchorMax = Vector2.one;
+            panel.pivot = new Vector2(0, 1);
+            panel.anchoredPosition = new Vector2(-5, 0);
+            panel.localScale = Vector3.one * 0.8f;
         }
     }
 }

@@ -35,6 +35,17 @@ internal sealed class SkinPickerController<T>
             .ToDictionary(picker => picker.Type);
     }
 
+    public SkinPickerController(
+        AlmanacSelection<T> selection,
+        IReadOnlyDictionary<T, SkinPicker<T>> pickers)
+    {
+        ArgumentNullException.ThrowIfNull(selection);
+        ArgumentNullException.ThrowIfNull(pickers);
+
+        this.selection = selection;
+        this.Pickers = pickers;
+    }
+
     public IReadOnlyDictionary<T, SkinPicker<T>> Pickers { get; }
 
     public void ApplySelections(SkinSelectionSet<T> selectionSet)

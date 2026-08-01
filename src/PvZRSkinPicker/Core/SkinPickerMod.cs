@@ -39,7 +39,7 @@ internal sealed class SkinPickerMod(
 
         skinSelectionPersistence.BindControllers(controllerPair);
 
-        disposeGroup.Collect(SeedChooserSkinPicker.Initialize());
+        disposeGroup.Collect(SeedChooserSkinPicker.Initialize(controllerPair.Plant.Pickers));
         disposeGroup.Collect(PlantSkinQuickSwap.Initialize(gameplayActivity, controllerPair.Plant.Pickers));
 
         packetRenderer.Dispose();

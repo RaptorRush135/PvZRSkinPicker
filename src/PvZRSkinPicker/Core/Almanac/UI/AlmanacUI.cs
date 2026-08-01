@@ -36,6 +36,17 @@ internal static class AlmanacUI
         return CreateOverlayButton(name, selectedItem.PortraitTransform, sprite, 150, new Vector2(50, verticalPadding));
     }
 
+    public static ModButton GetPortraitOverlayButton(
+        string name,
+        AlmanacSelectedItem selectedItem)
+    {
+        var button = selectedItem.PortraitTransform
+            .FindOrThrow(name)
+            .GetComponent<Button>();
+
+        return new(button);
+    }
+
     public static AlmanacSelectedItem GetSelectedItem(AlmanacEntryType type)
     {
         return type == AlmanacEntryType.Plant
