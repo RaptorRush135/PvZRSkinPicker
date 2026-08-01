@@ -57,9 +57,14 @@ internal sealed class SeedChooserSkinPicker : IDisposable
         MelonEvents.OnSceneWasLoaded.Unsubscribe(this.OnSceneWasLoaded);
     }
 
-    private static RectTransform CloneAlmanacSelectedPlantPanel(BinderContainer container)
+    private static RectTransform CloneAlmanacSelectedPlantPanel(
+        BinderContainer container,
+        BoolValueModel isChoosingModel)
     {
         var portraitClone = ClonePortraitRender();
+
+        isChoosingModel.Subscribe((Action<bool>)(
+            isChoosing => portraitClone.SetActive(isChoosing)));
 
         var binderKeyProxy = portraitClone.GetComponent<BinderKeyProxy>();
 
@@ -109,19 +114,21 @@ internal sealed class SeedChooserSkinPicker : IDisposable
                 return;
             }
 
-            this.GameplaySceneSetup(gameplayDataModel.m_seedChooserDataModel.m_selectedModel);
+            this.GameplaySceneSetup(
+                gameplayDataModel.m_seedChooserDataModel.m_selectedModel,
+                gameplayDataModel.m_seedBankDataModel.m_isChoosingModel);
         }
     }
 
-    private void GameplaySceneSetup(StringValueModel seedChooserSelectedModel)
+    private void GameplaySceneSetup(
+        StringValueModel seedChooserSelectedModel,
+        BoolValueModel isChoosingModel)
     {
-        // TODO: Bind PortraitRender visbility to chooser
-
-        var seedChooserTransform = GameObject.FindOrThrow("Panels")
+        var seedChooserBinder = GameObject.FindOrThrow("Panels")
             .transform.FindOrThrow("SeedChooserPanels/P_SeedChooser/Canvas/Layout/Center/Panel/SeedChooser")
             .GetComponent<BinderContainer>();
 
-        var selectedPlantPanelTransform = CloneAlmanacSelectedPlantPanel(seedChooserTransform);
+        var selectedPlantPanelTransform = CloneAlmanacSelectedPlantPanel(seedChooserBinder, isChoosingModel);
 
         var selectedItem = AlmanacSelectedItem.Wrap(selectedPlantPanelTransform.gameObject);
 
