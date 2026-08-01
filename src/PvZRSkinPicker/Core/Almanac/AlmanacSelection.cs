@@ -24,16 +24,16 @@ internal sealed class AlmanacSelection<T>
 
     private readonly StringBinder nameBinder;
 
-    private readonly bool ignoreEmptyValues;
+    private readonly bool allowEmptySelection;
 
-    public AlmanacSelection(StringValueModel selectedModel, StringBinder nameBinder, bool ignoreEmptyValues)
+    public AlmanacSelection(StringValueModel selectedModel, StringBinder nameBinder, bool allowEmptySelection)
     {
         ArgumentNullException.ThrowIfNull(selectedModel);
         ArgumentNullException.ThrowIfNull(nameBinder);
 
         this.selectedModel = selectedModel;
         this.nameBinder = nameBinder;
-        this.ignoreEmptyValues = ignoreEmptyValues;
+        this.allowEmptySelection = allowEmptySelection;
 
         selectedModel.Subscribe(
             (Action<string>)this.Changed);
@@ -46,7 +46,7 @@ internal sealed class AlmanacSelection<T>
     public static AlmanacSelection<T> Create(AlmanacEntryType type, StringValueModel selectedModel)
     {
         StringBinder nameBinder = AlmanacUI.GetSelectedItem(type).NameBinder;
-        return new(selectedModel, nameBinder, ignoreEmptyValues: false);
+        return new(selectedModel, nameBinder, allowEmptySelection: false);
     }
 
     public void Refresh()
@@ -55,7 +55,7 @@ internal sealed class AlmanacSelection<T>
             this.selectedModel.Value);
     }
 
-    public void OverrideNextNameSet(string name)
+    public void OverrideNextNameSet(string name, bool mustRunThisFrame)
     {
         var @event = this.nameBinder.OnTextSet;
         int frame = Time.frameCount;
@@ -64,7 +64,7 @@ internal sealed class AlmanacSelection<T>
         wrapper = (Action<string>)(_ =>
         {
             @event.RemoveListener(wrapper);
-            if (Time.frameCount != frame)
+            if (mustRunThisFrame && Time.frameCount != frame)
             {
                 this.logger.LogWarning(
                     "OnTextSet invoked on wrong frame. Expected {Frame}, actual {FrameCount}",
@@ -87,8 +87,10 @@ internal sealed class AlmanacSelection<T>
 
     private void Changed(string value)
     {
-        if (this.ignoreEmptyValues && string.IsNullOrEmpty(value))
+        if (this.allowEmptySelection && string.IsNullOrEmpty(value))
         {
+            this.Value = default;
+            this.SelectionChanged?.Invoke(this.Value);
             return;
         }
 

@@ -116,7 +116,6 @@ internal sealed class SeedChooserSkinPicker : IDisposable
     private void GameplaySceneSetup(StringValueModel seedChooserSelectedModel)
     {
         // TODO: Bind PortraitRender visbility to chooser
-        // TODO: Set initial skin name in panel
 
         var seedChooserTransform = GameObject.FindOrThrow("Panels")
             .transform.FindOrThrow("SeedChooserPanels/P_SeedChooser/Canvas/Layout/Center/Panel/SeedChooser")
@@ -127,6 +126,7 @@ internal sealed class SeedChooserSkinPicker : IDisposable
         var selectedItem = AlmanacSelectedItem.Wrap(selectedPlantPanelTransform.gameObject);
 
         var pickerController = CreateController();
+        pickerController.RefreshName(overrideUntilNextNameSet: true, mustRunThisFrame: false);
 
         var button = SkinSwapUI.GetButton(selectedItem);
 
@@ -139,7 +139,7 @@ internal sealed class SeedChooserSkinPicker : IDisposable
             var selection = new AlmanacSelection<SeedType>(
                 seedChooserSelectedModel,
                 selectedItem.NameBinder,
-                ignoreEmptyValues: true);
+                allowEmptySelection: true);
 
             return new(selection, this.pickers);
         }

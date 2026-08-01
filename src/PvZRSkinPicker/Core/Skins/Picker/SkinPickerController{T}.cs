@@ -91,11 +91,11 @@ internal sealed class SkinPickerController<T>
         }
     }
 
-    public void RefreshName(bool overrideUntilNextNameSet)
+    public void RefreshName(bool overrideUntilNextNameSet, bool mustRunThisFrame = true)
     {
         if (this.Pickers.TryGetValue(this.selection.Value, out var picker))
         {
-            this.RefreshName(picker, overrideUntilNextNameSet);
+            this.RefreshName(picker, overrideUntilNextNameSet, mustRunThisFrame);
         }
     }
 
@@ -110,7 +110,7 @@ internal sealed class SkinPickerController<T>
         return new SkinSelectionSet<T>(selections);
     }
 
-    private void RefreshName(SkinPicker<T> picker, bool overrideUntilNextNameSet)
+    private void RefreshName(SkinPicker<T> picker, bool overrideUntilNextNameSet, bool mustRunThisFrame = true)
     {
         Skin skin = picker.GetSelectedSkin();
         if (skin.Id.Type != SkinType.Custom)
@@ -120,7 +120,7 @@ internal sealed class SkinPickerController<T>
 
         if (overrideUntilNextNameSet)
         {
-            this.selection.OverrideNextNameSet(skin.Name);
+            this.selection.OverrideNextNameSet(skin.Name, mustRunThisFrame);
             return;
         }
 
