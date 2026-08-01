@@ -2,12 +2,15 @@
 
 using Il2CppReloaded.Data;
 
+using MelonLoader;
+
 using Microsoft.Extensions.Logging;
 
 using PvZRSkinPicker.Api;
 using PvZRSkinPicker.Skins.Picker;
 
 using SolarApi;
+using SolarApi.Utilities;
 
 internal sealed class SkinSelectionPersistence(
     FileInfo file)
@@ -53,28 +56,47 @@ internal sealed class SkinSelectionPersistence(
         }
     }
 
-    public void BindControllers(SkinPickerControllerPair controllerPair)
+    public void BindControllersAndScene(
+        SkinPickerControllerPair controllerPair,
+        string targetSceneName,
+        out IDisposable sceneUnloadSubscription)
     {
-        AlmanacApi.OnAlmanacClosed.Subscribe(closeType =>
+        AlmanacApi.OnAlmanacClosed.Subscribe(closeType => this.SaveSelections(controllerPair, closeType));
+
+        MelonEvents.OnSceneWasUnloaded.Subscribe(SceneWasUnloadedhandler);
+
+        sceneUnloadSubscription = new DisposableAction(
+            () => MelonEvents.OnSceneWasUnloaded.Unsubscribe(SceneWasUnloadedhandler));
+
+        void SceneWasUnloadedhandler(int buildIndex, string sceneName)
         {
-            SkinSelections newSelections = GetNewSelections();
-
-            this.TryWriteSelections(newSelections);
-
-            SkinSelections GetNewSelections()
+            _ = buildIndex;
+            if (sceneName == targetSceneName)
             {
-                return closeType switch
-                {
-                    AlmanacEntryType.Plant => this.Current with
-                    {
-                        Plants = controllerPair.Plant.GetSelections(),
-                    },
-                    AlmanacEntryType.Zombie => this.Current with
-                    {
-                        Zombies = controllerPair.Zombie.GetSelections(),
-                    },
-                };
+                this.SaveSelections(controllerPair, AlmanacEntryType.Plant);
             }
-        });
+        }
+    }
+
+    private void SaveSelections(SkinPickerControllerPair controllerPair, AlmanacEntryType type)
+    {
+        SkinSelections newSelections = GetNewSelections();
+
+        this.TryWriteSelections(newSelections);
+
+        SkinSelections GetNewSelections()
+        {
+            return type switch
+            {
+                AlmanacEntryType.Plant => this.Current with
+                {
+                    Plants = controllerPair.Plant.GetSelections(),
+                },
+                AlmanacEntryType.Zombie => this.Current with
+                {
+                    Zombies = controllerPair.Zombie.GetSelections(),
+                },
+            };
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace PvZRSkinPicker;
 
+using Il2CppReloaded;
 using Il2CppReloaded.TreeStateActivities;
 
 using PvZRSkinPicker.Almanac.SeedPackets.Renderer;
@@ -37,7 +38,11 @@ internal sealed class SkinPickerMod(
 
         SkinPickerControllerPair controllerPair = controllerInitializer.Create(skinSelections, customSkins);
 
-        skinSelectionPersistence.BindControllers(controllerPair);
+        skinSelectionPersistence.BindControllersAndScene(
+            controllerPair,
+            Constants.Transition.GAMEPLAY,
+            out var sceneUnloadSubscription);
+        disposeGroup.Collect(sceneUnloadSubscription);
 
         disposeGroup.Collect(SeedChooserSkinPicker.Initialize(controllerPair.Plant.Pickers));
         disposeGroup.Collect(PlantSkinQuickSwap.Initialize(gameplayActivity, controllerPair.Plant.Pickers));
