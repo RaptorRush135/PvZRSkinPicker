@@ -63,12 +63,12 @@ internal sealed class SkinSelectionPersistence(
     {
         AlmanacApi.OnAlmanacClosed.Subscribe(closeType => this.SaveSelections(controllerPair, closeType));
 
-        MelonEvents.OnSceneWasUnloaded.Subscribe(SceneWasUnloadedhandler);
+        MelonEvents.OnSceneWasUnloaded.Subscribe(SceneWasUnloadedHandler);
 
         sceneUnloadSubscription = new DisposableAction(
-            () => MelonEvents.OnSceneWasUnloaded.Unsubscribe(SceneWasUnloadedhandler));
+            () => MelonEvents.OnSceneWasUnloaded.Unsubscribe(SceneWasUnloadedHandler));
 
-        void SceneWasUnloadedhandler(int buildIndex, string sceneName)
+        void SceneWasUnloadedHandler(int buildIndex, string sceneName)
         {
             _ = buildIndex;
             if (sceneName == targetSceneName)
