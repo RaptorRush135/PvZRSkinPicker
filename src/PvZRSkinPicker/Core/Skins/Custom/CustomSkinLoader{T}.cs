@@ -66,7 +66,7 @@ internal sealed class CustomSkinLoader<T>(
                     return null;
                 }
 
-                var sprite = this.RenderSrite(prefab, targetType, skin.SeedPacketOverride);
+                var sprite = this.RenderSprite(prefab, targetType, skin.SeedPacketOverride);
 
                 logger.LogInformation("Successfully processed skin");
 
@@ -141,13 +141,13 @@ internal sealed class CustomSkinLoader<T>(
             => value != null ? "[x]" : "[ ]";
     }
 
-    private Sprite RenderSrite(GameObject prefab, T type, SeedPacketOverride? seedPacketOverride)
+    private Sprite RenderSprite(GameObject prefab, T type, SeedPacketOverride? seedPacketOverride)
     {
         var transform = skinTypeHandler.GetDefaultSeedPacketTransform(type)
             .Apply(seedPacketOverride?.Transform);
 
         var renderSpec = new PacketRenderSpec<T>(type, transform);
 
-        return skinTypeHandler.RenderSrite(prefab, renderSpec);
+        return skinTypeHandler.RenderSprite(prefab, renderSpec);
     }
 }

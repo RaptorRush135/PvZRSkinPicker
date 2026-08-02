@@ -94,9 +94,9 @@ internal sealed class PacketRenderer : IDisposable
 
         plant.PlantInitialize(0, 0, renderSpec.Type, SeedType.None, controller);
 
-        var skelAnim = controller.AnimationController.m_skeletonAnimation;
-        skelAnim.Update(0);
-        skelAnim.LateUpdate();
+        var skelAnimation = controller.AnimationController.m_skeletonAnimation;
+        skelAnimation.Update(0);
+        skelAnimation.LateUpdate();
 
         var targetT = target.transform;
         targetT.localPosition = new Vector2(renderSpec.Transform.X, renderSpec.Transform.Y);

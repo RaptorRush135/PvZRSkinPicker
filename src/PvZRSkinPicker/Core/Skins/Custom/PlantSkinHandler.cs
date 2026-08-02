@@ -101,6 +101,6 @@ internal sealed class PlantSkinHandler(
         };
     }
 
-    public Sprite RenderSrite(GameObject prefab, PacketRenderSpec<SeedType> renderSpec)
+    public Sprite RenderSprite(GameObject prefab, PacketRenderSpec<SeedType> renderSpec)
         => packetRenderer.RenderPlantToSprite(prefab, renderSpec);
 }

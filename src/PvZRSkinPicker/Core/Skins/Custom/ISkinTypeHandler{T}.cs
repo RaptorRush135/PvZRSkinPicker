@@ -21,5 +21,5 @@ internal interface ISkinTypeHandler<T>
 
     SkinTransform GetDefaultSeedPacketTransform(T type);
 
-    Sprite RenderSrite(GameObject prefab, PacketRenderSpec<T> renderSpec);
+    Sprite RenderSprite(GameObject prefab, PacketRenderSpec<T> renderSpec);
 }
